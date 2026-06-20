@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local editor / agent settings
+.claude/settings.local.json
+.cursor/
+.vscode/
+.idea/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Runtime bridge files
+storage_bridge/inbound/*
+storage_bridge/ready/*
+storage_bridge/failed/*
+!storage_bridge/inbound/.gitkeep
+!storage_bridge/ready/.gitkeep
+!storage_bridge/failed/.gitkeep
+!storage_bridge/README.md
+
+# Generated OCR / debug artifacts
+zones_detected.png
+*_detected.png
+_debug/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+# Local samples outside Git
+_local_samples/

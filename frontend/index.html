@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Capture</title>
+  <style>
+    body {font-family: Arial, sans-serif; display:flex; flex-direction:column; align-items:center; padding:20px; background:#f5f5f5;}
+    #status-message {margin-top:10px; padding:8px; border:1px solid #ccc; width:100%; max-width:400px; text-align:center;}
+    #service-section {margin-top:20px; display:none; border:1px solid #ddd; padding:10px; width:100%; max-width:400px;}
+    .btn {margin:5px; padding:5px 10px;}
+    #log-container {margin-top:20px; width:100%; max-width:600px;}
+    .terminal {
+      background:#1e1e1e;
+      color:#d4d4d4;
+      border-radius:8px;
+      padding:16px;
+      font-family:'Consolas','Monaco','Courier New',monospace;
+      font-size:13px;
+      line-height:1.5;
+      max-height:300px;
+      overflow-y:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .terminal .line {margin:4px 0;}
+    .terminal .key {color:#9cdcfe;}
+    .terminal .value {color:#ce9178;}
+    .terminal .section {color:#4ec9b0; font-weight:bold;}
+  </style>
+</head>
+<body>
+  <h1>Captura de Comprobante</h1>
+  <input type="file" accept="image/*" capture="environment" id="camara_nativa" />
+  <div id="status-message"></div>
+  <button id="toggle-services" class="btn">Gestionar Servicios</button>
+  <div id="service-section">
+    <h2>Servicios</h2>
+    <ul id="service-list"></ul>
+    <input type="text" id="new-service-name" placeholder="Nombre del servicio" />
+    <button id="add-service" class="btn">Agregar</button>
+  </div>
+  <div id="log-container" style="display:block;">
+    <div class="section">📋 Log de Procesamiento</div>
+    <div id="process-log" class="terminal"></div>
+  </div>
+  <script src="/src/app.js"></script>
+</body>
+</html>
