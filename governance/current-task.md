@@ -2,60 +2,93 @@
 
 ## ID
 
-T0.1
+T1.2
 
 ## Nombre
 
-Limpieza y baseline controlado
+Evaluación OCR GAS con imágenes reales locales
 
 ## Objetivo
 
-Corregir la estructura base del proyecto para eliminar redundancia, archivos vacíos, reglas duplicadas y contenido mal pegado.
+Crear un flujo local de evaluación OCR para comprobantes GAS usando imágenes reales o sanitizadas fuera del repositorio Git.
+
+El objetivo no es lograr OCR perfecto, sino medir con evidencia si el motor actual puede extraer campos útiles desde comprobantes reales con mucha información.
 
 ## Alcance
 
-Corregir:
+Crear o modificar únicamente:
 
 - `.gitignore`
-- `.env.example`
-- `README.md`
-- `ROADMAP.md`
-- `GOVERNANCE.md`
-- `AGENTS.md`
-- `CONTRIBUTING.md`
-- `VERSION`
-- `CHANGELOG.md`
-- `governance/decisions.md`
-- documentación en `docs/`
-- scripts de soporte en `scripts/`
+- `scripts/evaluate_gas_ocr.py`
+- `docs/OCR-STRATEGY.md`
+- `docs/ACCEPTANCE-CRITERIA.md`
+- `governance/current-task.md`
+- `backend/app/ocr.py` solo si se requiere una función reutilizable mínima de OCR global o extracción regex
 
-Eliminar o mover:
+## Carpetas locales no versionadas
 
-- archivos vacíos que no participan todavía;
-- carpetas mal nombradas;
-- artefactos generados;
-- configuraciones locales versionables.
+Las imágenes reales deben ubicarse en:
+
+```text
+_local_samples/gas/
+```
+
+Los reportes locales deben generarse en:
+
+```text
+_ocr_reports/
+```
+
+Estas carpetas deben estar ignoradas por Git.
 
 ## Fuera de alcance
 
-- No corregir OCR todavía.
-- No corregir frontend todavía.
-- No implementar bridge atómico todavía.
-- No cambiar `backend/app/main.py` en esta tarea.
-- No cambiar `backend/app/ocr.py` en esta tarea.
-- No cambiar `backend/config/services.ini` en esta tarea.
+- No modificar frontend.
+- No implementar bridge atómico.
+- No cambiar motor OCR.
+- No subir imágenes reales al repositorio.
+- No crear base de datos.
+- No trabajar otros servicios distintos de GAS.
+- No modificar GitHub remoto.
+- No crear tag.
+- No hacer refactors grandes.
 
 ## Criterios de aceptación
 
-- No existe `.ai/`.
-- No existe `.cursorrules`.
-- No existe `app/` en raíz.
-- No existe `zones_detected.png`.
-- `.gitignore` no contiene comandos PowerShell.
-- `AGENTS.md` no referencia `.ai/`.
-- `CONTRIBUTING.md` no tiene contenido duplicado.
-- `GOVERNANCE.md` no duplica decisiones arquitectónicas.
-- `governance/decisions.md` solo contiene decisiones.
-- `VERSION` contiene `0.1.0`.
-- `scripts/validate_project.py` ejecuta correctamente.
+- `.gitignore` ignora `_local_samples/`, `_ocr_reports/` y `_debug/`.
+- Existe un script local de evaluación OCR para GAS.
+- El script procesa imágenes desde `_local_samples/gas/`.
+- El script no falla si no hay imágenes, debe mostrar instrucción clara.
+- El script genera reporte local en `_ocr_reports/`.
+- El reporte incluye:
+  - archivo procesado;
+  - tiempo OCR;
+  - cantidad de líneas OCR;
+  - campos detectados;
+  - campos faltantes;
+  - texto OCR normalizado o resumen útil.
+- `python scripts\validate_project.py` pasa.
+- `pytest backend\tests -v` pasa.
+- `python -m pytest backend\tests -v` pasa.
+- No quedan imágenes reales ni reportes versionables.
 
+## Campos objetivo
+
+Prioridad:
+
+1. importe
+2. a pagar hasta
+3. n° cliente
+4. periodo
+5. nro medidor
+
+## Validación esperada
+
+```powershell
+python scripts\validate_project.py
+pytest backend\tests -v
+python -m pytest backend\tests -v
+python scripts\evaluate_gas_ocr.py
+git status --short
+git diff --stat
+```

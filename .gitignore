@@ -44,3 +44,4 @@ _debug/
 Thumbs.db
 # Local samples outside Git
 _local_samples/
+_ocr_reports/
