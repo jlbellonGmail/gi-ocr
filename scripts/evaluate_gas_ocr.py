@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import re
 import sys
 import time
 from datetime import datetime
@@ -21,62 +20,8 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tiff"}
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from backend.app.gas_extractor import extract_gas_fields  # noqa: E402
 from backend.app.ocr import extract_text_from_image  # noqa: E402
-
-
-def normalize_text(text: str) -> str:
-    return " ".join(text.replace("\n", " ").split())
-
-
-def extract_first(patterns: list[str], text: str) -> str | None:
-    for pattern in patterns:
-        match = re.search(pattern, text, flags=re.IGNORECASE)
-        if match:
-            return match.group(1).strip()
-    return None
-
-
-def extract_gas_fields(ocr_text: str) -> dict[str, str | None]:
-    text = normalize_text(ocr_text)
-
-    return {
-        "importe": extract_first(
-            [
-                r"(?:importe|total|a pagar|saldo)\D{0,30}(\$?\s?\d{1,3}(?:[.\s]\d{3})*(?:,\d{2})?)",
-                r"(\$?\s?\d{1,3}(?:[.\s]\d{3})*(?:,\d{2}))",
-                r"(\$?\s?\d+(?:[.,]\d{2}))",
-            ],
-            text,
-        ),
-        "a pagar hasta": extract_first(
-            [
-                r"(?:pagar hasta|vencimiento|vence|fecha de vencimiento)\D{0,30}(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-                r"(\d{1,2}[/-]\d{1,2}[/-]\d{4})",
-            ],
-            text,
-        ),
-        "n° cliente": extract_first(
-            [
-                r"(?:cliente|cuenta|usuario|nro cliente|n° cliente|numero cliente)\D{0,30}(\d{6,12})",
-                r"\b(\d{8,10})\b",
-            ],
-            text,
-        ),
-        "periodo": extract_first(
-            [
-                r"(?:periodo|período)\D{0,30}(\d{1,2}[/-]\d{2,4})",
-                r"\b(\d{1,2}[/-]\d{4})\b",
-            ],
-            text,
-        ),
-        "nro medidor": extract_first(
-            [
-                r"(?:medidor|nro medidor|n° medidor|numero medidor)\D{0,30}(\d{6,15})",
-                r"\b(\d{10,15})\b",
-            ],
-            text,
-        ),
-    }
 
 
 def list_images() -> list[Path]:
@@ -102,18 +47,16 @@ async def evaluate_image(image_path: Path) -> dict[str, Any]:
     )
 
     elapsed = round(time.perf_counter() - start, 3)
-    fields = extract_gas_fields(ocr_text)
-
-    detected_fields = [key for key, value in fields.items() if value]
-    missing_fields = [key for key, value in fields.items() if not value]
+    extraction = extract_gas_fields(ocr_text)
 
     return {
         "file": str(image_path.relative_to(ROOT_DIR)),
         "elapsed_seconds": elapsed,
         "ocr_lines_count": lines_count,
-        "fields": fields,
-        "detected_fields": detected_fields,
-        "missing_fields": missing_fields,
+        "fields": extraction["fields"],
+        "detected_fields": extraction["detected_fields"],
+        "missing_fields": extraction["missing_fields"],
+        "normalized_text": extraction["normalized_text"],
         "ocr_text": ocr_text,
     }
 
