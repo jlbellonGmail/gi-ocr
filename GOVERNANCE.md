@@ -74,6 +74,17 @@ Antes de cerrar la tarea:
 - **El contenido .DATA debe tener solo cabecera de campos (línea 1) y datos (línea 2+).**
 - **El separador obligatorio es punto y coma (;), no coma (,).**
 
+## Reglas obligatorias de salida `.DATA`
+
+- NO usar coma (,) como separador de columnas.
+- Separador obligatorio: punto y coma (`;`).
+- El archivo `.DATA` debe usar `;` como separador de encabezados y valores.
+- El contenido del archivo `.DATA` no debe incluir secciones como `[GAS]` o `[CEVT]`.
+- El contenido del archivo `.DATA` no debe incluir metadatos de fecha/hora fuera del nombre del archivo.
+
+Reglas obligatorias:
+- Separador obligatorio: punto y coma (`;`)
+
 ## Definición de tarea completada
 
 Una tarea está completa solo si:

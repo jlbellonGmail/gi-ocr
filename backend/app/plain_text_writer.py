@@ -39,16 +39,18 @@ def write_data_file(
         fields: Lista ordenada de nombres de campos
         values: Dict campo -> valor (None o string)
         timestamp: datetime a usar (para testing); si None, usa ahora
+        output_dir: Directorio de salida; si None, usa DEFAULT_OUTPUT_DIR
 
     Returns:
         Path al archivo creado
     """
-    ensure_output_dir()
+    out_dir = output_dir or DEFAULT_OUTPUT_DIR
+    ensure_output_dir(out_dir)
     ts = timestamp or datetime.now()
     # Formato: YYYYMMDD_HHMMSS
     time_str = ts.strftime("%Y%m%d_%H%M%S")
     filename = f"{service.upper()}_{time_str}.DATA"
-    filepath = OUTPUT_DIR / filename
+    filepath = out_dir / filename
 
     # Construir líneas
     header_line = ";".join(fields)

@@ -39,8 +39,20 @@ def assert_file_content_contains(path: Path, substrings: list[str]) -> None:
 def assert_json_absent_in_paths(paths: list[Path]) -> None:
     for p in paths:
         content = p.read_text(encoding="utf-8")
-        if "json" in content.lower():
-            fail(f"Uso de JSON detectado en {p}")
+        # Check for actual JSON usage patterns, not just the word
+        import re
+        # Look for JSON function calls, json module imports, or json.dump/loads
+        json_patterns = [
+            r'import\s+json',
+            r'from\s+json\s+import',
+            r'\.json\(\)',
+            r'json\.dump',
+            r'json\.loads',
+            r'json\.load',
+        ]
+        for pattern in json_patterns:
+            if re.search(pattern, content, re.IGNORECASE):
+                fail(f"Uso de JSON detectado en {p}")
 
 
 def validate_services_ini() -> None:
@@ -75,7 +87,7 @@ def validate_services_ini() -> None:
                 if not cfg.has_option(section, key):
                     fail(f"Sección [{section}] carece de {key}")
 
-    print("✅ services.ini cumple contrato")
+    print("[OK] services.ini cumple contrato")
 
 
 def validate_governance() -> None:
@@ -85,7 +97,7 @@ def validate_governance() -> None:
         "No usar JSON como configuración persistente de OCR",
         "La configuración OCR debe mantenerse en texto plano mediante backend/config/services.ini",
         "La salida legacy debe generarse en archivos .DATA con nombre SERVICIO_YYYYMMDD_HHMMSS.DATA",
-        "Separador obligatorio: punto y coma (;)"
+        "Separador obligatorio: punto y coma (`;`)"
     ])
 
     # decisions.md (ADR-007)
@@ -94,23 +106,21 @@ def validate_governance() -> None:
     # current-task.md
     assert_file_content_contains(CURRENT_TASK_MD, [".DATA", "SERVICIO_YYYYMMDD_HHMMSS.DATA"])
 
-    print("✅ Governance y decisiones cumplen contrato")
+    print("[OK] Governance y decisiones cumplen contrato")
 
 
 def validate_no_json_usage() -> None:
-    json_paths = [
-        ROOT / "backend" / "app" / "*.py",
-        ROOT / "scripts" / "evaluate_gas_ocr.py",
-    ]
+    # Collect all Python files to check
+    json_paths = list(ROOT.glob("backend/app/*.py")) + [ROOT / "scripts" / "evaluate_gas_ocr.py"]
     assert_json_absent_in_paths(json_paths)
-    print("✅ No se usa JSON como configuración/salida legacy")
+    print("[OK] No se usa JSON como configuración/salida legacy")
 
 
 def main() -> None:
     validate_services_ini()
     validate_governance()
     validate_no_json_usage()
-    print("\n🎉 VALIDACIÓN CONTRATUAL EXITOSA")
+    print("\n[OK] VALIDACION CONTRATUAL EXITOSA")
 
 
 if __name__ == "__main__":

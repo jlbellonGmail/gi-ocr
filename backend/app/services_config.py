@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 
-CONFIG_DIR = Path(__file__).resolve().parents[2] / "config"
+CONFIG_DIR = Path(__file__).resolve().parents[1] / "config"
 SERVICES_INI = CONFIG_DIR / "services.ini"
 
 
@@ -36,7 +36,7 @@ def get_service_fields(service: str) -> List[str]:
     cfg = _load_parser()
     if not cfg.has_section(service):
         return []
-    fields_str = cfg.get(service, "fields", fallback="")
+    fields_str = cfg.get(service, "Fields", fallback="")
     fields_str = fields_str.strip().strip('"')
     return [f.strip() for f in fields_str.split(",") if f.strip()]
 
