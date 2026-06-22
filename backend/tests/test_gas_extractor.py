@@ -1,8 +1,11 @@
 """Tests for the GAS field extractor."""
 from __future__ import annotations
 
+import asyncio
+
 import pytest
 
+from backend.app.extraction_engine import extract_service_fields
 from backend.app.gas_extractor import extract_gas_fields
 
 
@@ -119,3 +122,57 @@ def test_empty_text():
         "periodo",
         "nro_medidor",
     }
+
+
+def test_semantic_validation_rejects_comprobant():
+    """Should reject COMPROBANT for a_pagar_hasta field."""
+    text = "a pagar hasta COMPROBANT"
+    result = asyncio.run(extract_service_fields("GAS", text))
+    # Should reject COMPROBANT completely
+    assert result["fields"]["a_pagar_hasta"] is None
+
+
+def test_semantic_validation_accepts_date_with_slash():
+    """Should accept valid date with / separator."""
+    text = "Pagar hasta: 20/06/2026"
+    result = asyncio.run(extract_service_fields("GAS", text))
+    assert result["fields"]["a_pagar_hasta"] == "20/06/2026"
+
+
+def test_semantic_validation_accepts_date_with_dash():
+    """Should accept valid date with - separator."""
+    text = "Vencimiento 20-06-2026"
+    result = asyncio.run(extract_service_fields("GAS", text))
+    assert result["fields"]["a_pagar_hasta"] == "20-06-2026"
+
+
+def test_semantic_validation_accepts_date_with_dot():
+    """Should accept valid date with . separator."""
+    text = "a pagar hasta 20.06.2026"
+    result = asyncio.run(extract_service_fields("GAS", text))
+    assert result["fields"]["a_pagar_hasta"] == "20.06.2026"
+
+
+def test_semantic_validation_accepts_date_with_asterisk():
+    """Should accept valid date with * separator."""
+    text = "pagar hasta 20*06*2026"
+    result = asyncio.run(extract_service_fields("GAS", text))
+    assert result["fields"]["a_pagar_hasta"] == "20*06*2026"
+
+
+def test_semantic_validation_extracts_date_from_comprobant_text():
+    """Should extract date from 'COMPROBANT DD/MM/YYYY' text."""
+    text = "COMPROBANT 20/06/2026"
+    result = asyncio.run(extract_service_fields("GAS", text))
+    # Should extract the date, not COMPROBANT
+    assert result["fields"]["a_pagar_hasta"] == "20/06/2026"
+
+
+def test_semantic_validation_missing_date_returns_none():
+    """Should return None when no valid date is found."""
+    text = "a pagar hasta COMPROBANT"
+    result = asyncio.run(extract_service_fields("GAS", text))
+    # Deterministic: field should be None when no valid date
+    assert result["fields"]["a_pagar_hasta"] is None
+    # Should be in missing_fields list
+    assert "a_pagar_hasta" in result["missing_fields"]
