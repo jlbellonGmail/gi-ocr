@@ -2,213 +2,138 @@
 
 ## ID
 
-T1.3
+T1.4
 
 ## Nombre
 
-Extracción robusta de campos GAS
+Modelo configurable de extracción de texto plano OCR
 
 ## Objetivo
 
-Mejorar la extracción de campos de comprobantes GAS usando el texto OCR ya disponible.
+Implementar una arquitectura de extracción OCR configurable por texto plano, donde nuevos servicios se definen únicamente mediante configuración, sin crear nuevos archivos Python.
 
-La tarea debe enfocarse en normalización de texto, reglas regex iniciales y salida estructurada de campos. No busca cambiar el motor OCR ni mejorar imagen todavía.
+La salida legacy debe ser archivo plano `.DATA` con nombre `SERVICIO_YYYYMMDD_HHMMSS.DATA` y contenido con separador punto y coma (`;`).
 
 ## Rama requerida
 
 ```text
-feature/ocr-gas-field-extractor
-```
-
-## Contexto
-
-La tarea anterior `T1.2 — Evaluación OCR GAS con imágenes reales locales` agregó el script:
-
-```text
-scripts/evaluate_gas_ocr.py
-```
-
-Ese script ya procesa imágenes locales ignoradas por Git desde:
-
-```text
-_local_samples/gas/
-```
-
-y genera reportes locales ignorados por Git en:
-
-```text
-_ocr_reports/
-```
-
-En la prueba con fixture local, se detectaron varios campos, pero quedó pendiente mejorar especialmente:
-
-```text
-a pagar hasta
+feature/configurable-extraction-model
 ```
 
 ## Alcance permitido
 
-Se puede crear o modificar únicamente:
+Pueden crearse/modificar únicamente:
 
-* `backend/app/gas_extractor.py`
-* `backend/tests/test_gas_extractor.py`
-* `scripts/evaluate_gas_ocr.py`
-* `docs/OCR-STRATEGY.md`
-* `docs/ACCEPTANCE-CRITERIA.md`
-* `governance/current-task.md`
+- `backend/config/services.ini`
+- `backend/app/services_config.py`
+- `backend/app/extraction_engine.py`
+- `backend/app/plain_text_writer.py`
+- `backend/tests/test_services_config.py`
+- `backend/tests/test_extraction_engine.py`
+- `backend/tests/test_plain_text_writer.py`
+- `scripts/evaluate_gas_ocr.py`
+- `scripts/validate_plain_text_extraction_contract.py`
+- `scripts/validate_project.py`
+- `GOVERNANCE.md`
+- `governance/decisions.md`
+- `governance/current-task.md`
+- `docs/OCR-STRATEGY.md`
+- `docs/ACCEPTANCE-CRITERIA.md`
 
 ## Alcance prohibido
 
 No modificar:
 
-* frontend;
-* bridge;
-* `storage_bridge/`;
-* motor OCR;
-* endpoints FastAPI;
-* GitHub remoto;
-* tags;
-* imágenes reales;
-* reportes locales;
-* fixtures reales con datos sensibles.
+- `frontend/`
+- `storage_bridge/`
+- endpoints FastAPI
+- motor OCR
+- GitHub remoto
+- tags
+- imágenes reales
+- reportes locales versionables
 
-No crear nuevas ramas desde el agente.
+No crear:
 
-No hacer commits automáticos.
+- archivos JSON como configuración persistente
+- archivos JSON como salida legacy
+- nuevos extractores Python por servicio (cada servicio = solo configuración)
 
-## Campos objetivo
+## Contrato de configuración (services.ini)
 
-La extracción GAS debe intentar obtener:
+Cada servicio debe tener:
 
-1. `importe`
-2. `a_pagar_hasta`
-3. `cliente`
-4. `periodo`
-5. `nro_medidor`
+```ini
+[SERVICIO]
+Title=Título del servicio
+Fields=campo1,campo2,campo3
 
-## Requisitos técnicos
-
-Crear un módulo específico:
-
-```text
-backend/app/gas_extractor.py
+Field.campo1.Label=Nombre del campo
+Field.campo1.Example=ejemplo
+Field.campo1.Type=amount|text|date
+Field.campo1.Required=true|false
+Field.campo1.Patterns=patrón1|patrón2
+Field.campo1.Regex=expresión regular
 ```
 
-El módulo debe exponer una función principal simple, por ejemplo:
+## Contrato de salida .DATA
 
-```python
-extract_gas_fields(ocr_text: str) -> dict
+Nombre obligatorio: `SERVICIO_YYYYMMDD_HHMMSS.DATA`
+
+Contenido:
+
+```
+campo1;campo2;campo3
+valor1;valor2;valor3
 ```
 
-La salida debe incluir:
+Reglas:
 
-```json
-{
-  "fields": {
-    "importe": "...",
-    "a_pagar_hasta": "...",
-    "cliente": "...",
-    "periodo": "...",
-    "nro_medidor": "..."
-  },
-  "detected_fields": [],
-  "missing_fields": [],
-  "normalized_text": "..."
-}
-```
-
-Los campos no encontrados deben quedar como `null`.
-
-## Reglas de extracción
-
-La extracción debe usar:
-
-* normalización de saltos de línea;
-* normalización de espacios múltiples;
-* tolerancia a mayúsculas/minúsculas;
-* regex específicas por campo;
-* tolerancia a variantes como:
-
-  * `cliente`
-  * `nro cliente`
-  * `n° cliente`
-  * `número cliente`
-  * `medidor`
-  * `nro medidor`
-  * `vencimiento`
-  * `vence`
-  * `pagar hasta`
-  * `a pagar hasta`
-  * `total`
-  * `importe`
-  * `saldo`
-
-## Integración con evaluación local
-
-Actualizar:
-
-```text
-scripts/evaluate_gas_ocr.py
-```
-
-para que use `backend/app/gas_extractor.py` en lugar de tener la lógica de regex embebida en el script.
-
-El script debe conservar su comportamiento actual:
-
-* corre sin imágenes;
-* procesa imágenes desde `_local_samples/gas/`;
-* genera reportes en `_ocr_reports/`;
-* no escribe en `storage_bridge/`.
+- Separador obligatorio: punto y coma (`;`)
+- No usar coma como separador de columnas
+- No incluir `[SERVICIO]` en el contenido
+- No incluir fecha/hora en el contenido (va en el nombre del archivo)
+- Línea 1: nombres de campos separados por `;`
+- Línea 2+: datos extraídos separados por `;`
 
 ## Tests requeridos
 
-Crear:
+1. `test_services_config.py`: carga de `services.ini`, sección `[GAS]`, campos, patrones.
+2. `test_extraction_engine.py`: extracción de campos usando regex desde configuración.
+3. `test_plain_text_writer.py`: generación de archivo `.DATA` con nombre correcto y formato.
+4. Test de servicio ficticio `CABLEVISION_TEST` definido solo por configuración.
 
-```text
-backend/tests/test_gas_extractor.py
+## Validación contractual
+
+Ejecutar:
+
+```powershell
+python scripts\validate_plain_text_extraction_contract.py
 ```
 
-Los tests deben validar, como mínimo:
+El validador debe verificar:
 
-* extracción de importe;
-* extracción de cliente;
-* extracción de fecha `a_pagar_hasta`;
-* extracción de periodo;
-* extracción de nro medidor;
-* campos faltantes cuando el texto no contiene datos;
-* salida estable con `fields`, `detected_fields`, `missing_fields` y `normalized_text`.
-
-Los tests deben usar textos sintéticos, no imágenes reales.
+1. `backend/config/services.ini` existe.
+2. Sección `[GAS]` existe.
+3. `Title` existe.
+4. `Fields` existe.
+5. Cada campo tiene `Label`, `Example`, `Type`, `Required`, `Patterns`, `Regex`.
+6. `GOVERNANCE.md` contiene regla sobre `SERVICIO_YYYYMMDD_HHMMSS.DATA`.
+7. `governance/decisions.md` contiene ADR-007.
+8. No hay uso de `json` como configuración ni salida legacy.
+9. El writer usa `;` como separador.
+10. El writer genera nombre con formato `SERVICIO_YYYYMMDD_HHMMSS.DATA`.
 
 ## Criterios de aceptación
 
-La tarea queda lista solo si:
+La tarea queda lista si:
 
-* existe `backend/app/gas_extractor.py`;
-* existe `backend/tests/test_gas_extractor.py`;
-* `scripts/evaluate_gas_ocr.py` usa el extractor GAS;
-* `python scripts\validate_project.py` pasa;
-* `pytest backend\tests -v` pasa;
-* `python -m pytest backend\tests -v` pasa;
-* `python scripts\evaluate_gas_ocr.py` corre sin romper;
-* no aparecen `_local_samples/`, `_ocr_reports/` ni `_debug/` en Git;
-* `git diff --name-only` muestra solo archivos dentro del alcance.
-
-## Validación esperada
-
-```powershell
-git branch --show-current
-git status --short
-python scripts\validate_project.py
-pytest backend\tests -v
-python -m pytest backend\tests -v
-python scripts\evaluate_gas_ocr.py
-git diff --stat
-git diff --name-only
-```
-
-## Commit sugerido
-
-```text
-feat(ocr): add gas field extractor
-```
+- estás en rama `feature/configurable-extraction-model`;
+- `services.ini` cumple el contrato nuevo;
+- governance registra la regla obligatoria;
+- existe validador contractual pasando;
+- `pytest backend\tests -v` pasa;
+- `python scripts\evaluate_gas_ocr.py` genera `.DATA` correcto;
+- no hay `json` como configuración ni salida;
+- no hay extractores por servicio;
+- no se toca `frontend/` ni `storage_bridge/`.
