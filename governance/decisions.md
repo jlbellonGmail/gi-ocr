@@ -92,3 +92,26 @@ Pendiente:
 - Medir precisión.
 - Medir velocidad.
 - Comparar contra Tesseract, PaddleOCR, Google Document AI y Azure Document Intelligence.
+
+---
+
+## ADR-007 — Modelo configurable de extracción de texto plano
+
+Estado: aceptada.
+
+Las reglas de extracción OCR se definen en un archivo INI plano (`backend/config/services.ini`), no JSON. La salida legacy se genera en archivos `.DATA` con nombre `SERVICIO_YYYYMMDD_HHMMSS.DATA`.
+
+Motivo:
+
+- Evita proliferación de extractores Python por servicio.
+- Hace que la adición de servicios sea solo un cambio de configuración.
+- Sigue el principio de separación estructural: lógica genérica, definición por configuración.
+
+Reglas:
+
+- La configuración vive en `backend/config/services.ini`.
+- La salida legacy es un archivo plano `.DATA` con nombre `SERVICIO_YYYYMMDD_HHMMSS.DATA`.
+- El contenido: primera línea con nombres de campos separados por `;`, segunda línea en adelante con valores extraídos, separado por `;`.
+- No usar `json` como contrato persistente ni como salida legacy.
+- No crear extractores Python por servicio; todos los servicios deben trabajar con el mismo motor genérico.
+- Futuro CRUD sobre servicios, campos y reglas será posible solo por modelo conceptual.

@@ -67,6 +67,12 @@ Antes de cerrar la tarea:
 - No cambiar alcance del MVP sin aprobación.
 - No copiar comandos PowerShell dentro de archivos Markdown.
 - No mezclar limpieza estructural, OCR, frontend y bridge en una misma tarea.
+- **No usar JSON como configuración persistente de OCR ni como salida legacy.**
+- **No crear extractores Python específicos por servicio.**
+- **La configuración OCR debe mantenerse en texto plano mediante backend/config/services.ini.**
+- **La salida legacy debe generarse en archivos .DATA con nombre SERVICIO_YYYYMMDD_HHMMSS.DATA.**
+- **El contenido .DATA debe tener solo cabecera de campos (línea 1) y datos (línea 2+).**
+- **El separador obligatorio es punto y coma (;), no coma (,).**
 
 ## Definición de tarea completada
 
