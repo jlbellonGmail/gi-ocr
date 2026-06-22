@@ -19,6 +19,9 @@ from .services_config import (
     get_service_config,
 )
 
+# Global configuration for semantic validation
+SEMANTIC_VALIDATION_ENABLED = True
+
 
 async def extract_service_fields(
     service: str,
@@ -83,6 +86,8 @@ async def extract_service_fields(
         if value is None:
             value = _extract_generic(field, normalized_text)
 
+        # Apply semantic validation
+        value = _validate_semantic_field(field, value)
         extracted[field] = value
 
     detected = [f for f in fields if extracted[f] is not None]
@@ -157,8 +162,13 @@ def _extract_generic(field: str, text: str) -> Optional[str]:
         return match.group(1) if match else text_clean[:10]
 
     if "pagar" in field_lower or "vencimiento" in field_lower:
+        # Try extended delimiters and ignore stray text like COMPROBANT
+        match = re.search(r"(\d{1,2}[/\-\.\*]\d{1,2}[/\-\.\*]\d{2,4})", text_clean)
+        if match:
+            return match.group(1)
+        # Fallback: keep original behavior with limited delimiters
         match = re.search(r"(\d{1,2}[/-]\d{1,2}[/-]\d{4})", text_clean)
-        return match.group(1) if match else text_clean[:10]
+        return match.group(1) if match else None
 
     if "importe" in field_lower or "total" in field_lower:
         match = re.search(r"([\d]{1,3}[.,][\d]{3}[.,][\d]{2}|[\d]+[.,][\d]{2})", text_clean)
@@ -175,3 +185,19 @@ def _clean_value(value: str | None) -> Optional[str]:
     cleaned = re.sub(r"^[\s:$\-]+", "", cleaned)
     cleaned = re.sub(r"[\s,.;:]+$", "", cleaned)
     return cleaned or None
+
+
+def _validate_semantic_field(field: str, value: str | None) -> Optional[str]:
+    """
+    Validates semantic field values (e.g., rejects invalid terms for date fields).
+    Used for semantic field validation.
+    """
+    if not value:
+        return None
+
+    # Reject COMPROBANT for date fields specifically
+    if field == "a_pagar_hasta" and "COMPROBANT" in value.upper():
+        return None  # Reject COMPROBANT completely
+
+    # Additional semantic validations would go here
+    return value
