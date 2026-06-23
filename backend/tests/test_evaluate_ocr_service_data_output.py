@@ -1,31 +1,87 @@
-"""Tests for the OCR local evaluator that generates .DATA output.
+"""Tests for the generic OCR local evaluator that generates .DATA output."""
 
-Import pytest, pathlib, mock.
-Import evaluate_image from scripts.evaluate_ocr_service.
-
-Define minimal tests fulfilling requirements:
-
-- test_evaluator_generates_data_filename
-- test_evaluator_writes_header_and_values
-- test_evaluator_uses_semicolon_separator
-- test_evaluator_does_not_generate_json_output
-- test_evaluator_preserves_empty_missing_fields
-
-Each test uses tmp_path fixture, monkeypatch, avoids real _ocr_reports, avoids JSON,
-no capfipe, no fixtures besides tmp_path and monkeypatch.
-
-Implementation follows approach: mock Image.open, extract_text_from_image,
-extract_service_fields, set REPORTS_DIR to temporary directory,
-call evaluate_image via asyncio.run, inspect generated .DATA file.
-
-All tests are pure unit tests, no external files, no real images.
-"""
-import pytest
+import asyncio
 from pathlib import Path
 from unittest import mock
 
-# Import the function to test
+import pytest
+
+from scripts import evaluate_ocr_service as evaluator
 from scripts.evaluate_ocr_service import evaluate_image
+
+
+def test_cli_defaults_are_kept():
+    """The evaluator must keep the existing no-argument behavior."""
+    args = evaluator.parse_args([])
+
+    assert args.service == "GAS"
+    assert args.samples == "_local_samples/gas"
+    assert args.output == "_ocr_reports"
+
+
+def test_cli_accepts_explicit_arguments():
+    """The evaluator must accept service, samples and output CLI arguments."""
+    args = evaluator.parse_args(
+        [
+            "--service",
+            "GAS",
+            "--samples",
+            "_local_samples\\gas",
+            "--output",
+            "_ocr_reports",
+        ]
+    )
+
+    assert args.service == "GAS"
+    assert args.samples == "_local_samples\\gas"
+    assert args.output == "_ocr_reports"
+
+
+def test_main_uses_cli_arguments(tmp_path, monkeypatch):
+    """The CLI arguments must be passed to the generic evaluator flow."""
+    samples_dir = tmp_path / "samples"
+    output_dir = tmp_path / "reports"
+    samples_dir.mkdir(parents=True, exist_ok=True)
+
+    calls = {}
+
+    def fake_list_images(received_samples_dir):
+        calls["samples_dir"] = received_samples_dir
+        return [received_samples_dir / "sample.jpg"]
+
+    async def fake_evaluate_image(image_path, service, output_dir):
+        calls["image_path"] = image_path
+        calls["service"] = service
+        calls["output_dir"] = output_dir
+        return {
+            "elapsed_seconds": 0.001,
+            "ocr_lines_count": 1,
+            "detected_fields": ["importe"],
+            "missing_fields": [],
+            "data_file": "GAS_20260623_000000.DATA",
+        }
+
+    monkeypatch.setattr(evaluator, "list_images", fake_list_images)
+    monkeypatch.setattr(evaluator, "evaluate_image", fake_evaluate_image)
+
+    exit_code = asyncio.run(
+        evaluator.main(
+            [
+                "--service",
+                "gas",
+                "--samples",
+                str(samples_dir),
+                "--output",
+                str(output_dir),
+            ]
+        )
+    )
+
+    assert exit_code == 0
+    assert calls["samples_dir"] == samples_dir
+    assert calls["image_path"] == samples_dir / "sample.jpg"
+    assert calls["service"] == "GAS"
+    assert calls["output_dir"] == output_dir
 
 
 def test_evaluator_generates_data_filename(tmp_path, monkeypatch):
@@ -34,7 +90,6 @@ def test_evaluator_generates_data_filename(tmp_path, monkeypatch):
     mock_image_path.suffix = ".jpg"
     mock_image_path.relative_to.return_value = Path("mock_gas.jpg")
 
-    # Mock PIL Image.open
     mock_image = mock.Mock()
     mock_image.convert.return_value = mock.Mock()
     mock_image.__enter__ = mock.Mock(return_value=mock_image)
@@ -59,14 +114,13 @@ def test_evaluator_generates_data_filename(tmp_path, monkeypatch):
                 }
                 mock_extract_fields.return_value = fake_extraction
 
-                # Set REPORTS_DIR to a temporary directory
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
                 monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
-                import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
 
+                assert result["service"] == "GAS"
                 assert result["data_file"].startswith("GAS_")
                 assert result["data_file"].endswith(".DATA")
                 assert not result["data_file"].endswith(".json")
@@ -103,23 +157,20 @@ def test_evaluator_writes_header_and_values(tmp_path, monkeypatch):
             with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
                 mock_extract_fields.return_value = fake_extraction
 
-                # Set temporary reports dir
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
                 monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
-                import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
 
-                # Read the generated .DATA file from the temporary directory
                 data_file_path = reports_dir / result["data_file"]
                 assert data_file_path.exists()
                 content = data_file_path.read_text(encoding="utf-8")
                 lines = content.splitlines()
-                assert len(lines) == 2  # header + values
+
+                assert len(lines) == 2
                 assert lines[0] == "importe;cliente;nro_medidor;a_pagar_hasta;periodo"
-                expected_values_line = "100,00;045-987654;34572;20/06/2026;01/2026"
-                assert lines[1] == expected_values_line
+                assert lines[1] == "100,00;045-987654;34572;20/06/2026;01/2026"
 
 
 def test_evaluator_preserves_empty_missing_fields(tmp_path, monkeypatch):
@@ -138,7 +189,6 @@ def test_evaluator_preserves_empty_missing_fields(tmp_path, monkeypatch):
             mock_extract_text.return_value = ("sample OCR text", 3)
 
             with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
-                # Return a result where 'periodo' is missing
                 fake_extraction = {
                     "fields": {
                         "importe": "100,00",
@@ -152,21 +202,18 @@ def test_evaluator_preserves_empty_missing_fields(tmp_path, monkeypatch):
                 }
                 mock_extract_fields.return_value = fake_extraction
 
-                # Set temporary reports dir
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
                 monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
-                import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
 
-                # Read the generated .DATA file
                 data_file_path = reports_dir / result["data_file"]
                 assert data_file_path.exists()
                 content = data_file_path.read_text(encoding="utf-8")
                 lines = content.splitlines()
+
                 assert lines[0] == "importe;cliente;nro_medidor;a_pagar_hasta;periodo"
-                # Missing field should be an empty entry (trailing semicolon present after previous value)
                 assert lines[1] == "100,00;045-987654;34572;20/06/2026;"
 
 
@@ -183,7 +230,7 @@ def test_evaluator_uses_semicolon_separator(tmp_path, monkeypatch):
 
     fake_extraction = {
         "fields": {
-            "importe": "100,00",  # note: comma inside value is ok
+            "importe": "100,00",
             "cliente": "045-987654",
             "nro_medidor": "34572",
             "a_pagar_hasta": "20/06/2026",
@@ -205,17 +252,17 @@ def test_evaluator_uses_semicolon_separator(tmp_path, monkeypatch):
                 reports_dir.mkdir(parents=True, exist_ok=True)
                 monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
-                import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
 
-                # Check the generated file
                 data_file_path = reports_dir / result["data_file"]
                 assert data_file_path.exists()
                 content = data_file_path.read_text(encoding="utf-8")
                 lines = content.splitlines()
+
                 assert len(lines) == 2
                 header_parts = lines[0].split(";")
                 value_parts = lines[1].split(";")
+
                 assert len(header_parts) == 5
                 assert len(value_parts) == 5
                 assert header_parts == ["importe", "cliente", "nro_medidor", "a_pagar_hasta", "periodo"]
@@ -257,9 +304,7 @@ def test_evaluator_does_not_generate_json_output(tmp_path, monkeypatch):
                 reports_dir.mkdir(parents=True, exist_ok=True)
                 monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
-                import asyncio
-                result = asyncio.run(evaluate_image(mock_image_path))
+                asyncio.run(evaluate_image(mock_image_path))
 
-                # No JSON files should be present in the reports dir
                 json_files = list(reports_dir.glob("*.json"))
                 assert len(json_files) == 0, f"Found unexpected JSON files: {json_files}"
