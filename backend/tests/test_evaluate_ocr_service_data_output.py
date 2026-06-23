@@ -1,7 +1,7 @@
 """Tests for the OCR local evaluator that generates .DATA output.
 
 Import pytest, pathlib, mock.
-Import evaluate_image from scripts.evaluate_gas_ocr.
+Import evaluate_image from scripts.evaluate_ocr_service.
 
 Define minimal tests fulfilling requirements:
 
@@ -25,7 +25,7 @@ from pathlib import Path
 from unittest import mock
 
 # Import the function to test
-from scripts.evaluate_gas_ocr import evaluate_image
+from scripts.evaluate_ocr_service import evaluate_image
 
 
 def test_evaluator_generates_data_filename(tmp_path, monkeypatch):
@@ -40,11 +40,11 @@ def test_evaluator_generates_data_filename(tmp_path, monkeypatch):
     mock_image.__enter__ = mock.Mock(return_value=mock_image)
     mock_image.__exit__ = mock.Mock(return_value=False)
 
-    with mock.patch("scripts.evaluate_gas_ocr.Image.open", return_value=mock_image):
-        with mock.patch("scripts.evaluate_gas_ocr.extract_text_from_image") as mock_extract_text:
+    with mock.patch("scripts.evaluate_ocr_service.Image.open", return_value=mock_image):
+        with mock.patch("scripts.evaluate_ocr_service.extract_text_from_image") as mock_extract_text:
             mock_extract_text.return_value = ("sample OCR text", 12)
 
-            with mock.patch("scripts.evaluate_gas_ocr.extract_service_fields") as mock_extract_fields:
+            with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
                 fake_extraction = {
                     "fields": {
                         "importe": "100,00",
@@ -62,7 +62,7 @@ def test_evaluator_generates_data_filename(tmp_path, monkeypatch):
                 # Set REPORTS_DIR to a temporary directory
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
-                monkeypatch.setattr("scripts.evaluate_gas_ocr.REPORTS_DIR", reports_dir)
+                monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
                 import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
@@ -96,17 +96,17 @@ def test_evaluator_writes_header_and_values(tmp_path, monkeypatch):
         "normalized_text": "sample OCR text",
     }
 
-    with mock.patch("scripts.evaluate_gas_ocr.Image.open", return_value=mock_image):
-        with mock.patch("scripts.evaluate_gas_ocr.extract_text_from_image") as mock_extract_text:
+    with mock.patch("scripts.evaluate_ocr_service.Image.open", return_value=mock_image):
+        with mock.patch("scripts.evaluate_ocr_service.extract_text_from_image") as mock_extract_text:
             mock_extract_text.return_value = ("sample OCR text", 5)
 
-            with mock.patch("scripts.evaluate_gas_ocr.extract_service_fields") as mock_extract_fields:
+            with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
                 mock_extract_fields.return_value = fake_extraction
 
                 # Set temporary reports dir
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
-                monkeypatch.setattr("scripts.evaluate_gas_ocr.REPORTS_DIR", reports_dir)
+                monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
                 import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
@@ -133,11 +133,11 @@ def test_evaluator_preserves_empty_missing_fields(tmp_path, monkeypatch):
     mock_image.__enter__ = mock.Mock(return_value=mock_image)
     mock_image.__exit__ = mock.Mock(return_value=False)
 
-    with mock.patch("scripts.evaluate_gas_ocr.Image.open", return_value=mock_image):
-        with mock.patch("scripts.evaluate_gas_ocr.extract_text_from_image") as mock_extract_text:
+    with mock.patch("scripts.evaluate_ocr_service.Image.open", return_value=mock_image):
+        with mock.patch("scripts.evaluate_ocr_service.extract_text_from_image") as mock_extract_text:
             mock_extract_text.return_value = ("sample OCR text", 3)
 
-            with mock.patch("scripts.evaluate_gas_ocr.extract_service_fields") as mock_extract_fields:
+            with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
                 # Return a result where 'periodo' is missing
                 fake_extraction = {
                     "fields": {
@@ -155,7 +155,7 @@ def test_evaluator_preserves_empty_missing_fields(tmp_path, monkeypatch):
                 # Set temporary reports dir
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
-                monkeypatch.setattr("scripts.evaluate_gas_ocr.REPORTS_DIR", reports_dir)
+                monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
                 import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
@@ -194,16 +194,16 @@ def test_evaluator_uses_semicolon_separator(tmp_path, monkeypatch):
         "normalized_text": "sample OCR text",
     }
 
-    with mock.patch("scripts.evaluate_gas_ocr.Image.open", return_value=mock_image):
-        with mock.patch("scripts.evaluate_gas_ocr.extract_text_from_image") as mock_extract_text:
+    with mock.patch("scripts.evaluate_ocr_service.Image.open", return_value=mock_image):
+        with mock.patch("scripts.evaluate_ocr_service.extract_text_from_image") as mock_extract_text:
             mock_extract_text.return_value = ("sample OCR text", 5)
 
-            with mock.patch("scripts.evaluate_gas_ocr.extract_service_fields") as mock_extract_fields:
+            with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
                 mock_extract_fields.return_value = fake_extraction
 
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
-                monkeypatch.setattr("scripts.evaluate_gas_ocr.REPORTS_DIR", reports_dir)
+                monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
                 import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
@@ -246,16 +246,16 @@ def test_evaluator_does_not_generate_json_output(tmp_path, monkeypatch):
         "normalized_text": "sample OCR text",
     }
 
-    with mock.patch("scripts.evaluate_gas_ocr.Image.open", return_value=mock_image):
-        with mock.patch("scripts.evaluate_gas_ocr.extract_text_from_image") as mock_extract_text:
+    with mock.patch("scripts.evaluate_ocr_service.Image.open", return_value=mock_image):
+        with mock.patch("scripts.evaluate_ocr_service.extract_text_from_image") as mock_extract_text:
             mock_extract_text.return_value = ("sample OCR text", 5)
 
-            with mock.patch("scripts.evaluate_gas_ocr.extract_service_fields") as mock_extract_fields:
+            with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
                 mock_extract_fields.return_value = fake_extraction
 
                 reports_dir = tmp_path / "_ocr_reports"
                 reports_dir.mkdir(parents=True, exist_ok=True)
-                monkeypatch.setattr("scripts.evaluate_gas_ocr.REPORTS_DIR", reports_dir)
+                monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
 
                 import asyncio
                 result = asyncio.run(evaluate_image(mock_image_path))
