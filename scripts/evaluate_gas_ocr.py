@@ -22,7 +22,7 @@ import numpy as np
 ROOT_DIR = Path(__file__).resolve().parents[1]
 SAMPLES_DIR = ROOT_DIR / "_local_samples" / "gas"
 REPORTS_DIR = ROOT_DIR / "_ocr_reports"
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tif"}  # .tiff included via .tif? We'll add .tiff
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tiff"}  # .tiff included via .tif? We'll add .tiff
 
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -75,30 +75,14 @@ async def evaluate_image(image_path: Path) -> dict[str, Any]:
     # Extraer valores dict
     values_dict = extraction["fields"]  # campo -> valor o None
 
-    # Escribir archivo .DATA
+    # Escribir archivo .DATA directamente al directorio de reportes
     write_data_file(
         service="GAS",
         fields=fields_order,
         values=values_dict,
-        timestamp=timestamp,  # para que el writer lo use (aunque escribe su propio timestamp)
+        timestamp=timestamp,
+        output_dir=REPORTS_DIR,
     )
-
-    # Mover archivo al directorio de reportes (writer escribe en backend/output)
-    # Pero writer ya escribe en backend/output; queremos en _ocr_reports.
-    # Simplificamos: writer escribe directamente a output_path si le damos ruta.
-    # Vamos a adaptar writer para aceptar ruta opcional; pero por ahora moveremos.
-    # En lugar de eso, llamaremos a una función que escribe a ruta específica.
-    # Vamos a crear una función interna simple.
-    # Pero para evitar cambios en writer, vamos a mover el archivo generado.
-    backend_output_dir = ROOT_DIR / "backend" / "output"
-    generated_file = backend_output_dir / filename
-    if generated_file.exists():
-        generated_file.replace(output_path)
-    else:
-        # Si writer no generó (quizás porque no hay datos), crear vacío con cabecera
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(";".join(fields_order) + "\n")
-            f.write(";".join("" if v is None else str(v) for f, v in values_dict.items()) + "\n")
 
     return {
         "file": str(image_path.relative_to(ROOT_DIR)),
