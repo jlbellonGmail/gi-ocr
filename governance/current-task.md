@@ -2,138 +2,97 @@
 
 ## ID
 
-T1.4
+T2.1
 
 ## Nombre
 
-Modelo configurable de extracción de texto plano OCR
+Bridge de salida atomica DATA
 
 ## Objetivo
 
-Implementar una arquitectura de extracción OCR configurable por texto plano, donde nuevos servicios se definen únicamente mediante configuración, sin crear nuevos archivos Python.
+Implementar el bridge de salida controlado para archivos legacy DATA, escribiendo primero en un archivo temporal y moviendo luego de forma atomica hacia storage_bridge/ready.
 
-La salida legacy debe ser archivo plano `.DATA` con nombre `SERVICIO_YYYYMMDD_HHMMSS.DATA` y contenido con separador punto y coma (`;`).
+La tarea convierte la salida plana existente en una salida operativa segura para integracion, evitando archivos parciales en ready.
 
 ## Rama requerida
 
-```text
-feature/configurable-extraction-model
-```
+feature/ocr-storage-bridge-atomic-output
 
 ## Alcance permitido
 
-Pueden crearse/modificar únicamente:
+Pueden crearse/modificarse unicamente:
 
-- `backend/config/services.ini`
-- `backend/app/services_config.py`
-- `backend/app/extraction_engine.py`
-- `backend/app/plain_text_writer.py`
-- `backend/tests/test_services_config.py`
-- `backend/tests/test_extraction_engine.py`
-- `backend/tests/test_plain_text_writer.py`
-- `scripts/evaluate_gas_ocr.py`
-- `scripts/validate_plain_text_extraction_contract.py`
-- `scripts/validate_project.py`
-- `GOVERNANCE.md`
-- `governance/decisions.md`
-- `governance/current-task.md`
-- `docs/OCR-STRATEGY.md`
-- `docs/ACCEPTANCE-CRITERIA.md`
+- backend/app/storage_bridge_writer.py
+- backend/tests/test_storage_bridge_writer.py
+- governance/current-task.md
 
 ## Alcance prohibido
 
 No modificar:
 
-- `frontend/`
-- `storage_bridge/`
+- frontend/
 - endpoints FastAPI
 - motor OCR
-- GitHub remoto
+- backend/app/gas_extractor.py
+- backend/config/services.ini
+- GitHub remoto sin aprobacion explicita
 - tags
-- imágenes reales
+- imagenes reales
 - reportes locales versionables
 
 No crear:
 
-- archivos JSON como configuración persistente
 - archivos JSON como salida legacy
-- nuevos extractores Python por servicio (cada servicio = solo configuración)
+- nuevos extractores Python por servicio
+- archivos DATA versionables
 
-## Contrato de configuración (services.ini)
+## Contrato de salida bridge
 
-Cada servicio debe tener:
+El bridge debe:
 
-```ini
-[SERVICIO]
-Title=Título del servicio
-Fields=campo1,campo2,campo3
-
-Field.campo1.Label=Nombre del campo
-Field.campo1.Example=ejemplo
-Field.campo1.Type=amount|text|date
-Field.campo1.Required=true|false
-Field.campo1.Patterns=patrón1|patrón2
-Field.campo1.Regex=expresión regular
-```
-
-## Contrato de salida .DATA
-
-Nombre obligatorio: `SERVICIO_YYYYMMDD_HHMMSS.DATA`
-
-Contenido:
-
-```
-campo1;campo2;campo3
-valor1;valor2;valor3
-```
-
-Reglas:
-
-- Separador obligatorio: punto y coma (`;`)
-- No usar coma como separador de columnas
-- No incluir `[SERVICIO]` en el contenido
-- No incluir fecha/hora en el contenido (va en el nombre del archivo)
-- Línea 1: nombres de campos separados por `;`
-- Línea 2+: datos extraídos separados por `;`
+1. Recibir service, fields, values y timestamp.
+2. Generar nombre SERVICIO_YYYYMMDD_HHMMSS.DATA.
+3. Generar contenido plano con linea de encabezado y linea de valores.
+4. Usar punto y coma como separador obligatorio.
+5. Escribir primero en storage_bridge/inbound/*.tmp.
+6. Mover con os.replace hacia storage_bridge/ready/*.DATA.
+7. No escribir directamente archivos finales en ready.
+8. No dejar DATA parcial en ready ante error.
+9. Preservar valores faltantes como columnas vacias.
+10. Rechazar payload invalido antes de escribir.
 
 ## Tests requeridos
 
-1. `test_services_config.py`: carga de `services.ini`, sección `[GAS]`, campos, patrones.
-2. `test_extraction_engine.py`: extracción de campos usando regex desde configuración.
-3. `test_plain_text_writer.py`: generación de archivo `.DATA` con nombre correcto y formato.
-4. Test de servicio ficticio `CABLEVISION_TEST` definido solo por configuración.
+1. Construccion de nombre SERVICIO_YYYYMMDD_HHMMSS.DATA.
+2. Contenido DATA con punto y coma y valores vacios preservados.
+3. Escritura temporal y movimiento atomico con os.replace.
+4. Ausencia de archivo parcial en ready ante error.
+5. Rechazo de payload invalido antes de escribir.
+6. No sobrescribir un DATA existente en ready.
 
-## Validación contractual
+## Validaciones requeridas
 
 Ejecutar:
 
-```powershell
-python scripts\validate_plain_text_extraction_contract.py
-```
+python -m py_compile backend\app\storage_bridge_writer.py
+python -m py_compile backend\tests\test_storage_bridge_writer.py
+python scripts\validate_project.py
+pytest backend\tests\test_storage_bridge_writer.py -v
+pytest backend\tests -v
+python -m pytest backend\tests -v
+git diff --check
+git status --short
 
-El validador debe verificar:
-
-1. `backend/config/services.ini` existe.
-2. Sección `[GAS]` existe.
-3. `Title` existe.
-4. `Fields` existe.
-5. Cada campo tiene `Label`, `Example`, `Type`, `Required`, `Patterns`, `Regex`.
-6. `GOVERNANCE.md` contiene regla sobre `SERVICIO_YYYYMMDD_HHMMSS.DATA`.
-7. `governance/decisions.md` contiene ADR-007.
-8. No hay uso de `json` como configuración ni salida legacy.
-9. El writer usa `;` como separador.
-10. El writer genera nombre con formato `SERVICIO_YYYYMMDD_HHMMSS.DATA`.
-
-## Criterios de aceptación
+## Criterios de aceptacion
 
 La tarea queda lista si:
 
-- estás en rama `feature/configurable-extraction-model`;
-- `services.ini` cumple el contrato nuevo;
-- governance registra la regla obligatoria;
-- existe validador contractual pasando;
-- `pytest backend\tests -v` pasa;
-- `python scripts\evaluate_gas_ocr.py` genera `.DATA` correcto;
-- no hay `json` como configuración ni salida;
-- no hay extractores por servicio;
-- no se toca `frontend/` ni `storage_bridge/`.
+- estas en rama feature/ocr-storage-bridge-atomic-output;
+- existe writer atomico para storage_bridge;
+- existe test especifico del bridge;
+- no se escribe directo en ready;
+- se usa os.replace;
+- no quedan DATA generados como archivos versionables;
+- todos los tests pasan;
+- no se toca frontend, endpoints, motor OCR ni configuracion de servicios;
+- se propone commit sin ejecutarlo hasta aprobacion explicita.
