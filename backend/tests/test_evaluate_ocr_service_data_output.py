@@ -308,3 +308,91 @@ def test_evaluator_does_not_generate_json_output(tmp_path, monkeypatch):
 
                 json_files = list(reports_dir.glob("*.json"))
                 assert len(json_files) == 0, f"Found unexpected JSON files: {json_files}"
+
+def test_parse_args_accepts_bridge_target_and_directories(tmp_path):
+    """The evaluator CLI must accept storage bridge target and custom bridge directories."""
+    inbound_dir = tmp_path / "bridge" / "inbound"
+    ready_dir = tmp_path / "bridge" / "ready"
+    failed_dir = tmp_path / "bridge" / "failed"
+
+    args = evaluator.parse_args(
+        [
+            "--target",
+            "bridge",
+            "--bridge-inbound",
+            str(inbound_dir),
+            "--bridge-ready",
+            str(ready_dir),
+            "--bridge-failed",
+            str(failed_dir),
+        ]
+    )
+
+    assert args.target == "bridge"
+    assert args.bridge_inbound == str(inbound_dir)
+    assert args.bridge_ready == str(ready_dir)
+    assert args.bridge_failed == str(failed_dir)
+
+
+def test_parse_args_keeps_reports_as_default_target():
+    """The evaluator must keep reports as the default output target."""
+    args = evaluator.parse_args([])
+
+    assert args.target == "reports"
+
+
+def test_evaluate_image_writes_data_to_bridge_ready(tmp_path, monkeypatch):
+    """Bridge target must write the final DATA file into ready and expose its path."""
+    from pathlib import Path
+    from PIL import Image
+
+    image_path = tmp_path / "sample.jpg"
+    Image.new("RGB", (1, 1), color="white").save(image_path, format="JPEG")
+
+    inbound_dir = tmp_path / "storage_bridge" / "inbound"
+    ready_dir = tmp_path / "storage_bridge" / "ready"
+    failed_dir = tmp_path / "storage_bridge" / "failed"
+
+    async def fake_extract_text_from_image(*args, **kwargs):
+        return "Cliente Juan\nImporte 1234.56", 2
+
+    async def fake_extract_service_fields(*args, **kwargs):
+        ocr_text = kwargs.get("ocr_text", "")
+        service = kwargs.get("service", "GAS")
+        return {
+            "service": service,
+            "fields": {
+                "cliente": "Juan",
+                "importe": "1234.56",
+            },
+            "detected_fields": ["cliente", "importe"],
+            "missing_fields": [],
+            "normalized_text": ocr_text,
+        }
+
+    monkeypatch.setattr(evaluator, "extract_text_from_image", fake_extract_text_from_image)
+    monkeypatch.setattr(evaluator, "extract_service_fields", fake_extract_service_fields)
+    monkeypatch.setattr(evaluator, "get_service_fields", lambda service: ["cliente", "importe"])
+
+    result = asyncio.run(
+        evaluator.evaluate_image(
+            image_path=image_path,
+            service="GAS",
+            target="bridge",
+            bridge_inbound_dir=inbound_dir,
+            bridge_ready_dir=ready_dir,
+            bridge_failed_dir=failed_dir,
+        )
+    )
+
+    data_path = Path(result["data_path"])
+
+    assert result["target"] == "bridge"
+    assert result["detected_fields"] == ["cliente", "importe"]
+    assert result["missing_fields"] == []
+    assert data_path.exists()
+    assert data_path.parent == ready_dir
+    assert data_path.name == result["data_file"]
+    assert data_path.read_text(encoding="utf-8").strip()
+    assert not list(inbound_dir.glob("*.tmp"))
+

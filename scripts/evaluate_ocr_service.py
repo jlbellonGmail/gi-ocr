@@ -11,7 +11,7 @@ Salida legacy:
 - Separador: ;
 - Nombre: SERVICIO_YYYYMMDD_HHMMSS.DATA
 
-No genera JSON ni escribe en storage_bridge/.
+Puede escribir salida local de reportes o DATA atómico en storage_bridge/ready/.
 """
 from __future__ import annotations
 
