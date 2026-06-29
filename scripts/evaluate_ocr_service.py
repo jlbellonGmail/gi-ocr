@@ -31,6 +31,13 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 DEFAULT_SERVICE = "GAS"
 DEFAULT_SAMPLES = "_local_samples/gas"
 DEFAULT_OUTPUT = "_ocr_reports"
+DEFAULT_TARGET = "reports"
+
+# Bridge directories (defaults from storage_bridge_writer)
+DEFAULT_BRIDGE_DIR = Path("storage_bridge")
+DEFAULT_INBOUND_DIR = DEFAULT_BRIDGE_DIR / "inbound"
+DEFAULT_READY_DIR = DEFAULT_BRIDGE_DIR / "ready"
+DEFAULT_FAILED_DIR = DEFAULT_BRIDGE_DIR / "failed"
 
 SAMPLES_DIR = ROOT_DIR / DEFAULT_SAMPLES
 REPORTS_DIR = ROOT_DIR / DEFAULT_OUTPUT
@@ -43,6 +50,7 @@ if str(ROOT_DIR) not in sys.path:
 from backend.app.services_config import get_service_fields
 from backend.app.extraction_engine import extract_service_fields
 from backend.app.plain_text_writer import write_data_file
+from backend.app.storage_bridge_writer import write_atomic_data_file
 from backend.app.ocr import extract_text_from_image
 
 
@@ -64,6 +72,27 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "--output",
         default=DEFAULT_OUTPUT,
         help=f"Directorio de salida para archivos .DATA. Default: {DEFAULT_OUTPUT}",
+    )
+    parser.add_argument(
+        "--target",
+        choices=["reports", "bridge"],
+        default=DEFAULT_TARGET,
+        help=f"Modo de salida: 'reports' para salida local, 'bridge' para storage bridge. Default: {DEFAULT_TARGET}",
+    )
+    parser.add_argument(
+        "--bridge-inbound",
+        default=str(DEFAULT_INBOUND_DIR),
+        help=f"Directorio inbound para modo bridge. Default: {DEFAULT_INBOUND_DIR}",
+    )
+    parser.add_argument(
+        "--bridge-ready",
+        default=str(DEFAULT_READY_DIR),
+        help=f"Directorio ready para modo bridge. Default: {DEFAULT_READY_DIR}",
+    )
+    parser.add_argument(
+        "--bridge-failed",
+        default=str(DEFAULT_FAILED_DIR),
+        help=f"Directorio failed para modo bridge. Default: {DEFAULT_FAILED_DIR}",
     )
     return parser.parse_args(argv)
 
@@ -99,10 +128,12 @@ async def evaluate_image(
     image_path: Path,
     service: str = DEFAULT_SERVICE,
     output_dir: Path | None = None,
+    target: str = DEFAULT_TARGET,
+    bridge_inbound_dir: Path | None = None,
+    bridge_ready_dir: Path | None = None,
+    bridge_failed_dir: Path | None = None,
 ) -> dict[str, Any]:
     normalized_service = service.strip().upper()
-    target_output_dir = output_dir if output_dir is not None else REPORTS_DIR
-    target_output_dir.mkdir(parents=True, exist_ok=True)
 
     start = time.perf_counter()
 
@@ -123,21 +154,53 @@ async def evaluate_image(
     elapsed = round(time.perf_counter() - start, 3)
 
     timestamp = datetime.now()
-    filename = f"{normalized_service}_{timestamp.strftime('%Y%m%d_%H%M%S')}.DATA"
 
     fields_order = get_service_fields(normalized_service)
     values_dict = extraction["fields"]
 
-    written_path = write_data_file(
-        service=normalized_service,
-        fields=fields_order,
-        values=values_dict,
-        timestamp=timestamp,
-        output_dir=target_output_dir,
-    )
+    if target == "reports":
+        target_output_dir = output_dir if output_dir is not None else REPORTS_DIR
+        target_output_dir.mkdir(parents=True, exist_ok=True)
 
-    if written_path is not None:
-        filename = Path(written_path).name
+        written_path = write_data_file(
+            service=normalized_service,
+            fields=fields_order,
+            values=values_dict,
+            timestamp=timestamp,
+            output_dir=target_output_dir,
+        )
+
+        filename = f"{normalized_service}_{timestamp.strftime('%Y%m%d_%H%M%S')}.DATA"
+        if written_path is not None:
+            filename = Path(written_path).name
+
+        data_path = str(target_output_dir / filename)
+
+    elif target == "bridge":
+        inbound_dir = bridge_inbound_dir if bridge_inbound_dir is not None else DEFAULT_INBOUND_DIR
+        ready_dir = bridge_ready_dir if bridge_ready_dir is not None else DEFAULT_READY_DIR
+        failed_dir = bridge_failed_dir if bridge_failed_dir is not None else DEFAULT_FAILED_DIR
+
+        # Ensure bridge directories exist
+        Path(inbound_dir).mkdir(parents=True, exist_ok=True)
+        Path(ready_dir).mkdir(parents=True, exist_ok=True)
+        Path(failed_dir).mkdir(parents=True, exist_ok=True)
+
+        final_path = write_atomic_data_file(
+            service=normalized_service,
+            fields=fields_order,
+            values=values_dict,
+            timestamp=timestamp,
+            inbound_dir=inbound_dir,
+            ready_dir=ready_dir,
+            failed_dir=failed_dir,
+        )
+
+        filename = final_path.name
+        data_path = str(final_path)
+
+    else:
+        raise ValueError(f"Unknown target: {target}")
 
     return {
         "file": format_path(image_path),
@@ -150,6 +213,8 @@ async def evaluate_image(
         "normalized_text": extraction["normalized_text"],
         "ocr_text": ocr_text,
         "data_file": filename,
+        "data_path": data_path,
+        "target": target,
     }
 
 
