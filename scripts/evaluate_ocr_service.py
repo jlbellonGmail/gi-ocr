@@ -52,6 +52,11 @@ from backend.app.extraction_engine import extract_service_fields
 from backend.app.plain_text_writer import write_data_file
 from backend.app.storage_bridge_writer import write_atomic_data_file
 from backend.app.ocr import extract_text_from_image
+from backend.app.document_services import (
+    UnsupportedDocumentServiceError,
+    DisabledDataEvaluatorServiceError,
+    validate_data_evaluator_service,
+)
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
