@@ -1,0 +1,18 @@
+[
+  {
+    "id": "GAS",
+    "title": "Servicio de Gas",
+    "document_type": "GAS",
+    "status": "active",
+    "data_evaluator_enabled": true,
+    "expected_fields": ["importe", "cliente", "nro_medidor", "a_pagar_hasta", "periodo"]
+  },
+  {
+    "id": "CEVT",
+    "title": "Servicio CEVT",
+    "document_type": "CEVT",
+    "status": "active",
+    "data_evaluator_enabled": true,
+    "expected_fields": ["medidor_numero", "periodo", "vencimiento", "codigo_pago_electronico", "total_a_pagar"]
+  }
+]
