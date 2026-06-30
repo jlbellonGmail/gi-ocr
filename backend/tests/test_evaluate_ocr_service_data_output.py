@@ -341,7 +341,7 @@ def test_parse_args_keeps_reports_as_default_target():
     assert args.target == "reports"
 
 
-def test_evaluate_image_writes_data_to_bridge_ready(tmp_path, monkeypatch):
+def test_generic_service_document_writes_data_to_bridge_ready(tmp_path, monkeypatch):
     """Bridge target must write the final DATA file into ready and expose its path."""
     from pathlib import Path
     from PIL import Image
@@ -354,30 +354,31 @@ def test_evaluate_image_writes_data_to_bridge_ready(tmp_path, monkeypatch):
     failed_dir = tmp_path / "storage_bridge" / "failed"
 
     async def fake_extract_text_from_image(*args, **kwargs):
-        return "Cliente Juan\nImporte 1234.56", 2
+        return "Service Document Output Test", 1
 
     async def fake_extract_service_fields(*args, **kwargs):
         ocr_text = kwargs.get("ocr_text", "")
-        service = kwargs.get("service", "GAS")
+        service = kwargs.get("service", "EXAMPLE")
         return {
             "service": service,
             "fields": {
-                "cliente": "Juan",
-                "importe": "1234.56",
+                "document_type": "INVOICE",
+                "amount": "500.00",
+                "provider": "Test Provider",
             },
-            "detected_fields": ["cliente", "importe"],
+            "detected_fields": ["document_type", "amount", "provider"],
             "missing_fields": [],
             "normalized_text": ocr_text,
         }
 
     monkeypatch.setattr(evaluator, "extract_text_from_image", fake_extract_text_from_image)
     monkeypatch.setattr(evaluator, "extract_service_fields", fake_extract_service_fields)
-    monkeypatch.setattr(evaluator, "get_service_fields", lambda service: ["cliente", "importe"])
+    monkeypatch.setattr(evaluator, "get_service_fields", lambda service: ["document_type", "amount", "provider"])
 
     result = asyncio.run(
         evaluator.evaluate_image(
             image_path=image_path,
-            service="GAS",
+            service="EXAMPLE",
             target="bridge",
             bridge_inbound_dir=inbound_dir,
             bridge_ready_dir=ready_dir,
@@ -388,11 +389,20 @@ def test_evaluate_image_writes_data_to_bridge_ready(tmp_path, monkeypatch):
     data_path = Path(result["data_path"])
 
     assert result["target"] == "bridge"
-    assert result["detected_fields"] == ["cliente", "importe"]
+    assert result["service"] == "EXAMPLE"
+    assert result["detected_fields"] == ["document_type", "amount", "provider"]
     assert result["missing_fields"] == []
     assert data_path.exists()
     assert data_path.parent == ready_dir
     assert data_path.name == result["data_file"]
-    assert data_path.read_text(encoding="utf-8").strip()
+    assert data_path.name.startswith("EXAMPLE_")
+    assert data_path.name.endswith(".DATA")
+    content = data_path.read_text(encoding="utf-8")
+    lines = content.strip().splitlines()
+    assert len(lines) == 2
+    assert lines[0] == "document_type;amount;provider"
+    assert lines[1] == "INVOICE;500.00;Test Provider"
     assert not list(inbound_dir.glob("*.tmp"))
+
+
 
