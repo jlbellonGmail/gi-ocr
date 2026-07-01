@@ -131,6 +131,26 @@ def list_images(samples_dir: Path | None = None) -> list[Path]:
     )
 
 
+def _get_validated_data_fields(values: dict[str, str], validation: dict | None) -> dict[str, str]:
+    """Return only DATA fields accepted by service validation.
+
+    The evaluator keeps validation metadata for traceability, but .DATA represents
+    final structured data and must not publish fields rejected by validation.
+    """
+    if not validation:
+        return dict(values)
+
+    validated_fields = validation.get("validated_fields")
+    if isinstance(validated_fields, dict):
+        return {
+            field_name: field_value
+            for field_name, field_value in values.items()
+            if field_name in validated_fields
+        }
+
+    # Fallback: if validation uses a different key naming, preserve original values.
+    return dict(values)
+
 async def evaluate_image(
     image_path: Path,
     service: str = DEFAULT_SERVICE,
@@ -177,6 +197,7 @@ async def evaluate_image(
 
     fields_order = get_service_fields(normalized_service)
     values_dict = extraction["fields"]
+    filtered_values = _get_validated_data_fields(values_dict, extraction.get("_validation"))
 
     if target == "reports":
         target_output_dir = output_dir if output_dir is not None else REPORTS_DIR
@@ -185,7 +206,7 @@ async def evaluate_image(
         written_path = write_data_file(
             service=normalized_service,
             fields=fields_order,
-            values=values_dict,
+            values=filtered_values,
             timestamp=timestamp,
             output_dir=target_output_dir,
         )
@@ -209,7 +230,7 @@ async def evaluate_image(
         final_path = write_atomic_data_file(
             service=normalized_service,
             fields=fields_order,
-            values=values_dict,
+            values=filtered_values,
             timestamp=timestamp,
             inbound_dir=inbound_dir,
             ready_dir=ready_dir,
