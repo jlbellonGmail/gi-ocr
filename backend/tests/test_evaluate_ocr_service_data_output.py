@@ -405,4 +405,48 @@ def test_generic_service_document_writes_data_to_bridge_ready(tmp_path, monkeypa
     assert not list(inbound_dir.glob("*.tmp"))
 
 
+def test_data_output_excludes_rejected_fields_from_validation_metadata():
+    from scripts.evaluate_ocr_service import _get_validated_data_fields
+
+    values = {
+        "cliente": "Cliente Demo",
+        "importe": "COMPROBANTE",
+        "fecha": "2026-06-30",
+    }
+    validation = {
+        "validated_fields": {
+            "cliente": "Cliente Demo",
+            "fecha": "2026-06-30",
+        },
+        "rejected_fields": {
+            "importe": {
+                "value": "COMPROBANTE",
+                "reason": "Invalid amount format",
+            },
+        },
+    }
+
+    filtered = _get_validated_data_fields(values, validation)
+
+    assert filtered == {
+        "cliente": "Cliente Demo",
+        "fecha": "2026-06-30",
+    }
+    assert "importe" not in filtered
+
+
+def test_data_output_preserves_existing_behavior_without_validation_metadata():
+    from scripts.evaluate_ocr_service import _get_validated_data_fields
+
+    values = {
+        "cliente": "Cliente Demo",
+        "importe": "1234.56",
+    }
+
+    filtered = _get_validated_data_fields(values, None)
+
+    assert filtered == values
+    assert filtered is not values
+
+
 
