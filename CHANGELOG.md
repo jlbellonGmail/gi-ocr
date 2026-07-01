@@ -1,5 +1,14 @@
 # Changelog
 
+
+## Unreleased
+
+### Added
+- T2.9: integración de métricas de campos rechazados en el evaluador/pipeline, derivadas desde `rejected_fields`, sin modificar contrato `.DATA`.
+
+### Changed
+- Roadmap y governance reconciliados con el historial Git después del cierre de T2.9.
+
 ## [0.1.0] - 2026-06-20
 
 ### Changed

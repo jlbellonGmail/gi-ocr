@@ -96,3 +96,46 @@ Criterios:
 - Facilidad de instalación.
 - Privacidad.
 - Mantenimiento.
+
+---
+
+## Estado operativo actual
+
+Última tarea cerrada:
+**T2.9 — Integración con pipeline de producción y monitoreo de métricas de campos rechazados.**
+
+Estado: Cerrada, mergeada y pusheada a main.
+
+Feature commit:
+`2c4dabf feat(ocr): add rejected data field metrics`
+
+Merge commit:
+`613daba merge: integrate rejected field metrics with production pipeline`
+
+Validaciones finales:
+- python scripts/validate_project.py: PASS
+- pytest -q backend/tests/test_evaluate_ocr_service_data_output.py: 20 passed
+- pytest -q: 77 passed, 7 warnings
+- git diff --check: sin errores
+
+---
+
+## Tareas T2.x cerradas confirmadas por Git
+
+- **T2.4** — Inventario de documentos/servicios DATA.
+- **T2.5** — Integración inventario DATA evaluator.
+- **T2.6** — Validación específica por servicio DATA.
+- **T2.8** — Validación DATA en salida .DATA.
+- **T2.9** — Integración con pipeline de producción y monitoreo de métricas de campos rechazados.
+
+---
+
+## Nota de consistencia
+
+Este roadmap fue reconciliado contra Git después de detectar que la documentación operativa anterior no reflejaba completamente el avance real del repositorio.
+
+---
+
+## Cantidad de tareas restantes
+
+No determinable con precisión hasta definir el siguiente bloque operativo del roadmap posterior a T2.9.
