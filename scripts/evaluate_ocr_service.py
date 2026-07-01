@@ -56,7 +56,9 @@ from backend.app.document_services import (
     UnsupportedDocumentServiceError,
     DisabledDataEvaluatorServiceError,
     validate_data_evaluator_service,
+    get_document_service,
 )
+from backend.app.service_data_validation import validate_service_data
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -155,6 +157,19 @@ async def evaluate_image(
         ocr_text=ocr_text,
         image_np=image_np,
     )
+
+    # --- Service-specific data validation ---
+    try:
+        service_def = get_document_service(normalized_service)
+        expected_fields = service_def.get("expected_fields", extraction["fields"])
+        validation_result = validate_service_data(
+            normalized_service,
+            extraction["fields"],
+            expected_fields,
+        )
+        extraction["_validation"] = validation_result
+    except (UnsupportedDocumentServiceError, DisabledDataEvaluatorServiceError):
+        pass
 
     elapsed = round(time.perf_counter() - start, 3)
 
