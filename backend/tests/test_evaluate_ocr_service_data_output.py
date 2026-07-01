@@ -449,4 +449,161 @@ def test_data_output_preserves_existing_behavior_without_validation_metadata():
     assert filtered is not values
 
 
+def test_evaluator_calculates_rejected_field_metrics_without_rejects():
+    """Métrica delta cuando no hay campos rechazados."""
+    from scripts.evaluate_ocr_service import _calculate_rejected_metrics
+
+    metrics = _calculate_rejected_metrics("gas", {})
+    assert metrics == {
+        "service": "gas",
+        "rejected_fields_count": 0,
+        "rejected_by_field": {},
+        "rejected_by_reason": {},
+    }
+
+
+def test_evaluator_calculates_rejected_field_metrics_single_reject():
+    """Métrica con un solo campo rechazado."""
+    from scripts.evaluate_ocr_service import _calculate_rejected_metrics
+
+    extraction = {
+        "_validation": {
+            "rejected_fields": {
+                "importe": {
+                    "value": "COMPROBANTE",
+                    "reason": "Invalid amount format",
+                },
+            },
+        },
+    }
+    metrics = _calculate_rejected_metrics("gas", extraction)
+
+    assert metrics == {
+        "service": "gas",
+        "rejected_fields_count": 1,
+        "rejected_by_field": {"importe": 1},
+        "rejected_by_reason": {"Invalid amount format": 1},
+    }
+
+
+def test_evaluator_calculates_rejected_field_metrics_multiple_by_field():
+    """Métrica con múltiples rechazos por mismo campo."""
+    from scripts.evaluate_ocr_service import _calculate_rejected_metrics
+
+    extraction = {
+        "_validation": {
+            "rejected_fields": {
+                "importe": {"value": "COMPROBANTE", "reason": "Invalid amount format"},
+                "total": {"value": "COMPROBANTE", "reason": "Invalid amount format"},
+                "amount": {"value": "cero", "reason": "Empty value"},
+            },
+        },
+    }
+    metrics = _calculate_rejected_metrics("gas", extraction)
+
+    assert metrics == {
+        "service": "gas",
+        "rejected_fields_count": 3,
+        "rejected_by_field": {"importe": 1, "total": 1, "amount": 1},
+        "rejected_by_reason": {
+            "Invalid amount format": 2,
+            "Empty value": 1,
+        },
+    }
+
+
+def test_evaluator_calculates_rejected_field_metrics_different_reasons():
+    """Métrica con diferentes motivos por campo."""
+    from scripts.evaluate_ocr_service import _calculate_rejected_metrics
+
+    extraction = {
+        "_validation": {
+            "rejected_fields": {
+                "importe": {"value": "COMPROBANTE", "reason": "Invalid amount format"},
+                "due_date": {"value": "fecha inválida", "reason": "Invalid date format"},
+                "client": {"value": "", "reason": "Empty value"},
+            },
+        },
+    }
+    metrics = _calculate_rejected_metrics("gas", extraction)
+
+    assert metrics == {
+        "service": "gas",
+        "rejected_fields_count": 3,
+        "rejected_by_field": {"importe": 1, "due_date": 1, "client": 1},
+        "rejected_by_reason": {
+            "Invalid amount format": 1,
+            "Invalid date format": 1,
+            "Empty value": 1,
+        },
+    }
+
+
+def test_evaluator_calculates_rejected_field_metrics_no_validation_key():
+    """La métrica debe ser segura si no hay clave de validación."""
+    from scripts.evaluate_ocr_service import _calculate_rejected_metrics
+
+    metrics = _calculate_rejected_metrics("gas", {})
+    assert metrics["rejected_fields_count"] == 0
+    assert "rejected_by_field" in metrics
+    assert "rejected_by_reason" in metrics
+
+
+def test_evaluator_calculates_rejected_field_metrics_empty_rejected_dict():
+    """La métrica debe ser segura si rejected_fields está vacío."""
+    from scripts.evaluate_ocr_service import _calculate_rejected_metrics
+
+    extraction = {
+        "_validation": {
+            "rejected_fields": {},
+        },
+    }
+    metrics = _calculate_rejected_metrics("gas", extraction)
+
+    assert metrics == {
+        "service": "gas",
+        "rejected_fields_count": 0,
+        "rejected_by_field": {},
+        "rejected_by_reason": {},
+    }
+
+
+def test_evaluator_rejected_metrics_present_in_evaluation_output(tmp_path, monkeypatch):
+    """Verifica que los campos de métrica aparecen en el resultado final."""
+    mock_image_path = mock.Mock()
+    mock_image_path.suffix = ".jpg"
+    mock_image_path.relative_to.return_value = Path("mock_gas.jpg")
+
+    mock_image = mock.Mock()
+    mock_image.convert.return_value = mock.Mock()
+    mock_image.__enter__ = mock.Mock(return_value=mock_image)
+    mock_image.__exit__ = mock.Mock(return_value=False)
+
+    with mock.patch("scripts.evaluate_ocr_service.Image.open", return_value=mock_image):
+        with mock.patch("scripts.evaluate_ocr_service.extract_text_from_image") as mock_extract_text:
+            mock_extract_text.return_value = ("sample OCR text", 5)
+
+            with mock.patch("scripts.evaluate_ocr_service.extract_service_fields") as mock_extract_fields:
+                fake_extraction = {
+                    "fields": {"importe": "COMPROBANTE", "cliente": "045-987654"},
+                    "detected_fields": ["importe", "cliente"],
+                    "missing_fields": [],
+                    "normalized_text": "sample OCR text",
+                }
+                mock_extract_fields.return_value = fake_extraction
+
+                monkeypatch.setattr(evaluator, "get_service_fields", lambda service: ["importe", "cliente"])
+
+                reports_dir = tmp_path / "_ocr_reports"
+                reports_dir.mkdir(parents=True, exist_ok=True)
+                monkeypatch.setattr("scripts.evaluate_ocr_service.REPORTS_DIR", reports_dir)
+
+                result = asyncio.run(evaluate_image(mock_image_path))
+
+                assert "rejected_metrics" in result
+                assert result["rejected_metrics"]["service"] == "GAS"
+                assert result["rejected_metrics"]["rejected_fields_count"] == 1
+                assert "importe" in result["rejected_metrics"]["rejected_by_field"]
+
+
 
