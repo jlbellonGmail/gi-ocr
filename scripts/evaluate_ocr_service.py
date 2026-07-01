@@ -151,6 +151,37 @@ def _get_validated_data_fields(values: dict[str, str], validation: dict | None) 
     # Fallback: if validation uses a different key naming, preserve original values.
     return dict(values)
 
+def _calculate_rejected_metrics(normalized_service: str, extraction: dict[str, Any]) -> dict[str, Any]:
+    """
+    Devuelve métricas compactas de campos rechazados por campo y servicio.
+    Ubicación del evaluador para evitar mezclar responsabilidades.
+    La salida presenta contadores de campos rechazados reconocibles para monitoreo, sin modificar .DATA ni OCR.
+    """
+    metrics = {
+        "service": normalized_service,
+        "rejected_fields_count": 0,
+        "rejected_by_field": {},
+        "rejected_by_reason": {},
+    }
+
+    # Extraer de validación si existe
+    validation = extraction.get("_validation")
+    if isinstance(validation, dict) and "rejected_fields" in validation:
+        rejected = validation["rejected_fields"]
+        for field, info in rejected.items():
+            metrics["rejected_fields_count"] += 1
+            metrics["rejected_by_field"][field] = metrics["rejected_by_field"].get(field, 0) + 1
+
+            # Obtener motivo (uso "unknown" si no existe)
+            if isinstance(info, dict):
+                reason = info.get("reason", "unknown")
+            else:
+                reason = str(info) if info else "unknown"
+            metrics["rejected_by_reason"][reason] = metrics["rejected_by_reason"].get(reason, 0) + 1
+
+    return metrics
+
+
 async def evaluate_image(
     image_path: Path,
     service: str = DEFAULT_SERVICE,
@@ -243,6 +274,9 @@ async def evaluate_image(
     else:
         raise ValueError(f"Unknown target: {target}")
 
+    # Métrica derivada de validación, agregada al resultado del evaluador (sin alterar .DATA)
+    rejected_metrics = _calculate_rejected_metrics(normalized_service, extraction)
+
     return {
         "file": format_path(image_path),
         "service": normalized_service,
@@ -256,6 +290,7 @@ async def evaluate_image(
         "data_file": filename,
         "data_path": data_path,
         "target": target,
+        "rejected_metrics": rejected_metrics,
     }
 
 
