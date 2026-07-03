@@ -49,3 +49,4 @@ _ocr_reports/
 # Generated OCR / DATA outputs
 backend/output/
 output/
+.backups/
