@@ -1,4 +1,4 @@
-# Skill: gi-ocr-evidence-inspector
+# Skill: evidence-inspector
 
 ## Propósito
 

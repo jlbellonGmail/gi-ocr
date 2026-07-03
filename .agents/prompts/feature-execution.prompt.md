@@ -5,8 +5,8 @@ Actúa como Senior AI-Native Architect, OCR Engineer, QA Lead y Software Deliver
 Usa obligatoriamente:
 
 - AGENTS.md
-- .agents/skills/gi-ocr-feature-builder/SKILL.md
-- .agents/skills/gi-ocr-delivery-governance/SKILL.md
+- .agents/skills/feature-builder/SKILL.md
+- .agents/skills/delivery-governance/SKILL.md
 - ROADMAP.md
 - specs/ si existe una spec aplicable
 

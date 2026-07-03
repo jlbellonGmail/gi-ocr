@@ -1,4 +1,4 @@
-# Skill: gi-ocr-delivery-governance
+# Skill: delivery-governance
 
 ## Propósito
 

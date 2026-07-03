@@ -25,15 +25,15 @@ Comandos base esperados:
 
 Para features reales usar:
 
-- .agents/skills/gi-ocr-feature-builder/SKILL.md
-- .agents/prompts/gi-ocr-feature-execution.prompt.md
+- .agents/skills/feature-builder/SKILL.md
+- .agents/prompts/feature-execution.prompt.md
 
 Para fallos o ejecuciones sospechosas usar:
 
-- .agents/skills/gi-ocr-recovery/SKILL.md
-- .agents/prompts/gi-ocr-recovery.prompt.md
+- .agents/skills/recovery/SKILL.md
+- .agents/prompts/recovery.prompt.md
 
 Para auditoría read-only usar:
 
-- .agents/skills/gi-ocr-evidence-inspector/SKILL.md
-- .agents/prompts/gi-ocr-evidence-inspection.prompt.md
+- .agents/skills/evidence-inspector/SKILL.md
+- .agents/prompts/evidence-inspection.prompt.md

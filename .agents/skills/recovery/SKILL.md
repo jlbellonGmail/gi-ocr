@@ -1,4 +1,4 @@
-# Skill: gi-ocr-recovery
+# Skill: recovery
 
 ## Propósito
 

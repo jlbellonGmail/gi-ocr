@@ -5,8 +5,8 @@ Actúa como Evidence Inspector read-only para GI-OCR / TGI-OCR.
 Usa obligatoriamente:
 
 - AGENTS.md
-- .agents/skills/gi-ocr-evidence-inspector/SKILL.md
-- .agents/skills/gi-ocr-delivery-governance/SKILL.md
+- .agents/skills/evidence-inspector/SKILL.md
+- .agents/skills/delivery-governance/SKILL.md
 
 ## Evidencia a auditar
 

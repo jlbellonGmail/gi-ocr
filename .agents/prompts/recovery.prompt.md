@@ -5,8 +5,8 @@ Actúa como Recovery Lead para GI-OCR / TGI-OCR.
 Usa obligatoriamente:
 
 - AGENTS.md
-- .agents/skills/gi-ocr-recovery/SKILL.md
-- .agents/skills/gi-ocr-delivery-governance/SKILL.md
+- .agents/skills/recovery/SKILL.md
+- .agents/skills/delivery-governance/SKILL.md
 
 ## Situación
 

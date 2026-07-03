@@ -1,4 +1,4 @@
-# Skill: gi-ocr-feature-builder
+# Skill: feature-builder
 
 ## Propósito
 
