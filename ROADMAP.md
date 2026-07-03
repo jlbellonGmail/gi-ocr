@@ -99,10 +99,11 @@ BLOQUEADO: no puede avanzar sin resolver dependencia.
 
 ## Estado operativo actual
 
-Última tarea cerrada:
+Últimas tareas cerradas:
 
 ```text
-T2.10 — Reconciliación de roadmap operativo con Git real.
+T3.1 — MVP End-to-End Demo
+Tarea SDD local (Normalización local SDD)
 ```
 
 Estado reportado:
@@ -111,11 +112,18 @@ Estado reportado:
 Cerrada, commiteada y pusheada a main.
 ```
 
-Commit documental reportado:
+Merge commit reportado:
 
 ```text
-9c8573cf9988de4d12cdde42220f1fab72a3ba5c
-docs(governance): reconcile roadmap after rejected metrics task
+9a37026 merge: add mvp end-to-end demo
+66dfe03 merge: normalize local sdd structure
+```
+
+Feature commits reportados:
+
+```text
+acd2c4b feat(demo): add mvp end-to-end demo
+3d22e34 docs(governance): normalize local sdd structure
 ```
 
 Tarea técnica anterior cerrada:
@@ -125,13 +133,6 @@ T2.9 — Integración con pipeline de producción y monitoreo de métricas de ca
 ```
 
 Commits relevantes reportados:
-
-```text
-2c4dabf feat(ocr): add rejected data field metrics
-613daba merge: integrate rejected field metrics with production pipeline
-```
-
-Validaciones finales reportadas para T2.9:
 
 ```text
 python scripts/validate_project.py: PASS
@@ -397,34 +398,21 @@ La V1 solo puede considerarse cerrada cuando exista evidencia de:
 
 La próxima tarea elegible recomendada es:
 
-```text
-T3.0 — Auditoría demostrable del MVP end-to-end actual.
-```
+T3.2 - Ejecución fixture GAS/servicio real -> salida estructurada.
 
 Tipo:
 
-```text
-read-only / execution-only / no-code
-```
+feature / execution / demo-output
 
 Objetivo:
 
-```text
-Determinar qué parte del flujo real de producto funciona hoy de punta a punta,
-sin modificar código, y dónde se corta si no funciona.
-```
+Ejecutar un fixture GAS o servicio real controlado a través del flujo MVP end-to-end para generar una salida estructurada auditable.
 
 Resultado esperado:
 
-```text
-Un reporte con evidencia real que indique si el sistema puede hoy demostrar:
-imagen/fixture → OCR → extracción → validación → salida estructurada.
-```
+Una ejecución reproducible que demuestre: imagen/fixture -> OCR -> extracción -> validación -> salida estructurada, incluyendo evidencia de campos aceptados, rechazados y no encontrados.
 
-Esta tarea debe ejecutarse antes de iniciar nuevas features técnicas.
-
----
-
+Esta tarea debe ejecutarse después de confirmar que la gobernanza local quedó reconciliada con Git real.
 ## Notas de consistencia
 
 Este roadmap reemplaza la visión incompleta anterior por una estructura orientada a V1 demostrable.

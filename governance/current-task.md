@@ -6,18 +6,35 @@ No hay tarea técnica activa.
 
 ## Última tarea cerrada
 
-**T2.9 — Integración con pipeline de producción y monitoreo de métricas de campos rechazados.**
+Normalización local SDD de GI-OCR.
 
-Feature commit:
-`2c4dabf feat(ocr): add rejected data field metrics`
+Feature/docs commit:
+3d22e34 docs(governance): normalize local sdd structure
 
 Merge commit:
-`613daba merge: integrate rejected field metrics with production pipeline`
+66dfe03 merge: normalize local sdd structure
+
+## Tarea funcional anterior cerrada
+
+T3.1 - Demo MVP End-to-End.
+
+Feature commit:
+acd2c4b feat(demo): add mvp end-to-end demo
+
+Merge commit:
+9a37026 merge: add mvp end-to-end demo
 
 ## Próxima acción elegible
 
-Definir el siguiente bloque operativo del roadmap posterior a T2.9.
+T3.2 - Ejecución fixture GAS/servicio real -> salida estructurada.
+
+Objetivo esperado:
+
+- Ejecutar fixture GAS o servicio real controlado.
+- Pasar por OCR, extracción, validación y salida estructurada.
+- Reportar campos aceptados, rechazados y no encontrados.
+- Generar evidencia reproducible del flujo MVP end-to-end.
 
 ## Restricción
 
-No iniciar nueva tarea técnica hasta que el roadmap operativo posterior a T2.9 sea definido.
+No iniciar T3.2 hasta que esta reconciliación documental quede validada y commiteada.
