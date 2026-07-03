@@ -1,4 +1,4 @@
-# AGENTS.md — GI-OCR / TGI-OCR Smart Invoice Capture
+﻿# AGENTS.md — GI-OCR / TGI-OCR Smart Invoice Capture
 
 ## Rol del agente
 
@@ -210,3 +210,46 @@ Antes de cerrar confirmar:
 - [ ] Git status limpio o explicado.
 - [ ] Commit sugerido o creado coherente.
 - [ ] Próxima tarea solo mencionada como elegible, no iniciada.
+
+<!-- BEGIN GI-OCR MANAGED BLOCK: LOCAL-SDD-STRUCTURE -->
+## Estructura SDD local de GI-OCR
+
+La estructura local de Spec-Driven Development para GI-OCR queda definida asi:
+
+- .agents/: instrucciones operativas versionadas para agentes.
+- .agents/skills/: skills locales reutilizables.
+- .agents/prompts/: prompts locales reutilizables.
+- .specify/: reglas y plantillas SDD reutilizables.
+- .specify/templates/: templates para specs, planes, criterios de aceptacion y evidencia.
+- specs/: especificaciones concretas por tarea o feature.
+- governance/: estado, decisiones, cierres y evidencia de delivery.
+
+## Instruction gate obligatorio
+
+Antes de iniciar una tarea tecnica, el agente debe demostrar con evidencia real que existen las instrucciones versionadas locales criticas.
+
+Criticos para GI-OCR:
+
+- AGENTS.md
+- .agents/skills/
+- .agents/prompts/
+- .specify/
+- .specify/templates/
+- governance/
+- ROADMAP.md
+- scripts/validate_project.py
+
+No criticos salvo que una instruccion local los declare obligatorios:
+
+- CLAUDE.md
+- OPENCLAW.md
+- specs/
+
+## Regla anti-bootstrap
+
+Durante una feature funcional no se deben crear instrucciones faltantes, skills, prompts, templates, specs base ni gobernanza base.
+
+Si falta algo critico, la feature funcional debe bloquearse y reportar recovery.
+
+La normalizacion de estructura SDD debe hacerse como tarea separada.
+<!-- END GI-OCR MANAGED BLOCK: LOCAL-SDD-STRUCTURE -->
