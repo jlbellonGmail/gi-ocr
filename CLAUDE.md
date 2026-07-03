@@ -1,4 +1,4 @@
-# CLAUDE.md — GI-OCR Local Operating Notes
+﻿# CLAUDE.md — GI-OCR Local Operating Notes
 
 Este repositorio usa AGENTS.md como estándar operativo principal.
 
@@ -37,3 +37,18 @@ Para auditoría read-only usar:
 
 - .agents/skills/evidence-inspector/SKILL.md
 - .agents/prompts/evidence-inspection.prompt.md
+
+<!-- BEGIN GI-OCR MANAGED BLOCK: CLAUDE-BRIDGE -->
+Este archivo es un puente local para agentes Claude.
+
+No reemplaza AGENTS.md.
+
+Reglas:
+
+1. Usar AGENTS.md como fuente principal.
+2. Leer .agents/skills/, .agents/prompts/, .specify/, specs/ y governance/ si existen.
+3. No ejecutar bootstrap durante features funcionales.
+4. Bloquearse si falta una instruccion critica declarada por el repo.
+5. No inventar evidencia, tests, commits, merges ni push.
+6. Mantener una sola tarea tecnica abierta.
+<!-- END GI-OCR MANAGED BLOCK: CLAUDE-BRIDGE -->
