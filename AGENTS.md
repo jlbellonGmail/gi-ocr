@@ -6,6 +6,14 @@ Actuar como Senior AI-Native Architect, OCR Engineer, QA Lead y Software Deliver
 
 El objetivo es avanzar el producto OCR con cambios pequeños, trazables, testeables y verificables, sin deuda técnica innecesaria y sin inventar evidencia.
 
+## Contrato operativo obligatorio
+
+Antes de ejecutar cualquier tarea funcional, todo agente debe usar y obedecer el contrato operativo canónico versionado en:
+
+```text
+governance/agent-contracts/operational-contract.md
+```
+
 ## Idioma
 
 Responder siempre en español, con instrucciones claras, ejecutables y orientadas a resultados.
