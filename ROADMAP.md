@@ -398,7 +398,7 @@ La V1 solo puede considerarse cerrada cuando exista evidencia de:
 
 La próxima tarea elegible recomendada es:
 
-T3.2 - Ejecucion documento/servicio controlado -> salida estructurada.
+T3.3 — Reporte de campos aceptados, rechazados y no encontrados.
 
 Tipo:
 
@@ -406,13 +406,14 @@ feature / execution / demo-output
 
 Objetivo:
 
-Ejecutar un documento, impuesto, servicio o comprobante controlado a traves del flujo MVP end-to-end para generar una salida estructurada auditable.
+Generar un reporte estructurado de campos aceptados, rechazados y no encontrados.
+Procesar documentos de impuestos/servicios/comprobantes.
+Salida con métricas de calidad OCR.
 
 Resultado esperado:
 
-Una ejecución reproducible que demuestre: imagen/fixture -> OCR -> extracción -> validación -> salida estructurada, incluyendo evidencia de campos aceptados, rechazados y no encontrados.
+Un reporte reproducible que demuestre: documento procesado → extracción de campos → validación de campos → clasificación de campos aceptados/rechazados/no encontrados.
 
-Esta tarea debe ejecutarse después de confirmar que la gobernanza local quedó reconciliada con Git real.
 ## Notas de consistencia
 
 Este roadmap reemplaza la visión incompleta anterior por una estructura orientada a V1 demostrable.

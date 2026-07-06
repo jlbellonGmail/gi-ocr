@@ -4,37 +4,23 @@
 
 No hay tarea técnica activa.
 
-## Última tarea cerrada
-
-Normalización local SDD de GI-OCR.
-
-Feature/docs commit:
-3d22e34 docs(governance): normalize local sdd structure
-
-Merge commit:
-66dfe03 merge: normalize local sdd structure
-
 ## Tarea funcional anterior cerrada
 
-T3.1 - Demo MVP End-to-End.
+T3.2 - Ejecución documento/servicio controlado → salida estructurada.
 
-Feature commit:
-acd2c4b feat(demo): add mvp end-to-end demo
-
-Merge commit:
-9a37026 merge: add mvp end-to-end demo
+Commit:
+1659d68 feat(t3.2): implement controlled document to structured output pipeline
 
 ## Próxima acción elegible
 
-T3.2 - Ejecucion documento/servicio controlado -> salida estructurada.
+T3.3 — Reporte de campos aceptados, rechazados y no encontrados.
 
-Objetivo esperado:
+Objetivo:
 
-- Ejecutar documento, impuesto, servicio o comprobante controlado.
-- Pasar por OCR, extracción, validación y salida estructurada.
-- Reportar campos aceptados, rechazados y no encontrados.
-- Generar evidencia reproducible del flujo MVP end-to-end.
+- Generar reporte con campos aceptados, rechazados y no encontrados.
+- Aplicable a documentos de impuestos/servicios/comprobantes.
+- Salida estructurada con métricas de calidad OCR.
 
 ## Restricción
 
-No iniciar T3.2 hasta que esta reconciliación documental quede validada y commiteada.
+No iniciar T3.3 sin spec actualizada en specs/.
