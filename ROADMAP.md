@@ -258,7 +258,7 @@ Tareas propuestas:
 
 * T3.0 — Auditoría demostrable del MVP end-to-end actual.
 * T3.1 — Definición del comando o procedimiento único de demo local.
-* T3.2 — Ejecución fixture GAS/servicio real → salida estructurada.
+* T3.2 - Ejecucion documento/servicio controlado -> salida estructurada.
 * T3.3 — Reporte de campos aceptados, rechazados y no encontrados.
 * T3.4 — Documentación de cómo reproducir la demo.
 * T3.5 — Criterio de aceptación visual/técnico para dueño de producto.
@@ -398,7 +398,7 @@ La V1 solo puede considerarse cerrada cuando exista evidencia de:
 
 La próxima tarea elegible recomendada es:
 
-T3.2 - Ejecución fixture GAS/servicio real -> salida estructurada.
+T3.2 - Ejecucion documento/servicio controlado -> salida estructurada.
 
 Tipo:
 
@@ -406,7 +406,7 @@ feature / execution / demo-output
 
 Objetivo:
 
-Ejecutar un fixture GAS o servicio real controlado a través del flujo MVP end-to-end para generar una salida estructurada auditable.
+Ejecutar un documento, impuesto, servicio o comprobante controlado a traves del flujo MVP end-to-end para generar una salida estructurada auditable.
 
 Resultado esperado:
 

@@ -26,11 +26,11 @@ Merge commit:
 
 ## Próxima acción elegible
 
-T3.2 - Ejecución fixture GAS/servicio real -> salida estructurada.
+T3.2 - Ejecucion documento/servicio controlado -> salida estructurada.
 
 Objetivo esperado:
 
-- Ejecutar fixture GAS o servicio real controlado.
+- Ejecutar documento, impuesto, servicio o comprobante controlado.
 - Pasar por OCR, extracción, validación y salida estructurada.
 - Reportar campos aceptados, rechazados y no encontrados.
 - Generar evidencia reproducible del flujo MVP end-to-end.
