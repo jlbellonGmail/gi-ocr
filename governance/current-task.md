@@ -23,4 +23,4 @@ Objetivo:
 
 ## Restricción
 
-No iniciar T3.3 sin spec actualizada en specs/.
+T3.3 especificación disponible en specs/t3.3-field-reporting.md. Iniciar implementación solo si specs completas y tests pasan.
