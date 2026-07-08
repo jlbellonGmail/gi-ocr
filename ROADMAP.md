@@ -104,40 +104,40 @@ BLOQUEADO: no puede avanzar sin resolver dependencia.
 ```text
 T3.1 — MVP End-to-End Demo
 Tarea SDD local (Normalización local SDD)
+T3.2 — Ejecución documento/servicio controlado → salida estructurada
+T3.3 — Reporte de campos aceptados, rechazados y no encontrados
 ```
 
 Estado reportado:
 
 ```text
-Cerrada, commiteada y pusheada a main.
+T3.3: CLOSED_REMOTE / HITL_APPROVED.
+Commiteada y pusheada a main.
 ```
 
-Merge commit reportado:
+Merge commit T3.3 reportado:
 
 ```text
-9a37026 merge: add mvp end-to-end demo
-66dfe03 merge: normalize local sdd structure
+70fe3b0 merge: add T3.3 field reporting
 ```
 
-Feature commits reportados:
+Feature commit T3.3 reportado:
 
 ```text
-acd2c4b feat(demo): add mvp end-to-end demo
-3d22e34 docs(governance): normalize local sdd structure
+4a64188 feat(t3.3): implement field reporting processor
 ```
 
-Tarea técnica anterior cerrada:
+Push remoto T3.3 reportado:
 
 ```text
-T2.9 — Integración con pipeline de producción y monitoreo de métricas de campos rechazados.
+8e106b4..70fe3b0 main -> main
 ```
 
-Commits relevantes reportados:
+Validaciones T3.3 reportadas:
 
 ```text
 python scripts/validate_project.py: PASS
-pytest -q backend/tests/test_evaluate_ocr_service_data_output.py: 20 passed
-pytest -q: 77 passed, 7 warnings
+pytest: 98 passed, 27 warnings
 git diff --check: sin errores
 ```
 
@@ -398,21 +398,26 @@ La V1 solo puede considerarse cerrada cuando exista evidencia de:
 
 La próxima tarea elegible recomendada es:
 
-T3.3 — Reporte de campos aceptados, rechazados y no encontrados.
+GOV/SPEC — Evaluación en 3 capas: OCR bruto, extracción/candidatos y validación/reporte estructurado.
 
 Tipo:
 
-feature / execution / demo-output
+governance / specification
 
 Objetivo:
 
-Generar un reporte estructurado de campos aceptados, rechazados y no encontrados.
-Procesar documentos de impuestos/servicios/comprobantes.
-Salida con métricas de calidad OCR.
+Documentar la arquitectura de evaluación en 3 capas del flujo T3.2/T3.3:
+1. OCR bruto: texto extraído sin procesamiento
+2. Extracción/candidatos: campos identificados por heurísticas
+3. Validación/reporte: clasificación aceptado/rechazado/no encontrado
 
-Resultado esperado:
+Estado:
 
-Un reporte reproducible que demuestre: documento procesado → extracción de campos → validación de campos → clasificación de campos aceptados/rechazados/no encontrados.
+PENDIENTE - Especificación disponible en specs/t3.3-field-reporting.md
+
+Nota:
+
+T3.3 quedó cerrada como CLOSED_REMOTE / HITL_APPROVED.
 
 ## Notas de consistencia
 

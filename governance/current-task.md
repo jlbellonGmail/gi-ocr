@@ -2,25 +2,36 @@
 
 ## Estado
 
-No hay tarea técnica activa.
+T3.3 — CLOSED_REMOTE / HITL_APPROVED.
 
 ## Tarea funcional anterior cerrada
 
-T3.2 - Ejecución documento/servicio controlado → salida estructurada.
+T3.3 - Reporte de campos aceptados, rechazados y no encontrados.
 
-Commit:
-1659d68 feat(t3.2): implement controlled document to structured output pipeline
+Feature commit:
+4a64188 feat(t3.3): implement field reporting processor
+
+Merge commit:
+70fe3b0 merge: add T3.3 field reporting
+
+Push:
+8e106b4..70fe3b0 main -> main
+
+Validaciones:
+- python scripts/validate_project.py: PASS
+- pytest: 98 passed, 27 warnings
 
 ## Próxima acción elegible
 
-T3.3 — Reporte de campos aceptados, rechazados y no encontrados.
+GOV/SPEC — Evaluación en 3 capas: OCR bruto, extracción/candidatos y validación/reporte estructurado.
 
 Objetivo:
 
-- Generar reporte con campos aceptados, rechazados y no encontrados.
-- Aplicable a documentos de impuestos/servicios/comprobantes.
-- Salida estructurada con métricas de calidad OCR.
+- Documentar la arquitectura de evaluación en 3 capas del flujo T3.2/T3.3.
+- Separar claramente OCR bruto de candidatos y de reporte validado.
+- No iniciar implementación: solo especificación de gobernanza.
 
 ## Restricción
 
-T3.3 especificación disponible en specs/t3.3-field-reporting.md. Iniciar implementación solo si specs completas y tests pasan.
+No iniciar T3.4 ni implementación de la evaluación en 3 capas en esta tarea.
+La spec de evaluación en 3 capas queda como próxima tarea elegible, no iniciada.
