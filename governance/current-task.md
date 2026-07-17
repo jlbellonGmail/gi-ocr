@@ -2,7 +2,7 @@
 
 ## Estado
 
-T3.3 — CLOSED_REMOTE / HITL_APPROVED.
+T3.4 — EN PROGRESO.
 
 ## Tarea funcional anterior cerrada
 
