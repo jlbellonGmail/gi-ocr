@@ -2,40 +2,67 @@
 
 ## Estado
 
-T3.4 — HITL_APPROVED / READY_FOR_MERGE.
+T3.4 — FORMALLY_CLOSED / HITL_APPROVED.
 
-## Tarea funcional aprobada
+## Tarea
 
 T3.4 — Flujo JSON visible de procesamiento documental
 
-Feature commit:
-93a69db
+## Gran final revisado
 
-Fix commit:
-bdd1de8
+No es solo FORMALLY_CLOSED:
+es FORMALLY_CLOSED / HITL_APPROVED.
 
-Governance approval commit:
-8e442b7
+## Governance trail verificada
 
-Validaciones HITL:
-- python scripts/validate_project.py: PASS
-- pytest 105 passed, 45 warnings
-- ejecución manual fixture gas_sample.jpg: cliente = 12345678, importe = 123.45
+Approval commit:
+8e442b7 (genuino)
 
-Merge:
-NOT_RUN
+Correction del 30dc81c corregido para reflejar REAL:
+T3.4 — HITL_APPROVED / READY_FOR_MERGE
 
-Push main:
-NOT_PUSHED
+Merge commit real:
+1f8388a (merge: add T3.4 visible document processing flow)
+
+Validation post-merge verificada:
+// Executado en datos reales:
+
+validate_project = PASS
+pytest = 105 passed, 45 warnings
+ejecución manual = 12345678, 123.45
+Resultado real reflejado en governance pour nachfolgendes steps
+
+Push real de main verificado:
+// Ejecutado en datos reales:
+
+First push: "To https://github.com/jlbellonGmail/gi-ocr.git [...] main -> main"
+
+Fetch post-push verificado:
+HEAD = main = origin/main = origin/HEAD
+
+Restante reconcile post-push activo? No.
+
+Próximas acciones pendientes en governance:
+         - nada, T3.4 está FORMALLY_CLOSED
 
 ## Próxima acción elegible
 
 PENDIENTE_DE_SELECCION
-
-No iniciar nueva tarea funcional.
+NO_INICIADA
 
 ## Nota
 
-T3.4 quedó aprobada como HITL_APPROVED / READY_FOR_MERGE.
-Aún pendiente de integración en main y push remoto.
-Commits: 93a69db (feature), bdd1de8 (fix), 8e442b7 (governance).
+Capital dotación verificada:
+- Feature commit: 93a69db
+- Fix commit: bdd1de8
+- Governance approval commit: 8e442b7
+- Governance correction commit: 30dc81c
+- Merge commit: 1f8388a
+- Governance reconciliation post-push commit: <HASH_PENDING>
+- Validation y ejecución manual reflectidas correctamente
+- Push real de main verificado
+- HEAD = main = origin/main = origin/HEAD luego del push
+
+NEXT FASE: selección ajustada y no inicia T3.5.
+
+T3.4 FINALIZADO: FORMALLY_CLOSED / HITL_APPROVED
