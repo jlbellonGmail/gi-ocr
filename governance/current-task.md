@@ -2,50 +2,34 @@
 
 ## Estado
 
-T3.4 — EN PROGRESO.
+T3.4 — FORMALLY_CLOSED / HITL_APPROVED.
 
-## Tarea funcional anterior cerrada
+## Tarea funcional cerrada
 
-T3.3 - Reporte de campos aceptados, rechazados y no encontrados.
+T3.4 — Flujo JSON visible de procesamiento documental
 
 Feature commit:
-4a64188 feat(t3.3): implement field reporting processor
+93a69db feat(t3.4): add visible document processing JSON flow
 
-Merge commit:
-70fe3b0 merge: add T3.3 field reporting
+Fix commit:
+bdd1de8 fix(t3.4): extract importe from monetary context
 
-Push:
-8e106b4..70fe3b0 main -> main
+Merge:
+T3.4 integrada en main con merge --no-ff
 
 Validaciones:
 - python scripts/validate_project.py: PASS
-- pytest: 98 passed, 27 warnings
+- pytest suite completa: 105 passed, 45 warnings
+- ejecución manual fixture gas_sample.jpg: cliente = 12345678, importe = 123.45
 
 ## Próxima acción elegible
 
-T3.4 — Flujo visible de procesamiento de comprobante a salida JSON final.
+PENDIENTE_DE_SELECCION
 
-Objetivo:
+No iniciar nueva tarea funcional.
 
-Implementar un flujo ejecutable y visible que procese un comprobante/fixture local y genere una salida JSON final integrando:
-- raw_ocr_text
-- salida estructurada existente del pipeline
-- field_report de T3.3 con accepted_fields, rejected_fields, missing_fields y summary_counts
+## Nota
 
-Resultado esperado:
-
-Un comando o script reproducible que permita ver:
-documento procesado → OCR → extracción/candidatos → validación/reporte T3.3 → JSON final.
-
-Restricción:
-
-No iniciar T3.4 en esta tarea governance.
-T3.4 queda solo como próxima tarea elegible.
-
-Nota:
-
-T3.3 quedó cerrada como CLOSED_REMOTE / HITL_APPROVED.
-Feature commit: 4a64188 feat(t3.3): implement field reporting processor
-Merge commit: 70fe3b0 merge: add T3.3 field reporting
-Governance commit previo: 4c61d54 docs(governance): reconcile roadmap after T3.3 remote closure
-Validaciones: validate_project PASS, pytest 98 passed / 27 warnings
+T3.4 quedó cerrada como FORMALLY_CLOSED / HITL_APPROVED.
+Commits aceptados: 93a69db y bdd1de8.
+Push de main realizado tras integración.
