@@ -48,8 +48,7 @@ def _extract_first(patterns: list[str], text: str) -> str | None:
 
 def _extract_importe(text: str) -> str | None:
     patterns = [
-        rf"(?:importe|total|saldo|a\s+pagar)\s*(?:final|total)?\s*[:\-]?\s*(?:\$|s/|ars|pesos)?\s*{AMOUNT_PATTERN}",
-        rf"(?:\$|s/|ars)?\s*{AMOUNT_PATTERN}",
+        rf"(?:importe|total|saldo|a\s+pagar)\s*(?:final|total)?\s*[:\-]?\s*(?:\$|s/|s'|ars|pesos)?\s*{AMOUNT_PATTERN}",
     ]
     return _extract_first(patterns, text)
 
