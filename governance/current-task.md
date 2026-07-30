@@ -40,6 +40,20 @@ T3.4 — Flujo JSON visible de procesamiento documental.
 
 `main`, `origin/main` y `origin/HEAD` quedaron alineados después del push de cierre.
 
-## Próxima tarea
+## Próxima tarea seleccionada por HITL
 
-PENDIENTE_DE_SELECCION / NO_INICIADA.
+**T3.5** — Ejecución documental local utilizable con entrada de archivo y exportación JSON
+
+## Estado T3.5
+
+- Selección HITL: ✅ Autorizada
+- Numeración: T3.5 (convención secuencial T3.1→T3.2→T3.3→T3.4→T3.5, ROADMAP.md:264)
+- Especificación: `specs/t3.5-cli-json-export.md`
+- Estado formal: SELECTED / SPEC_IN_PROGRESS
+- Implementación: pendiente de ejecución (archivos funcionales existentes pero unstaged)
+- Validación: pendiente
+- Aprobación de cierre: pendiente
+
+T3.4 permanece FORMALLY_CLOSED / HITL_APPROVED.
+
+T3.5 queda seleccionada y su spec está en progreso. No se inicia T3.6 ni ninguna otra tarea posterior.
