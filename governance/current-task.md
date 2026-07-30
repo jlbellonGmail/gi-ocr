@@ -49,13 +49,13 @@ T3.4 — Flujo JSON visible de procesamiento documental.
 - Selección HITL: ✅ Autorizada
 - Numeración: T3.5 (convención secuencial T3.1→T3.2→T3.3→T3.4→T3.5, ROADMAP.md:264)
 - Especificación: `specs/t3.5-cli-json-export.md`
-- Estado formal: IMPLEMENTED / VALIDATED / PENDING_HITL
+- Estado formal: FORMALLY_CLOSED / HITL_APPROVED
 - Implementación: completada (scripts/process_document.py, backend/app/document_result_exporter.py)
 - Tests: 16 tests T3.5 pasando + 7 tests regresión T3.4 = 23 passing
 - Validaciones globales: validate_project.py PASS, suite completa 121 passing
 - Ejecución manual: exit 0, JSON parseable, structure completa T3.4 preservada
-- Aprobación de cierre: pendiente HITL
+- Aprobación de cierre: ✅ HITL_APPROVED
 
 T3.4 permanece FORMALLY_CLOSED / HITL_APPROVED.
 
-T3.5 implementada y validada localmente. Pendiente revisión HITL para cierre formal.
+T3.5 implementada, validada y formalmente cerrada. Próxima tarea: PENDIENTE_DE_SELECCION / NO_INICIADA.
