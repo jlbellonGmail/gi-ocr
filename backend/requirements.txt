@@ -8,6 +8,17 @@ pydantic-settings>=2.3.3
 Pillow>=10.2.0
 numpy>=1.26.0
 opencv-python-headless>=4.9.0.80
+
+# Motor OCR local principal: RapidOCR (PP-OCRv3) + ONNX Runtime (reemplaza EasyOCR como principal).
+# EasyOCR se conserva declarado por compatibilidad de guard (validate_project) pero no se usa como motor principal.
+rapidocr-onnxruntime>=1.2.3
+onnxruntime>=1.17.0
+
+# PDF: extracción de texto nativo + render. Licencia BSD-3-Clause / Apache-2.0.
+pypdfium2>=4.0.0
+
 easyocr>=1.7.1
 
 pytest>=8.0.0
+# TestClient de FastAPI requiere httpx para tests del endpoint web tipado (T4).
+httpx>=0.27.0
