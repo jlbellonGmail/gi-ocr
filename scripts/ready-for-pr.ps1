@@ -231,16 +231,20 @@ El reconciliador local iniciado por `ready-for-pr.ps1` solo limpia worktree/rama
 try {
     Set-Content -LiteralPath $bodyPath -Value $body -Encoding UTF8
     Write-Host "==> Creando PR hacia $baseBranch..."
-    $createResult = Invoke-GhJson -GitHubCliPath $ghPath -Arguments @(
+    # 'gh pr create' no soporta --json/--jq en todas las versiones de gh
+    # (a diferencia de 'gh pr view'/'gh pr list'). Se crea sin --json y se
+    # confirma la PR creada con una consulta aparte, que si lo soporta.
+    Invoke-GhJson -GitHubCliPath $ghPath -Arguments @(
         "pr", "create",
         "--base", $baseBranch,
         "--head", $currentBranch,
         "--title", $Title,
-        "--body-file", $bodyPath,
-        "--json", "number,url,baseRefName",
-        "--jq", "."
-    )
-    $createdPr = $createResult.StdOut | ConvertFrom-Json
+        "--body-file", $bodyPath
+    ) | Out-Null
+    $createdPr = Get-ExistingPr -GitHubCliPath $ghPath -Branch $currentBranch
+    if ($null -eq $createdPr) {
+        throw "gh pr create no reporto error pero la PR de '$currentBranch' no aparece en 'gh pr view'."
+    }
     if ($createdPr.baseRefName -ne $baseBranch) {
         throw "La PR creada #$($createdPr.number) apunta a '$($createdPr.baseRefName)', no a '$baseBranch'."
     }
