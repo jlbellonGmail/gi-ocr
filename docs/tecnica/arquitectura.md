@@ -76,22 +76,30 @@ Motivo:
 - Evita que otro proceso lea archivos incompletos.
 - Hace más segura la integración con sistemas externos.
 
-## ADR-006 — Motor OCR actual
+## ADR-006 — Motor OCR
 
-Estado: experimental.
+Estado: **resuelta** (feature `01-captura-ocr-local-agil`, ver
+[docs/tecnica/captura-ocr-local-agil.md](captura-ocr-local-agil.md)).
 
-El código actual usa EasyOCR (`backend/app/ocr.py`).
+Motor principal: **RapidOCR (PP-OCRv3) + ONNX Runtime**, con arquitectura
+two-pass ROI-focalizada. Reemplaza a EasyOCR, que queda declarado en
+`backend/requirements.txt` como fallback interno opcional deshabilitado
+por defecto (no se elimina).
 
-Motivo:
+Evidencia medida:
 
-- Ya existe implementación inicial.
-- Permite validar flujo local.
+- EasyOCR: ~30 s/documento (motor previo, `backend/app/ocr.py`).
+- RapidOCR/ONNX two-pass ROI: **2.35–2.57 s en caliente** por documento.
+- PaddleOCR PP-OCR Mobile: evaluado y descartado — sin wheel disponible
+  para Python 3.14 en el entorno de desarrollo (`pip install paddlepaddle`
+  → `No matching distribution found`).
+- Tesseract, Google Document AI, Azure Document Intelligence: no
+  evaluados en esta ronda (RapidOCR/ONNX ya cumplió el objetivo de
+  rendimiento local sin costo por página; no había necesidad de seguir
+  comparando motores cloud pagos para un requisito 100% local).
 
-Pendiente (ver `ROADMAP.md`):
-
-- Medir precisión y velocidad con evidencia.
-- Comparar contra Tesseract, PaddleOCR, Google Document AI y Azure
-  Document Intelligence.
+Licencias verificadas: RapidOCR Apache-2.0, onnxruntime MIT — ambas
+compatibles con uso local sin costo por página ni egress de documentos.
 
 ## ADR-007 — Modelo configurable de extracción de texto plano
 

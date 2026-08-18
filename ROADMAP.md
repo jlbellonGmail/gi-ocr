@@ -57,68 +57,52 @@ Validaciones reportadas en el cierre de T3.5: `pytest` en verde,
 
 ## Estado actual verificado (2026-08-18)
 
-**T4 — MVP web operable end-to-end** está **implementado y testeado en la
-rama `feature/t4-mvp-web-operable`, pero todavía NO mergeado a `develop`
-ni a `main`** (verificado: `git log main..feature/t4-mvp-web-operable`
-muestra 3 commits propios de T4 que `main`/`develop` no tienen).
+**T4 — MVP web operable end-to-end (EasyOCR)** quedó **archivada sin
+mergear**: estaba implementada y testeada en `feature/t4-mvp-web-operable`
+(154 tests en verde), pero el mismo día se decidió explícitamente
+priorizar una línea de trabajo distinta y más avanzada (ver abajo). El
+commit se preserva en el tag `archive/t4-mvp-web-operable`; la rama se
+eliminó. No se mezcla con el trabajo activo.
 
-Lo que ya existe en esa rama (verificado con `pytest -q`: **154 passed, 0
-failed** en `backend/tests/` con el `.venv` del proyecto):
+**01-captura-ocr-local-agil** es la línea real hacia el MVP operable:
+reemplaza EasyOCR por RapidOCR/ONNX (2.35–2.57s por documento medido, vs
+~30s de EasyOCR), agrega soporte multi-proveedor (GAS + CEVT), PDF, cola
+de jobs y frontend nuevo. Existía como commit único local
+(`feature/captura-ocr-local-agil`, nunca pusheado) desde el 2026-08-13;
+se migró a `feature/01-captura-ocr-local-agil` en worktree propio
+(`../worktrees/01-captura-ocr-local-agil/`), siguiendo el circuito
+completo:
 
-- Endpoints tipados `POST /api/v1/process`, `POST /api/v1/process/{job_id}/confirm`,
-  `GET /api/v1/process/{job_id}/json` (409 si no confirmado),
-  `GET /api/v1/process/{job_id}/original`, `GET /api/v1/process/{job_id}/status`.
-- Servicio de confirmación de revisión humana
-  (`backend/app/review_confirmation_service.py`): preserva originales,
-  traza correcciones, valida por tipo de campo, genera nombre de archivo
-  seguro.
-- Frontend (`frontend/`) con preview, estados visuales y edición de
-  campos, servido por FastAPI en el mismo origen.
-- `/api/v1/capture` legacy conservado sin modificar.
-- Spec de la etapa: `specs/t4-mvp-web-operable.md` (pre-circuito).
+- `spec.md`/`audit-1.md` (approved)/`test-report-1.md` (approved)/
+  `decision.md` en `runs/01-captura-ocr-local-agil/`.
+- `docs/tecnica/captura-ocr-local-agil.md` +
+  `docs/usuario/captura-ocr-local-agil.md`, enlazados en ambos índices.
+- **Evidencia real (worktree, `.venv` sincronizado con el
+  `backend/requirements.txt` de la rama):
+  `pytest -q` → 197 passed, 6 skipped (motivo verificado: `playwright` no
+  instalado, muestras privadas de facturas no disponibles), 0 failed.**
+- `Assert-FeatureContract` (`scripts/feature-contract.ps1`) → **PASS**.
+- Resuelve, con evidencia medida, la decisión de motor OCR pendiente en
+  `docs/tecnica/arquitectura.md` (ADR-006), y el ítem que antes figuraba
+  como `04-servicio-cevt` (CEVT ya viene soportado en las plantillas de
+  esta feature) — ambos se retiran del backlog abajo para no dejar
+  pendientes duplicados.
 
-Lo que falta para que T4 pueda cerrarse **por este circuito** (no es
-código nuevo, es completar el contrato de `AGENTS.md`):
-
-- `runs/01-mvp-web-operable/spec.md`, `audit-N.md`, `test-report-N.md`,
-  `decision.md`.
-- `docs/tecnica/mvp-web-operable.md` y `docs/usuario/mvp-web-operable.md`
-  (distinto de `docs/tecnica/gas.md`/`docs/usuario/gas.md`, que documentan
-  el servicio GAS en sí, no el flujo web de confirmación).
-- Enlaces exactos en `docs/tecnica/index.md` y `docs/usuario/index.md`.
-- PR de `feature/t4-mvp-web-operable` (o de una rama `feature/01-mvp-web-operable`
-  que retome ese trabajo) hacia `develop`, con CI verde.
-- Decisión HITL final (`MERGE`/`NO MERGE`).
-
-No se marca `[-]` todavía porque ese contrato de artefactos no existe: no
-hay que inventar avance de proceso que no ocurrió.
+Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
+(`MERGE`/`NO MERGE`) — no se marca `[-]` en este archivo hasta que
+`scripts/ready-for-pr.ps1` lo haga como parte de ese paso del circuito.
 
 ---
 
 ## Backlog (circuito `AGENTS.md`)
 
-- [ ] 01-mvp-web-operable — Cerrar el MVP web operable end-to-end (T4)
-      por el circuito de `AGENTS.md`: producir `spec.md`/`audit-N.md`/
-      `test-report-N.md`/`decision.md` en `runs/01-mvp-web-operable/`,
-      escribir `docs/tecnica/mvp-web-operable.md` +
-      `docs/usuario/mvp-web-operable.md`, y llevar la implementación ya
-      existente (rama `feature/t4-mvp-web-operable`) a PR contra `develop`
-      con CI verde para la decisión HITL final. Es la etapa que cierra el
-      "MVP operable" descripto en el propósito del producto.
-- [ ] 02-mejora-precision-ocr — Preprocesamiento de imagen, recorte/guía
-      visual, métrica simple de confianza, comparación de resultados
-      antes/después con fixtures por servicio (continúa la antigua Fase 5
-      del roadmap pre-circuito).
-- [ ] 03-evaluacion-motor-ocr — Matriz comparativa de motores (EasyOCR
-      actual vs. Tesseract, PaddleOCR, Google Document AI, Azure Document
-      Intelligence) con fixtures reales y decisión documentada en
-      `docs/tecnica/arquitectura.md` (continúa la antigua Fase 6).
-- [ ] 04-servicio-cevt — Activar el segundo servicio ya configurado en
-      `backend/config/services.ini` (`[CEVT]`) end-to-end (extracción,
-      validación semántica, salida `.DATA`, docs), como primera prueba de
-      que agregar un servicio es solo configuración (ADR-007) y no
-      requiere un extractor Python nuevo.
-- [ ] 05-empaquetado-despliegue — Decisión de despliegue (Dockerfile,
+- [ ] 01-captura-ocr-local-agil — Ver "Estado actual verificado" arriba.
+- [ ] 02-mejora-precision-ocr — Validar con datos reales lo que el
+      two-pass ROI de `01-captura-ocr-local-agil` todavía no verificó:
+      benchmark de lote (`scripts/benchmark_captura.py`, 400 documentos,
+      p50/p95, memoria) y robustez con facturas reales adicionales más
+      allá del fixture usado en desarrollo.
+- [ ] 03-empaquetado-despliegue — Decisión de despliegue (Dockerfile,
       `release.yml`, destino) una vez que exista una decisión de
       infraestructura concreta. No se inicia sin esa decisión (ver
       `docs/tecnica/arquitectura.md`).
