@@ -27,5 +27,7 @@ Solo deben quedar versionados:
 
 ## Nota
 
-La escritura atómica del bridge se implementará en una tarea específica del roadmap.
+La escritura atómica del bridge está implementada en
+`backend/app/storage_bridge_writer.py` (archivo temporal + rename atómico
+a `ready/`). Ver [docs/tecnica/arquitectura.md](../docs/tecnica/arquitectura.md), ADR-005.
 
