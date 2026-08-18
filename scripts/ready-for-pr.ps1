@@ -232,23 +232,23 @@ try {
     Set-Content -LiteralPath $bodyPath -Value $body -Encoding UTF8
     Write-Host "==> Creando PR hacia $baseBranch..."
     # 'gh pr create' no soporta --json/--jq en todas las versiones de gh
-    # (a diferencia de 'gh pr view'/'gh pr list'). Se crea sin --json y se
-    # confirma la PR creada con una consulta aparte, que si lo soporta.
-    Invoke-GhJson -GitHubCliPath $ghPath -Arguments @(
+    # (a diferencia de 'gh pr view'/'gh pr list'). En su forma normal
+    # (sin --json), 'gh pr create' imprime unicamente la URL de la PR
+    # creada en stdout; se parsea el numero desde ahi. No hace falta una
+    # consulta aparte: si 'gh pr create' no lanzo error, el --base que le
+    # pasamos ya fue aceptado por GitHub.
+    $createResult = Invoke-GhJson -GitHubCliPath $ghPath -Arguments @(
         "pr", "create",
         "--base", $baseBranch,
         "--head", $currentBranch,
         "--title", $Title,
         "--body-file", $bodyPath
-    ) | Out-Null
-    $createdPr = Get-ExistingPr -GitHubCliPath $ghPath -Branch $currentBranch
-    if ($null -eq $createdPr) {
-        throw "gh pr create no reporto error pero la PR de '$currentBranch' no aparece en 'gh pr view'."
+    )
+    $prUrl = $createResult.StdOut.Trim()
+    if ($prUrl -notmatch "/pull/(\d+)\s*$") {
+        throw "No se pudo interpretar la URL de la PR creada por 'gh pr create': '$prUrl'"
     }
-    if ($createdPr.baseRefName -ne $baseBranch) {
-        throw "La PR creada #$($createdPr.number) apunta a '$($createdPr.baseRefName)', no a '$baseBranch'."
-    }
-    Write-Host "==> PR creada: #$($createdPr.number) $($createdPr.url)"
+    Write-Host "==> PR creada: #$($Matches[1]) $prUrl"
 }
 finally {
     if (Test-Path -LiteralPath $bodyPath) {
