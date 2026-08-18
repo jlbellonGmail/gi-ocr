@@ -1,0 +1,4 @@
+# Repo-local Codex defaults. Use this directory as CODEX_HOME when running
+# the project agent profiles documented in .codex/README.md.
+model = "gpt-5.5"
+model_reasoning_effort = "medium"

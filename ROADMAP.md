@@ -1,438 +1,142 @@
-# Roadmap del Proyecto GI-OCR / TGI-OCR — Smart Invoice Capture
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
-Este roadmap es el contrato operativo de alcance, avance y cierre de la primera versión del producto.
+Cada feature nueva se implementa siguiendo el circuito agéntico de
+[AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
+`[-] READY_FOR_PR` → PR → CI verde → HITL (único punto de aprobación
+humana) → Merge → `[x]`, con su carpeta de evidencia en
+`runs/<NN>-<slug>/` y su documentación en `docs/tecnica/<slug>.md` +
+`docs/usuario/<slug>.md`.
 
-No debe usarse solo como lista técnica. Debe indicar con claridad:
-
-- qué producto se está construyendo;
-- qué ya está cerrado;
-- qué está parcialmente aplicado;
-- qué todavía no fue demostrado;
-- qué falta para cerrar la V1;
-- cuál es la próxima tarea elegible.
-
----
+Este archivo refleja el estado **verificado** del proyecto (código, tests
+corridos, `git log`), no expectativas. No se marca `[x]` antes del merge
+a `develop` (ver estados más abajo).
 
 ## Propósito del producto
 
-GI-OCR / TGI-OCR tiene como objetivo capturar comprobantes, impuestos, servicios y documentos empresariales mediante OCR, extraer campos configurables, validarlos semánticamente y generar salidas estructuradas para integración operativa.
-
-El objetivo primario de la primera versión es permitir el siguiente flujo demostrable:
-
-```text
-Imagen de impuesto/servicio/comprobante
-→ OCR
-→ extracción de texto bruto
-→ candidatos de campos configurables
-→ validación semántica
-→ campos aceptados / rechazados / no encontrados
-→ salida TXT/.DATA/storage_bridge
-→ evidencia auditable del procesamiento
-```
-
-La V1 no se considera cerrada solo porque existen tests internos. La V1 se considera cerrada cuando el flujo anterior pueda ejecutarse y demostrarse de forma reproducible.
+Capturar un comprobante (inicialmente `GAS`) desde un frontend web
+mobile-first, procesarlo con OCR, extraer campos configurados por
+servicio, validarlos semánticamente, permitir revisión/corrección humana
+trazable, y generar una salida estructurada (`.DATA` + JSON confirmado)
+para integración con un sistema externo/legacy vía `storage_bridge/`.
 
 ---
 
-## Alcance de la V1
+## Historial (features cerradas antes de este circuito)
 
-La V1 debe permitir una demostración controlada de punta a punta con al menos un tipo de documento, impuesto, servicio o fixture representativo.
+Las siguientes etapas están **mergeadas en `main`/`develop`**
+(verificado: `main` y `develop` apuntan al mismo commit,
+`70a912d docs(governance): formally close T3.5 (HITL_APPROVED)`) y se
+gobernaron con el circuito HITL-intensivo anterior (`GOVERNANCE.md`,
+`governance/current-task.md`), ya reemplazado por `AGENTS.md`. No se
+renumeran retroactivamente al esquema `NN-slug`; quedan documentadas acá
+como contexto histórico.
 
-Incluye:
+- **Fase 0 — Baseline controlado**: estructura base, versionado, `VERSION`,
+  `CHANGELOG.md`. Cerrada.
+- **T2.x — Pipeline DATA interno**: escritura atómica del bridge
+  (`storage_bridge_writer.py`), inventario de documentos/servicios,
+  validación específica por servicio, evaluador DATA, métricas de campos
+  rechazados. Cerrada como infraestructura interna (no como demo visible).
+- **T3.1–T3.2 — Demo E2E y pipeline controlado**: documento/servicio
+  controlado → salida estructurada (`document_processing_service.py`,
+  `t3_2_orchestrator.py`). Cerrada.
+- **T3.3 — Reporte de campos**: `accepted_fields`/`rejected_fields`/
+  `missing_fields`/`summary_counts` (`field_reporting_processor.py`).
+  Cerrada (`4a64188` → merge `70fe3b0`).
+- **T3.4 — Flujo visible JSON**: imagen → OCR → candidatos → validación →
+  `field_report` → JSON final, vía script reproducible
+  (`scripts/t3_4_visible_flow.py`). Cerrada.
+- **T3.5 — CLI de documento**: `scripts/process_document.py` con
+  exportación JSON. Cerrada (`fd114ad`, cierre `70a912d`).
 
-* carga o captura de imagen de comprobante/impuesto/servicio;
-* selección manual o configuración del servicio/documento;
-* procesamiento OCR;
-* extracción de texto bruto OCR;
-* extracción de campos configurables;
-* validación semántica de campos;
-* diferenciación entre campos aceptados, rechazados y no encontrados;
-* generación de salida estructurada;
-* escritura segura en `storage_bridge`;
-* salida TXT, `.DATA` o equivalente estructurado;
-* evidencia mínima para auditoría técnica;
-* prueba demostrable reproducible.
-
----
-
-## Fuera de alcance de la V1
-
-Quedan fuera de la primera versión:
-
-* multiusuario;
-* autenticación avanzada;
-* facturación SaaS;
-* integraciones ERP productivas;
-* procesamiento masivo;
-* OCR cloud pago obligatorio;
-* motor OCR definitivo;
-* UI enterprise completa;
-* automatización contable final;
-* reglas de negocio hardcodeadas por proveedor sin configuración o tests;
-* eliminación de legacy sin autorización explícita.
+Validaciones reportadas en el cierre de T3.5: `pytest` en verde,
+`validate_project.py` (removido en esta migración, ver
+`docs/tecnica/arquitectura.md`) en verde.
 
 ---
 
-## Principios de avance
+## Estado actual verificado (2026-08-18)
 
-* No avanzar a una fase posterior si la fase actual no está validada.
-* No declarar tareas cerradas sin evidencia real.
-* No confundir infraestructura interna con producto demostrable.
-* Toda mejora OCR debe indicar campo, documento, fixture, salida y validación.
-* Todo cambio funcional debe tener tests o justificación explícita.
-* La V1 se cierra por demostración end-to-end, no solo por tests unitarios.
-* El roadmap debe reflejar el estado real de Git y no expectativas.
-* Una sola tarea técnica puede estar abierta por vez.
+**T4 — MVP web operable end-to-end** está **implementado y testeado en la
+rama `feature/t4-mvp-web-operable`, pero todavía NO mergeado a `develop`
+ni a `main`** (verificado: `git log main..feature/t4-mvp-web-operable`
+muestra 3 commits propios de T4 que `main`/`develop` no tienen).
 
----
+Lo que ya existe en esa rama (verificado con `pytest -q`: **154 passed, 0
+failed** en `backend/tests/` con el `.venv` del proyecto):
 
-## Leyenda de estado
+- Endpoints tipados `POST /api/v1/process`, `POST /api/v1/process/{job_id}/confirm`,
+  `GET /api/v1/process/{job_id}/json` (409 si no confirmado),
+  `GET /api/v1/process/{job_id}/original`, `GET /api/v1/process/{job_id}/status`.
+- Servicio de confirmación de revisión humana
+  (`backend/app/review_confirmation_service.py`): preserva originales,
+  traza correcciones, valida por tipo de campo, genera nombre de archivo
+  seguro.
+- Frontend (`frontend/`) con preview, estados visuales y edición de
+  campos, servido por FastAPI en el mismo origen.
+- `/api/v1/capture` legacy conservado sin modificar.
+- Spec de la etapa: `specs/t4-mvp-web-operable.md` (pre-circuito).
 
-```text
-CERRADO: implementado, validado y respaldado por evidencia.
-PARCIAL: existe avance, pero falta validación, integración o demostración completa.
-PENDIENTE: no implementado o no demostrado.
-BLOQUEADO: no puede avanzar sin resolver dependencia.
-```
+Lo que falta para que T4 pueda cerrarse **por este circuito** (no es
+código nuevo, es completar el contrato de `AGENTS.md`):
 
----
+- `runs/01-mvp-web-operable/spec.md`, `audit-N.md`, `test-report-N.md`,
+  `decision.md`.
+- `docs/tecnica/mvp-web-operable.md` y `docs/usuario/mvp-web-operable.md`
+  (distinto de `docs/tecnica/gas.md`/`docs/usuario/gas.md`, que documentan
+  el servicio GAS en sí, no el flujo web de confirmación).
+- Enlaces exactos en `docs/tecnica/index.md` y `docs/usuario/index.md`.
+- PR de `feature/t4-mvp-web-operable` (o de una rama `feature/01-mvp-web-operable`
+  que retome ese trabajo) hacia `develop`, con CI verde.
+- Decisión HITL final (`MERGE`/`NO MERGE`).
 
-## Estado operativo actual
-
-Últimas tareas cerradas:
-
-```text
-T3.1 — MVP End-to-End Demo
-Tarea SDD local (Normalización local SDD)
-T3.2 — Ejecución documento/servicio controlado → salida estructurada
-T3.3 — Reporte de campos aceptados, rechazados y no encontrados
-```
-
-Estado reportado:
-
-```text
-T3.3: CLOSED_REMOTE / HITL_APPROVED.
-Commiteada y pusheada a main.
-```
-
-Merge commit T3.3 reportado:
-
-```text
-70fe3b0 merge: add T3.3 field reporting
-```
-
-Feature commit T3.3 reportado:
-
-```text
-4a64188 feat(t3.3): implement field reporting processor
-```
-
-Push remoto T3.3 reportado:
-
-```text
-8e106b4..70fe3b0 main -> main
-```
-
-Validaciones T3.3 reportadas:
-
-```text
-python scripts/validate_project.py: PASS
-pytest: 98 passed, 27 warnings
-git diff --check: sin errores
-```
+No se marca `[-]` todavía porque ese contrato de artefactos no existe: no
+hay que inventar avance de proceso que no ocurrió.
 
 ---
 
-## Fase 0 — Baseline controlado
-
-Objetivo: dejar el proyecto limpio, versionable y gobernado.
-
-Estado: CERRADO según historial operativo del proyecto.
-
-Capacidades esperadas:
-
-* estructura base simple;
-* `GOVERNANCE.md`;
-* `CONTRIBUTING.md`;
-* `VERSION`;
-* `CHANGELOG.md`;
-* documentación base en `docs/`;
-* validador de proyecto;
-* baseline aprobado en Git.
-
-Criterio de cierre:
-
-```bash
-python scripts/validate_project.py
-git status --short
-```
-
-Nota:
-
-Esta fase representa la base de gobernanza y versionado. No implica por sí sola que el producto OCR sea demostrable.
-
----
-
-## Fase 1 — OCR baseline con imagen fixture
-
-Objetivo: procesar una imagen conocida y extraer campos mínimos.
-
-Estado: PARCIAL/CERRADO según evidencia de tests y fixtures existentes en el repositorio.
-
-Capacidades esperadas:
-
-* fixture representativo, por ejemplo `gas_sample.jpg`;
-* prueba OCR mínima;
-* extracción de al menos dos campos;
-* medición de tiempo de procesamiento;
-* documentación de limitaciones.
-
-Criterio de cierre:
-
-```bash
-pytest backend/tests
-```
-
-Nota:
-
-Esta fase valida que existe una base OCR medible. No equivale a una demo completa de producto si no está conectada con extracción, validación y salida estructurada.
-
----
-
-## Fase 2 — Bridge de salida controlado / DATA pipeline
-
-Objetivo: generar archivos de salida estructurados sin riesgo de lectura parcial.
-
-Estado: CERRADO para las tareas T2.x confirmadas; PARCIAL como experiencia de producto visible.
-
-Capacidades asociadas:
-
-* escritura atómica en `storage_bridge`;
-* validación de payload;
-* movimiento seguro a `storage_bridge/ready`;
-* generación de salida `.DATA`;
-* evaluador DATA;
-* inventario de documentos/servicios;
-* validación específica por servicio;
-* validación DATA en salida `.DATA`;
-* métricas de campos rechazados;
-* integración con pipeline productivo.
-
-Tareas T2.x cerradas confirmadas:
-
-* T2.4 — Inventario de documentos/servicios DATA.
-* T2.5 — Integración inventario DATA evaluator.
-* T2.6 — Validación específica por servicio DATA.
-* T2.8 — Validación DATA en salida `.DATA`.
-* T2.9 — Integración con pipeline de producción y monitoreo de métricas de campos rechazados.
-* T2.10 — Reconciliación de roadmap operativo con Git real.
-
-Nota importante:
-
-Las tareas T2.x prepararon infraestructura interna del pipeline. Son valiosas, pero no cierran por sí solas la V1 porque todavía falta una demostración visible end-to-end para el usuario/dueño de producto.
-
----
-
-## Fase 3 — Demo end-to-end visible de la V1
-
-Objetivo: demostrar el flujo completo del producto sin asumir funcionamiento por piezas internas.
-
-Estado: PENDIENTE.
-
-Esta es la siguiente fase crítica.
-
-Flujo mínimo requerido:
-
-```text
-Imagen fixture o imagen real controlada
-→ OCR
-→ texto bruto OCR
-→ extracción de campos candidatos
-→ validación semántica
-→ campos aceptados, rechazados y no encontrados
-→ salida TXT/.DATA/storage_bridge
-→ evidencia del archivo generado
-```
-
-Tareas propuestas:
-
-* T3.0 — Auditoría demostrable del MVP end-to-end actual.
-* T3.1 — Definición del comando o procedimiento único de demo local.
-* T3.2 - Ejecucion documento/servicio controlado -> salida estructurada.
-* T3.3 — Reporte de campos aceptados, rechazados y no encontrados.
-* T3.4 — Documentación de cómo reproducir la demo.
-* T3.5 — Criterio de aceptación visual/técnico para dueño de producto.
-
-Criterio de cierre:
-
-```text
-Existe una ejecución reproducible que muestra:
-- entrada usada;
-- servicio/documento procesado;
-- texto bruto OCR;
-- campos candidatos;
-- campos validados;
-- campos rechazados;
-- campos no encontrados;
-- archivo de salida generado;
-- comando o procedimiento de reproducción.
-```
-
----
-
-## Fase 4 — Frontend móvil mínimo
-
-Objetivo: capturar o cargar una imagen desde celular y mostrar resultados básicos.
-
-Estado: PENDIENTE.
-
-Tareas:
-
-* corregir carga de servicios si aplica;
-* permitir selección manual de servicio;
-* permitir carga/captura de imagen desde celular;
-* mostrar vista previa de imagen;
-* mostrar campos extraídos;
-* mostrar campos rechazados/no encontrados;
-* mostrar errores claros;
-* conectar con pipeline real o endpoint local.
-
-Criterio de cierre:
-
-```text
-Desde una interfaz mínima usable se puede cargar/capturar una imagen,
-procesarla y ver el resultado estructurado.
-```
-
-Nota:
-
-Esta fase no debe iniciarse hasta saber con evidencia qué parte del flujo backend end-to-end ya funciona.
-
----
-
-## Fase 5 — Mejora de precisión OCR
-
-Objetivo: mejorar captura y extracción con evidencia medible.
-
-Estado: PENDIENTE.
-
-Tareas:
-
-* preprocesamiento de imagen;
-* recorte o guía visual;
-* fallback por regex global;
-* métrica simple de confianza;
-* fixtures por tipo de servicio/documento;
-* evaluación de falsos positivos;
-* comparación de resultados antes/después.
-
-Criterio de cierre:
-
-```text
-La mejora OCR debe demostrar:
-- campo extraído;
-- tipo de documento;
-- fixture o imagen usada;
-- salida producida;
-- validación aplicada;
-- falsos positivos evitados.
-```
-
----
-
-## Fase 6 — Evaluación de motor OCR
-
-Objetivo: decidir motor OCR con evidencia y no por preferencia.
-
-Estado: PENDIENTE.
-
-Motores candidatos:
-
-* EasyOCR;
-* Tesseract;
-* PaddleOCR;
-* Google Document AI;
-* Azure Document Intelligence.
-
-Criterios:
-
-* precisión;
-* velocidad;
-* costo;
-* facilidad de instalación;
-* privacidad;
-* mantenimiento;
-* compatibilidad con despliegue esperado.
-
-Criterio de cierre:
-
-```text
-Existe una matriz comparativa con fixtures reales y decisión documentada.
-```
-
----
-
-## Cierre de V1
-
-La V1 solo puede considerarse cerrada cuando exista evidencia de:
-
-* al menos un flujo end-to-end reproducible;
-* al menos un documento/servicio procesado con fixture o imagen real controlada;
-* OCR ejecutado;
-* texto bruto OCR disponible;
-* campos configurables extraídos;
-* validación semántica aplicada;
-* campos aceptados, rechazados y no encontrados reportados;
-* salida TXT/.DATA/storage_bridge generada;
-* comando o procedimiento documentado;
-* tests relevantes pasando;
-* `python scripts/validate_project.py` pasando;
-* `pytest -q` pasando o justificación explícita si se usa subset;
-* `git diff --check` sin errores;
-* working tree limpio;
-* commit y push realizados.
-
----
-
-## Próxima tarea elegible
-
-La próxima tarea elegible recomendada es:
-
-T3.4 — Flujo visible de procesamiento de comprobante a salida JSON final.
-
-Tipo:
-
-feature / application-flow / demo-output
-
-Objetivo:
-
-Implementar un flujo ejecutable y visible que procese un comprobante/fixture local y genere una salida JSON final integrando:
-- raw_ocr_text
-- salida estructurada existente del pipeline
-- field_report de T3.3 con accepted_fields, rejected_fields, missing_fields y summary_counts
-
-Resultado esperado:
-
-Un comando o script reproducible que permita ver:
-documento procesado → OCR → extracción/candidatos → validación/reporte T3.3 → JSON final.
-
-Restricción:
-
-No iniciar T3.4 en esta tarea governance.
-T3.4 queda solo como próxima tarea elegible.
-
-Nota:
-
-T3.3 quedó cerrada como CLOSED_REMOTE / HITL_APPROVED.
-Feature commit: 4a64188 feat(t3.3): implement field reporting processor
-Merge commit: 70fe3b0 merge: add T3.3 field reporting
-Governance commit previo: 4c61d54 docs(governance): reconcile roadmap after T3.3 remote closure
-Validaciones: validate_project PASS, pytest 98 passed / 27 warnings
-
-## Notas de consistencia
-
-Este roadmap reemplaza la visión incompleta anterior por una estructura orientada a V1 demostrable.
-
-Las tareas T2.x cerradas siguen siendo válidas como infraestructura interna, pero no cierran por sí solas la primera versión del producto.
-
-La siguiente prioridad no es sumar más infraestructura, sino demostrar el flujo completo visible.
+## Backlog (circuito `AGENTS.md`)
+
+- [ ] 01-mvp-web-operable — Cerrar el MVP web operable end-to-end (T4)
+      por el circuito de `AGENTS.md`: producir `spec.md`/`audit-N.md`/
+      `test-report-N.md`/`decision.md` en `runs/01-mvp-web-operable/`,
+      escribir `docs/tecnica/mvp-web-operable.md` +
+      `docs/usuario/mvp-web-operable.md`, y llevar la implementación ya
+      existente (rama `feature/t4-mvp-web-operable`) a PR contra `develop`
+      con CI verde para la decisión HITL final. Es la etapa que cierra el
+      "MVP operable" descripto en el propósito del producto.
+- [ ] 02-mejora-precision-ocr — Preprocesamiento de imagen, recorte/guía
+      visual, métrica simple de confianza, comparación de resultados
+      antes/después con fixtures por servicio (continúa la antigua Fase 5
+      del roadmap pre-circuito).
+- [ ] 03-evaluacion-motor-ocr — Matriz comparativa de motores (EasyOCR
+      actual vs. Tesseract, PaddleOCR, Google Document AI, Azure Document
+      Intelligence) con fixtures reales y decisión documentada en
+      `docs/tecnica/arquitectura.md` (continúa la antigua Fase 6).
+- [ ] 04-servicio-cevt — Activar el segundo servicio ya configurado en
+      `backend/config/services.ini` (`[CEVT]`) end-to-end (extracción,
+      validación semántica, salida `.DATA`, docs), como primera prueba de
+      que agregar un servicio es solo configuración (ADR-007) y no
+      requiere un extractor Python nuevo.
+- [ ] 05-empaquetado-despliegue — Decisión de despliegue (Dockerfile,
+      `release.yml`, destino) una vez que exista una decisión de
+      infraestructura concreta. No se inicia sin esa decisión (ver
+      `docs/tecnica/arquitectura.md`).
+
+## Cómo se usa este archivo
+
+1. El humano mantiene el backlog: agrega, renombra o reordena items.
+2. Ningún item se marca `[x]` antes del merge a `develop`.
+3. Después de QA aprobado, la automatización cambia `[ ]` → `[-]` en la
+   rama de la feature (`scripts/ready-for-pr.ps1`) y lo lleva dentro de
+   la PR.
+4. Después del merge, GitHub Actions ejecuta
+   `post-merge-close-feature.yml`, que invoca `scripts/close-feature.ps1`
+   desde `develop` para cambiar `[-]` → `[x]`, commitear y pushear a
+   `origin/develop`.
+5. Al arrancar una feature se usa el número/slug de este archivo para
+   crear `runs/<NN>-<slug>/` y la rama `feature/<NN>-<slug>` (en worktree
+   propio bajo `../worktrees/<slug>/`).
+
+**Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
+minúsculas con guiones, seguido de `—` y descripción corta en español.

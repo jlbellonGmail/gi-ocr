@@ -53,29 +53,37 @@ python -m venv .venv
 pip install -r backend\requirements.txt
 ```
 
-Ejecutar backend:
+Ejecutar backend + frontend (un solo comando, mismo origen):
 
 ```powershell
 python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Validar estructura:
+Correr tests:
 
 ```powershell
-python scripts/validate_project.py
+pytest
 ```
+
+## Circuito de desarrollo (AI-Native)
+
+Este proyecto se desarrolla con el circuito agéntico definido en
+[AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
+`ROADMAP.md [-]` → PR → CI verde → HITL (único punto de aprobación
+humana: `MERGE`/`NO MERGE`) → Merge → `ROADMAP.md [x]`. Ver también
+[ROADMAP.md](ROADMAP.md) y [docs/index.md](docs/index.md).
 
 ## Reglas principales
 
-- No trabajar directo en `main`.
-- Toda tarea va en rama `feature/*`.
+- No trabajar directo en `main` ni en `develop`.
+- Toda tarea va en rama `feature/<NN>-<slug>` (ver `AGENTS.md`).
 - No versionar `.venv/`.
-- No versionar archivos generados en `storage_bridge/ready/`.
-- No avanzar sin validar.
-- No cambiar arquitectura sin registrar decisión en `governance/decisions.md`.
+- No versionar archivos generados en `storage_bridge/{inbound,ready,failed}/`.
+- No avanzar sin validar (tests reales, no evidencia inventada).
+- No cambiar arquitectura sin registrar la decisión en
+  `docs/tecnica/arquitectura.md`.
 
 ## Estado actual
 
-Versión base: `0.1.0`.
-
-Esta versión ordena la estructura y deja preparado el proyecto para avanzar con OCR real, bridge atómico, frontend móvil y versionado profesional.
+Ver [ROADMAP.md](ROADMAP.md) para el estado real verificado (qué está
+cerrado, qué está en curso, próxima etapa hacia el MVP operable).
