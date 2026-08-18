@@ -8,6 +8,22 @@ pydantic-settings>=2.3.3
 Pillow>=10.2.0
 numpy>=1.26.0
 opencv-python-headless>=4.9.0.80
+
+# Motor OCR local principal: RapidOCR (PP-OCRv3) + ONNX Runtime (reemplaza EasyOCR como principal).
+# EasyOCR se conserva declarado como fallback opcional, no se usa como motor principal.
+# Version FIJADA (no >=): backend/app/ocr_engine.py depende de atributos internos del
+# objeto RapidOCR (text_detector/text_recognizer, ver two-pass ROI). rapidocr-onnxruntime
+# 1.4.4 (la ultima disponible al momento de escribir esto) cambio esa forma interna y
+# rompe ocr_engine.py con AttributeError. 1.2.3 es la version con la que se escribio,
+# probo y midio el rendimiento declarado en docs/tecnica/captura-ocr-local-agil.md.
+rapidocr-onnxruntime==1.2.3
+onnxruntime==1.28.0
+
+# PDF: extracción de texto nativo + render. Licencia BSD-3-Clause / Apache-2.0.
+pypdfium2>=4.0.0
+
 easyocr>=1.7.1
 
 pytest>=8.0.0
+# TestClient de FastAPI requiere httpx para tests del endpoint web tipado (T4).
+httpx>=0.27.0

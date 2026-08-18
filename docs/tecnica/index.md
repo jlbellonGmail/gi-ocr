@@ -6,3 +6,4 @@ decisiones de diseño.
 
 - [Arquitectura](arquitectura.md)
 - [GAS](gas.md)
+- [Captura OCR Local Ágil](captura-ocr-local-agil.md)

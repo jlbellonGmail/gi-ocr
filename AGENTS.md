@@ -13,7 +13,9 @@ sistemas externos/legacy por filesystem (`storage_bridge/`).
   origen, un solo comando)
 - Gestor de paquetes: `pip` + entorno virtual (`.venv`), dependencias en
   `backend/requirements.txt`
-- OCR: EasyOCR (motor actual, experimental — ver `docs/tecnica/arquitectura.md`)
+- OCR: RapidOCR (PP-OCRv3) + ONNX Runtime (motor principal, two-pass
+  ROI-focalizada — ver `docs/tecnica/arquitectura.md`, ADR-006). EasyOCR
+  se conserva como fallback interno opcional deshabilitado por defecto.
 - Testing: `pytest`
 - Documentación: MkDocs Material, publicada en GitHub Pages
 - Frontend: HTML + JavaScript simple, sin framework, mobile-first

@@ -231,20 +231,24 @@ El reconciliador local iniciado por `ready-for-pr.ps1` solo limpia worktree/rama
 try {
     Set-Content -LiteralPath $bodyPath -Value $body -Encoding UTF8
     Write-Host "==> Creando PR hacia $baseBranch..."
+    # 'gh pr create' no soporta --json/--jq en todas las versiones de gh
+    # (a diferencia de 'gh pr view'/'gh pr list'). En su forma normal
+    # (sin --json), 'gh pr create' imprime unicamente la URL de la PR
+    # creada en stdout; se parsea el numero desde ahi. No hace falta una
+    # consulta aparte: si 'gh pr create' no lanzo error, el --base que le
+    # pasamos ya fue aceptado por GitHub.
     $createResult = Invoke-GhJson -GitHubCliPath $ghPath -Arguments @(
         "pr", "create",
         "--base", $baseBranch,
         "--head", $currentBranch,
         "--title", $Title,
-        "--body-file", $bodyPath,
-        "--json", "number,url,baseRefName",
-        "--jq", "."
+        "--body-file", $bodyPath
     )
-    $createdPr = $createResult.StdOut | ConvertFrom-Json
-    if ($createdPr.baseRefName -ne $baseBranch) {
-        throw "La PR creada #$($createdPr.number) apunta a '$($createdPr.baseRefName)', no a '$baseBranch'."
+    $prUrl = $createResult.StdOut.Trim()
+    if ($prUrl -notmatch "/pull/(\d+)\s*$") {
+        throw "No se pudo interpretar la URL de la PR creada por 'gh pr create': '$prUrl'"
     }
-    Write-Host "==> PR creada: #$($createdPr.number) $($createdPr.url)"
+    Write-Host "==> PR creada: #$($Matches[1]) $prUrl"
 }
 finally {
     if (Test-Path -LiteralPath $bodyPath) {

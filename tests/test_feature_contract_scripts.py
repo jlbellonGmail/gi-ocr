@@ -160,16 +160,19 @@ def make_fake_tools(bin_dir: Path, mode: str):
     if os.name == "nt":
         gh = bin_dir / "gh.cmd"
         if mode == "missing_then_create":
+            # Simula el 'gh' real: 'pr view' falla (no existe todavia) y
+            # 'pr create' (sin --json, que no todas las versiones de gh
+            # soportan) imprime unicamente la URL de la PR en stdout.
             gh.write_text(
                 "@echo off\n"
                 "echo %* | findstr /C:\"pr view\" >nul && (echo no pull requests found 1>&2 & exit /b 1)\n"
-                "echo {\"number\":123,\"url\":\"https://example.test/pr/123\",\"baseRefName\":\"develop\"}\n",
+                "echo https://example.test/pull/123\n",
                 encoding="utf-8",
             )
         elif mode == "existing":
             gh.write_text(
                 "@echo off\n"
-                "echo {\"number\":45,\"url\":\"https://example.test/pr/45\",\"baseRefName\":\"develop\",\"state\":\"OPEN\"}\n",
+                "echo {\"number\":45,\"url\":\"https://example.test/pull/45\",\"baseRefName\":\"develop\",\"state\":\"OPEN\"}\n",
                 encoding="utf-8",
             )
         else:
@@ -179,16 +182,19 @@ def make_fake_tools(bin_dir: Path, mode: str):
     else:
         gh = bin_dir / "gh"
         if mode == "missing_then_create":
+            # Simula el 'gh' real: 'pr view' falla (no existe todavia) y
+            # 'pr create' (sin --json, que no todas las versiones de gh
+            # soportan) imprime unicamente la URL de la PR en stdout.
             gh.write_text(
                 "#!/bin/sh\n"
                 "case \"$*\" in *'pr view'*) echo 'no pull requests found' >&2; exit 1;; esac\n"
-                "echo '{\"number\":123,\"url\":\"https://example.test/pr/123\",\"baseRefName\":\"develop\"}'\n",
+                "echo 'https://example.test/pull/123'\n",
                 encoding="utf-8",
             )
         elif mode == "existing":
             gh.write_text(
                 "#!/bin/sh\n"
-                "echo '{\"number\":45,\"url\":\"https://example.test/pr/45\",\"baseRefName\":\"develop\",\"state\":\"OPEN\"}'\n",
+                "echo '{\"number\":45,\"url\":\"https://example.test/pull/45\",\"baseRefName\":\"develop\",\"state\":\"OPEN\"}'\n",
                 encoding="utf-8",
             )
         else:

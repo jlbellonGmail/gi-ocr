@@ -4,3 +4,4 @@ Un archivo por servicio/documento OCR: para qué sirve, cómo consumirlo,
 ejemplos.
 
 - [GAS](gas.md)
+- [Captura OCR Local Ágil](captura-ocr-local-agil.md)

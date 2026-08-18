@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 function Get-RepositoryRoot {
     $root = (& git rev-parse --show-toplevel) -join "`n"
