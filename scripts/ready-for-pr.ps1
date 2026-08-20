@@ -41,7 +41,7 @@ function Get-CheckedOutput {
 
 # Get-GitHubCliPath y Get-PowerShellPath se reutilizan de feature-contract.ps1
 # (dot-sourced arriba), en vez de redefinirlas aca (ver criterio 15 de
-# runs/03-cierre-operativo-circuito-agentico/spec.md).
+# runs/04-cierre-operativo-circuito-agentico/spec.md).
 
 function Invoke-GhJson {
     param(
@@ -108,7 +108,7 @@ function Get-ExistingPr {
 # inicio, antes de cualquier verificacion propia de rama/commits y en
 # particular antes de tocar ROADMAP.md. Deliberadamente NO reutiliza la
 # matriz worktree/rama/ROADMAP de 'preflight.ps1 -Slug' (ver "Nota de
-# alcance" del spec de 03-cierre-operativo-circuito-agentico): esa matriz
+# alcance" del spec de 04-cierre-operativo-circuito-agentico): esa matriz
 # depende de la rama remota, que en el camino feliz de este script todavia
 # no existe entre marcar ROADMAP.md [-] y pushear.
 Assert-ToolchainReady

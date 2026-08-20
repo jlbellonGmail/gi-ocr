@@ -4,7 +4,7 @@ param(
 
 <#
     preflight.ps1 — diagnostico de solo lectura del circuito agentico
-    (ver AGENTS.md y runs/03-cierre-operativo-circuito-agentico/spec.md).
+    (ver AGENTS.md y runs/04-cierre-operativo-circuito-agentico/spec.md).
 
     NUNCA muta el repositorio: no commitea, no pushea (salvo 'git fetch',
     de solo lectura), no crea ni borra ramas/worktrees. Toda accion
@@ -237,7 +237,7 @@ function Get-ReconcilerDiagnostics {
 function Get-FeatureMatrixDiagnostics {
     <#
         Evalua la matriz de consistencia worktree/rama/ROADMAP descrita en
-        "Contexto" del spec de 03-cierre-operativo-circuito-agentico, como
+        "Contexto" del spec de 04-cierre-operativo-circuito-agentico, como
         comando standalone (nunca invocada por ready-for-pr.ps1 sobre si
         mismo: ver criterio 15 y la "Nota de alcance" del spec).
     #>

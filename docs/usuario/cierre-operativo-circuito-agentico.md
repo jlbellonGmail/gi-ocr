@@ -79,7 +79,7 @@ comandos por vos.
 ### `preflight.ps1 -Slug <NN-slug>` (diagnóstico de una feature puntual)
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preflight.ps1 -Slug 03-cierre-operativo-circuito-agentico
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/preflight.ps1 -Slug 04-cierre-operativo-circuito-agentico
 ```
 
 Corre todo lo del modo general, y además evalúa la matriz
@@ -90,12 +90,12 @@ del reconciliador local si corresponde.
 **Ejemplo — feature en camino a PR/CI, todo normal:**
 
 ```
-==> Matriz worktree/rama/ROADMAP para '03-cierre-operativo-circuito-agentico'
-[OK] '03-cierre-operativo-circuito-agentico' en camino a PR/CI: rama y worktree locales, rama remota presente.
-[OK] PR #7 (https://github.com/.../pull/7): estado OPEN, mergeStateStatus CLEAN. Detalle de checks: scripts/wait-pr-ci.ps1 -Snapshot -PrRef feature/03-cierre-operativo-circuito-agentico
+==> Matriz worktree/rama/ROADMAP para '04-cierre-operativo-circuito-agentico'
+[OK] '04-cierre-operativo-circuito-agentico' en camino a PR/CI: rama y worktree locales, rama remota presente.
+[OK] PR #7 (https://github.com/.../pull/7): estado OPEN, mergeStateStatus CLEAN. Detalle de checks: scripts/wait-pr-ci.ps1 -Snapshot -PrRef feature/04-cierre-operativo-circuito-agentico
 
-==> Contrato de artefactos para '03-cierre-operativo-circuito-agentico' (docs/decision/indices)
-[OK] El contrato de artefactos de '03-cierre-operativo-circuito-agentico' esta completo (spec, audit, test-report, docs, decision, indices).
+==> Contrato de artefactos para '04-cierre-operativo-circuito-agentico' (docs/decision/indices)
+[OK] El contrato de artefactos de '04-cierre-operativo-circuito-agentico' esta completo (spec, audit, test-report, docs, decision, indices).
 
 PREFLIGHT: OK (0 advertencia(s))
 ```
@@ -106,8 +106,8 @@ PREFLIGHT: OK (0 advertencia(s))
 que se hizo a mano):
 
 ```
-==> Matriz worktree/rama/ROADMAP para '03-cierre-operativo-circuito-agentico'
-[BLOCKING] '03-cierre-operativo-circuito-agentico' esta en READY_FOR_PR ([-]) pero no existe la rama remota 'feature/03-cierre-operativo-circuito-agentico'. ready-for-pr.ps1 exige push antes de marcar [-]; algo se hizo a mano o el push se perdio. Accion: Corre: git push -u origin feature/03-cierre-operativo-circuito-agentico ; luego re-corre: powershell -File scripts/ready-for-pr.ps1 03-cierre-operativo-circuito-agentico (es idempotente: no repite el commit de [-], solo reintenta push/PR).
+==> Matriz worktree/rama/ROADMAP para '04-cierre-operativo-circuito-agentico'
+[BLOCKING] '04-cierre-operativo-circuito-agentico' esta en READY_FOR_PR ([-]) pero no existe la rama remota 'feature/04-cierre-operativo-circuito-agentico'. ready-for-pr.ps1 exige push antes de marcar [-]; algo se hizo a mano o el push se perdio. Accion: Corre: git push -u origin feature/04-cierre-operativo-circuito-agentico ; luego re-corre: powershell -File scripts/ready-for-pr.ps1 04-cierre-operativo-circuito-agentico (es idempotente: no repite el commit de [-], solo reintenta push/PR).
 
 PREFLIGHT: BLOCKING (1 problema(s) bloqueante(s), 0 advertencia(s))
 ```
@@ -128,13 +128,13 @@ detalle de esta decisión de diseño).
 ### `wait-pr-ci.ps1 -Snapshot` (foto no bloqueante de PR/CI)
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/wait-pr-ci.ps1 -Snapshot -PrRef feature/03-cierre-operativo-circuito-agentico
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/wait-pr-ci.ps1 -Snapshot -PrRef feature/04-cierre-operativo-circuito-agentico
 ```
 
 Salida esperada (PR existente, checks en curso):
 
 ```
-==> Consultando snapshot de PR/CI para 'feature/03-cierre-operativo-circuito-agentico' (no bloqueante)...
+==> Consultando snapshot de PR/CI para 'feature/04-cierre-operativo-circuito-agentico' (no bloqueante)...
 ==> PR #7: https://github.com/.../pull/7
 ==> Estado: OPEN | mergeStateStatus: CLEAN
 ==> Checks (snapshot, sin --watch):

@@ -3,7 +3,7 @@
 Endurece el uso cotidiano del circuito descrito en `AGENTS.md` con
 herramientas de diagnóstico y recuperación, sin cambiar su forma (4
 agentes, un solo HITL). Implementa el spec
-`runs/03-cierre-operativo-circuito-agentico/spec.md` (aprobado en el
+`runs/04-cierre-operativo-circuito-agentico/spec.md` (aprobado en el
 intento 2, tras resolver en el intento 1 un conflicto de diseño entre el
 criterio 4 y el criterio 15 — ver más abajo).
 
@@ -374,22 +374,25 @@ común), no hace ningún push adicional — sigue siendo idempotente sin
 duplicar commits ni generar pushes de más en reintentos múltiples
 seguidos.
 
-## Nota operativa — entrada de `ROADMAP.md` faltante
+## Nota operativa — entrada de `ROADMAP.md` faltante y renumeración a 04
 
 Al implementar esta feature, `ROADMAP.md` (en el punto de partida de esta
-rama, heredado de `develop`) no tenía ninguna entrada para el slug
-`03-cierre-operativo-circuito-agentico` — el backlog solo llegaba hasta
-`03-empaquetado-despliegue`, y los slugs futuros que el spec aprobado ya
+rama, heredado de `develop`) no tenía ninguna entrada para esta feature —
+el backlog solo llegaba hasta `03-empaquetado-despliegue` (el cierre de
+`02-mejora-precision-ocr` mergeó una versión del `ROADMAP.md` más corta
+que la que asumía el spec aprobado), y los slugs futuros que el spec ya
 cita explícitamente en su sección "Explícitamente fuera de alcance"
 (`10-calidad-ci-lint-formato`, `11-empaquetado-despliegue`,
 `12-release-versionado-productivo`) tampoco existían todavía en el
-backlog. El `builder-agent` agregó la entrada `[ ]` mínima necesaria para
-que `ready-for-pr.ps1`/`Assert-FeatureContract` puedan operar sobre esta
-feature (requisito técnico duro del circuito, no una decisión de
-producto), sin renumerar ni tocar la entrada preexistente
-`03-empaquetado-despliegue` (que no es responsabilidad de esta feature).
-Ver `runs/03-cierre-operativo-circuito-agentico/decision.md`, sección
-"Nota sobre ROADMAP.md", para el detalle completo señalado al humano.
+backlog. `builder-agent` agregó primero la entrada mínima bajo el
+slug/número original del spec (`03-cierre-operativo-circuito-agentico`),
+lo cual colisionaba en el prefijo `03` con `03-empaquetado-despliegue`;
+el orquestador del circuito resolvió esa colisión antes de QA renombrando
+esta feature a `04-cierre-operativo-circuito-agentico` (rama, worktree,
+`runs/`, docs y comentarios de script), dejando
+`03-empaquetado-despliegue` intacto. Ver
+`runs/04-cierre-operativo-circuito-agentico/decision.md`, sección "Nota
+sobre ROADMAP.md", para el detalle completo señalado al humano.
 
 ## Cobertura de tests y su alcance en CI
 
@@ -420,7 +423,7 @@ Ver `runs/03-cierre-operativo-circuito-agentico/decision.md`, sección
   reconciliador local — no es una laguna nueva de esta feature, es
   consistente con la limitación ya aceptada del proyecto. La evidencia
   real de esta suite (20 tests en verde) es local, en Windows, documentada
-  en `runs/03-cierre-operativo-circuito-agentico/decision.md`.
+  en `runs/04-cierre-operativo-circuito-agentico/decision.md`.
 
 ## Tabla de interrupción/recuperación por paso del circuito
 

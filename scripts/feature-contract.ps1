@@ -405,7 +405,7 @@ function Get-ToolchainDiagnostics {
         git, gh (binario + autenticacion), PowerShell, Python y .venv.
         NO evalua el estado de 'develop' ni la matriz worktree/rama/ROADMAP
         de una feature puntual (eso vive exclusivamente en preflight.ps1,
-        ver "Nota de alcance" del spec de 03-cierre-operativo-circuito-agentico).
+        ver "Nota de alcance" del spec de 04-cierre-operativo-circuito-agentico).
         Devuelve un arreglo de pscustomobject { Tool; Severity; Message; Action }
         con Severity en OK | BLOCKING.
     #>
