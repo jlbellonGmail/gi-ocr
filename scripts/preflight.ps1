@@ -396,7 +396,26 @@ if (-not [string]::IsNullOrWhiteSpace($Slug)) {
 
     Write-Host ""
     Write-Host "==> Contrato de artefactos para '$Slug' (docs/decision/indices)"
-    $contractStatus = Get-FeatureContractStatus -Slug $Slug
+    # El titulo real de la feature no vive en ningun lado canonico salvo
+    # el propio contenido de decision.md ("# Decision: <slug> - <Titulo>").
+    # Si existe, se reusa para no reportar falsos WARNING de "enlace no
+    # exacto" cuando el titulo elegido difiere del que Get-FeatureInfo
+    # derivaria por defecto a partir del slug (caso comun: titulos con
+    # tildes/preposiciones, como esta misma feature).
+    $decisionTitle = ""
+    $decisionPathForTitle = "runs/$Slug/decision.md"
+    if (Test-Path -LiteralPath $decisionPathForTitle -PathType Leaf) {
+        $firstLine = (Get-Content -LiteralPath $decisionPathForTitle -TotalCount 1 -Encoding UTF8)
+        if ($firstLine -match "^#\s*Decision:\s*$([regex]::Escape($Slug))\s*-\s*(?<title>.+)$") {
+            $decisionTitle = $Matches["title"].Trim()
+        }
+    }
+    if ([string]::IsNullOrWhiteSpace($decisionTitle)) {
+        $contractStatus = Get-FeatureContractStatus -Slug $Slug
+    }
+    else {
+        $contractStatus = Get-FeatureContractStatus -Slug $Slug -Title $decisionTitle
+    }
     if ($contractStatus.IsComplete) {
         Add-Report "contract:$Slug" "OK" "El contrato de artefactos de '$Slug' esta completo (spec, audit, test-report, docs, decision, indices)." ""
         Write-ReportLine $report[$report.Count - 1]
