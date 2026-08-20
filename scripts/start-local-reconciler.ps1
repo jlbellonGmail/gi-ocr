@@ -72,9 +72,19 @@ $cmdLine = 'cmd.exe /s /c ' + (Convert-ToCmdQuoted ($innerCommand + " 1>" + (Con
 
 Write-Host "==> Iniciando reconciliador local para $Slug. Log: $logPath"
 try {
+    # Arranque explicitamente oculto: ShowWindow = 0 (SW_HIDE) + CreateFlags
+    # con CREATE_NO_WINDOW (0x08000000) sobre Win32_ProcessStartup, para que
+    # el proceso en segundo plano (hasta MaxMinutes) nunca muestre una
+    # consola flotante. Ver docs/tecnica/cierre-operativo-circuito-agentico.md.
+    $startupInfo = New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{
+        ShowWindow = 0
+        CreateFlags = 0x08000000
+    }
+
     $created = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
         CommandLine = $cmdLine
         CurrentDirectory = $mainRoot
+        ProcessStartupInformation = $startupInfo
     }
     if ($created.ReturnValue -ne 0) {
         throw "Win32_Process.Create fallo con codigo $($created.ReturnValue)."
