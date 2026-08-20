@@ -155,6 +155,36 @@ def test_ready_gate_fails_when_decision_or_index_link_is_missing(tmp_path: Path)
     assert "decision.md" in result.stderr
 
 
+def test_feature_contract_status_reports_multiple_missing_artifacts_without_throwing(
+    tmp_path: Path,
+):
+    repo, slug, title = make_contract_repo(tmp_path)
+    # decision.md nunca se creo (New-DecisionFile no corrio) y ademas se
+    # rompe el enlace exacto en docs/usuario/index.md, para verificar que
+    # el reporte no-throwing lista ambos problemas en una sola corrida.
+    (repo / "docs" / "usuario" / "index.md").write_text(
+        "# Usuario\n\nTexto externo\n- [Otro titulo](demo-feature.md)\n",
+        encoding="utf-8",
+    )
+    command = (
+        f". '{CONTRACT}'; "
+        f"$status = Get-FeatureContractStatus -Slug '{slug}' -Title '{title}'; "
+        "Write-Output ('IsComplete=' + $status.IsComplete); "
+        "Write-Output ('ProblemCount=' + $status.Problems.Count); "
+        "$status.Problems | ForEach-Object { Write-Output ('PROBLEM: ' + $_) }"
+    )
+
+    result = run_ps(command, repo)
+
+    assert result.returncode == 0, result.stderr
+    assert "IsComplete=False" in result.stdout
+    problem_lines = [line for line in result.stdout.splitlines() if line.startswith("PROBLEM: ")]
+    assert len(problem_lines) >= 2
+    combined = "\n".join(problem_lines)
+    assert "decision.md" in combined
+    assert "docs" in combined and "usuario" in combined and "index.md" in combined
+
+
 def make_fake_tools(bin_dir: Path, mode: str):
     bin_dir.mkdir()
     if os.name == "nt":
@@ -251,6 +281,28 @@ def test_ready_for_pr_blocks_real_gh_error(tmp_path: Path):
 
     assert result.returncode != 0
     assert "auth failed" in result.stderr
+
+
+def test_ready_for_pr_blocks_before_touching_roadmap_when_toolchain_check_fails(
+    tmp_path: Path,
+):
+    # Criterio 15(b): gh presente pero sin autenticar (alternativa aceptada
+    # por el spec a "gh ausente") debe abortar el diagnostico generico de
+    # herramientas (Assert-ToolchainReady, corrido al inicio del script)
+    # ANTES de marcar ROADMAP.md como READY_FOR_PR: sin commit nuevo, sin
+    # cambios en el archivo respecto del HEAD previo.
+    repo, slug, title, env = prepare_ready_repo(tmp_path, "real_error")
+    head_before = git(repo, "rev-parse", "HEAD").stdout.strip()
+    roadmap_before = (repo / "ROADMAP.md").read_text(encoding="utf-8")
+
+    result = run_file(READY_FOR_PR, [slug, title], repo, env)
+
+    assert result.returncode != 0
+    assert "auth failed" in result.stderr
+    assert git(repo, "rev-parse", "HEAD").stdout.strip() == head_before
+    assert (repo / "ROADMAP.md").read_text(encoding="utf-8") == roadmap_before
+    assert "- [-]" not in (repo / "ROADMAP.md").read_text(encoding="utf-8")
+    assert git(repo, "status", "--short").stdout.strip() == ""
 
 
 def test_workflow_yaml_is_valid():

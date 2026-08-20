@@ -39,33 +39,9 @@ function Get-CheckedOutput {
     return ($output -join "`n").Trim()
 }
 
-function Get-GitHubCliPath {
-    $command = Get-Command gh -ErrorAction SilentlyContinue
-    if ($command) {
-        return $command.Source
-    }
-
-    $defaultPath = Join-Path $env:ProgramFiles "GitHub CLI\gh.exe"
-    if (Test-Path -LiteralPath $defaultPath) {
-        return $defaultPath
-    }
-
-    throw "GitHub CLI (gh) no esta disponible. Instalalo y autenticalo para crear/verificar PRs automaticamente."
-}
-
-function Get-PowerShellPath {
-    $pwsh = Get-Command pwsh -ErrorAction SilentlyContinue
-    if ($pwsh) {
-        return $pwsh.Source
-    }
-
-    $windowsPowerShell = Get-Command powershell.exe -ErrorAction SilentlyContinue
-    if ($windowsPowerShell) {
-        return $windowsPowerShell.Source
-    }
-
-    throw "PowerShell no esta disponible para iniciar el reconciliador local."
-}
+# Get-GitHubCliPath y Get-PowerShellPath se reutilizan de feature-contract.ps1
+# (dot-sourced arriba), en vez de redefinirlas aca (ver criterio 15 de
+# runs/03-cierre-operativo-circuito-agentico/spec.md).
 
 function Invoke-GhJson {
     param(
@@ -126,6 +102,16 @@ function Get-ExistingPr {
 
     throw "Error real consultando PR existente con gh: $($result.StdErr)"
 }
+
+# Criterio 15: diagnostico generico de herramientas (git, gh binario +
+# autenticacion, PowerShell, Python, .venv) de preflight.ps1, corrido al
+# inicio, antes de cualquier verificacion propia de rama/commits y en
+# particular antes de tocar ROADMAP.md. Deliberadamente NO reutiliza la
+# matriz worktree/rama/ROADMAP de 'preflight.ps1 -Slug' (ver "Nota de
+# alcance" del spec de 03-cierre-operativo-circuito-agentico): esa matriz
+# depende de la rama remota, que en el camino feliz de este script todavia
+# no existe entre marcar ROADMAP.md [-] y pushear.
+Assert-ToolchainReady
 
 if ([string]::IsNullOrWhiteSpace($Title)) {
     $Title = "Feature $Slug"
