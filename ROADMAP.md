@@ -102,10 +102,29 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       benchmark de lote (`scripts/benchmark_captura.py`, 400 documentos,
       p50/p95, memoria) y robustez con facturas reales adicionales más
       allá del fixture usado en desarrollo.
+- [ ] 03-cierre-operativo-circuito-agentico — Endurecer el uso cotidiano
+      del circuito (`AGENTS.md`) con `scripts/preflight.ps1` (diagnostico
+      de herramientas y matriz worktree/rama/ROADMAP), `-Snapshot` no
+      bloqueante en `wait-pr-ci.ps1`, arranque sin ventana visible en
+      `start-local-reconciler.ps1`, reintento de push pendiente en
+      `close-feature.ps1`, y reutilizacion del diagnostico generico de
+      herramientas en `ready-for-pr.ps1`. Entrada de backlog agregada por
+      `builder-agent` al detectar que faltaba (ver
+      `runs/03-cierre-operativo-circuito-agentico/decision.md`, seccion
+      "Nota sobre ROADMAP.md"): el spec aprobado ya referencia este slug
+      exacto y numeros de backlog futuros (`10-calidad-ci-lint-formato`,
+      `11-empaquetado-despliegue`, `12-release-versionado-productivo`) que
+      tampoco existen todavia en este archivo; se documenta como
+      precondicion de circuito faltante, no como decision de producto.
 - [ ] 03-empaquetado-despliegue — Decisión de despliegue (Dockerfile,
       `release.yml`, destino) una vez que exista una decisión de
       infraestructura concreta. No se inicia sin esa decisión (ver
-      `docs/tecnica/arquitectura.md`).
+      `docs/tecnica/arquitectura.md`). Nota: coincide en el prefijo `03`
+      con `03-cierre-operativo-circuito-agentico` de arriba (ver esa
+      entrada); no se renumera aca porque el spec de esta feature no
+      autoriza reordenar el backlog de otra feature — queda para que el
+      humano lo renumere si corresponde (por ejemplo a
+      `11-empaquetado-despliegue`, como ya anticipa el spec citado).
 
 ## Cómo se usa este archivo
 
