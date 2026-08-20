@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -97,7 +97,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 ## Backlog (circuito `AGENTS.md`)
 
 - [x] 01-captura-ocr-local-agil — Ver "Estado actual verificado" arriba.
-- [-] 02-mejora-precision-ocr — Validar con datos reales lo que el
+- [x] 02-mejora-precision-ocr — Validar con datos reales lo que el
       two-pass ROI de `01-captura-ocr-local-agil` todavía no verificó:
       benchmark de lote (`scripts/benchmark_captura.py`, 400 documentos,
       p50/p95, memoria) y robustez con facturas reales adicionales más
@@ -124,6 +124,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
