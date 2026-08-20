@@ -72,20 +72,18 @@ $cmdLine = 'cmd.exe /s /c ' + (Convert-ToCmdQuoted ($innerCommand + " 1>" + (Con
 
 Write-Host "==> Iniciando reconciliador local para $Slug. Log: $logPath"
 try {
-    # Arranque explicitamente oculto: ShowWindow = 0 (SW_HIDE) + CreateFlags
-    # con CREATE_NO_WINDOW (0x08000000) sobre Win32_ProcessStartup, para que
-    # el proceso en segundo plano (hasta MaxMinutes) nunca muestre una
-    # consola flotante. Ver docs/tecnica/cierre-operativo-circuito-agentico.md.
-    $startupInfo = New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{
-        ShowWindow = 0
-        CreateFlags = 0x08000000
-    }
+    # Arranque explicitamente oculto: ShowWindow = 0 (SW_HIDE) sobre
+    # Win32_ProcessStartup, para que el proceso en segundo plano (hasta
+    # MaxMinutes) nunca muestre una consola flotante. Ver
+    # docs/tecnica/cierre-operativo-circuito-agentico.md para el detalle
+    # completo de esta decision, incluida la razon por la que se usa el
+    # wrapper WMI clasico ([wmiclass]) en vez de Invoke-CimMethod, y por
+    # la que no se agrega ademas CreateFlags = CREATE_NO_WINDOW.
+    $startupInfo = ([wmiclass]"Win32_ProcessStartup").CreateInstance()
+    $startupInfo.ShowWindow = [uint16] 0
 
-    $created = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
-        CommandLine = $cmdLine
-        CurrentDirectory = $mainRoot
-        ProcessStartupInformation = $startupInfo
-    }
+    $processClass = [wmiclass]"Win32_Process"
+    $created = $processClass.Create($cmdLine, $mainRoot, $startupInfo)
     if ($created.ReturnValue -ne 0) {
         throw "Win32_Process.Create fallo con codigo $($created.ReturnValue)."
     }

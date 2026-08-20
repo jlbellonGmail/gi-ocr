@@ -269,18 +269,20 @@ ejercitar las ramas `BLOCKING` de Python/`.venv`).
 
 ## Decisión: ventana oculta del reconciliador (criterio 8)
 
-`scripts/start-local-reconciler.ps1` lanza el proceso en segundo plano
-vía `Invoke-CimMethod -ClassName Win32_Process -MethodName Create`. Antes
-de esta feature, la llamada no pasaba información de arranque, lo que
-podía dejar una consola visible corriendo hasta `MaxMinutes` (1440 por
-defecto = 24 horas). Se agregó:
+`scripts/start-local-reconciler.ps1` lanza el proceso en segundo plano vía
+WMI (`Win32_Process.Create`). Antes de esta feature, la llamada no pasaba
+información de arranque, lo que podía dejar una consola visible corriendo
+hasta `MaxMinutes` (1440 por defecto = 24 horas).
+
+**Intento inicial (revertido, documentado por transparencia).** La
+primera implementación usó los cmdlets modernos de CIM, tal como sugería
+el spec:
 
 ```powershell
 $startupInfo = New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{
     ShowWindow = 0
     CreateFlags = 0x08000000
 }
-
 $created = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
     CommandLine = $cmdLine
     CurrentDirectory = $mainRoot
@@ -288,10 +290,46 @@ $created = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Argumen
 }
 ```
 
-`ShowWindow = 0` es `SW_HIDE`; `CreateFlags = 0x08000000` es
-`CREATE_NO_WINDOW`. Es el mecanismo estándar de Win32
-(`Win32_ProcessStartup` embebido en `Win32_Process.Create`), sin cambiar
-el mecanismo de lanzamiento de fondo (WMI), tal como anticipaba el spec.
+Verificado con la suite completa de `tests/test_local_reconciler_scripts.py`
+corrida localmente: esto **rompía el arranque del reconciliador** en este
+entorno (Windows PowerShell 5.1) — `Invoke-CimMethod` fallaba con
+`"Los tipos no coinciden"` (`HRESULT 0x80041005`, `InvalidType`) al pasar
+el objeto `ProcessStartupInformation` embebido, sin importar si llevaba
+`ShowWindow`, `CreateFlags`, ambos o ninguno seteado — un problema conocido
+de la capa MI (Management Infrastructure) de los cmdlets CIM al pasar
+instancias `-ClientOnly` como parámetros de método embebidos. El fallo no
+generaba una consola visible: directamente impedía que el reconciliador
+arrancara (6 de 7 tests de esa suite fallaban con logs nunca creados),
+mucho peor que el problema original.
+
+**Implementación final.** Se reemplaza `Invoke-CimMethod`/`New-CimInstance`
+por el wrapper WMI clásico (`[wmiclass]`), que sí acepta el objeto
+embebido en este entorno — sigue siendo WMI/`Win32_Process`, sin cambiar
+el mecanismo de lanzamiento de fondo, solo la familia de cmdlets usada
+para invocarlo:
+
+```powershell
+$startupInfo = ([wmiclass]"Win32_ProcessStartup").CreateInstance()
+$startupInfo.ShowWindow = [uint16] 0
+
+$processClass = [wmiclass]"Win32_Process"
+$created = $processClass.Create($cmdLine, $mainRoot, $startupInfo)
+```
+
+`ShowWindow = 0` es `SW_HIDE`. **No se agrega `CreateFlags`
+(`CREATE_NO_WINDOW` = `0x08000000`).** Verificado empíricamente en este
+entorno: pasar `CreateFlags = 0x08000000` a `Win32_Process.Create` (con
+cualquiera de los dos mecanismos, CIM o `[wmiclass]`) devuelve
+`ReturnValue = 21` (`Invalid Parameter`) — `Win32_ProcessStartup.CreateFlags`
+no acepta ese valor en este entorno, aunque `CREATE_NO_WINDOW` es un valor
+válido de la API `CreateProcess` nativa. `ShowWindow = 0` (`SW_HIDE`) por
+sí solo alcanza para el objetivo del criterio 8 (esconder la ventana del
+proceso en segundo plano) y no produce ese error; es además el mecanismo
+más citado en la práctica para este caso de uso concreto (ocultar
+consolas lanzadas vía `Win32_Process.Create`). Esta es exactamente la
+situación que la sección "Riesgos / supuestos" del spec anticipó y
+autorizó resolver a discreción del builder si el mecanismo sugerido no
+alcanzaba en el entorno real de ejecución.
 
 **Verificación aceptada para este criterio puntual (decisión explícita
 del spec, no del builder):** no se agrega un test automatizado que falle
