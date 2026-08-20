@@ -248,6 +248,39 @@ def test_push_failure_does_not_cleanup_or_claim_success(tmp_path: Path):
     assert_not_cleaned(repo, worktree)
 
 
+def test_retries_pending_push_when_close_commit_exists_locally_but_not_pushed(
+    tmp_path: Path,
+):
+    # Simula un corte de red: el commit de cierre queda hecho localmente
+    # (Set-Content + git commit ya corrieron) pero 'git push origin develop'
+    # falla por el hook. La segunda corrida debe detectar que el commit ya
+    # existe localmente (already-closed), reintentar el push pendiente en
+    # vez de saltar directo a la verificacion remota, y terminar en exit 0
+    # sin generar un commit de cierre duplicado.
+    repo, remote, worktree, bin_dir = make_case(tmp_path, f"- [-] {SLUG} - Validacion\n")
+    hook = remote / "hooks" / "pre-receive"
+    hook.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+    hook.chmod(hook.stat().st_mode | stat.S_IXUSR)
+
+    first = close_feature(repo, worktree, bin_dir)
+    assert first.returncode != 0
+    assert f"- [x] {SLUG} - Validacion" in roadmap(repo)
+    assert f"- [-] {SLUG}" in roadmap(repo, "origin/develop")
+    before = commit_count(repo)
+    assert_not_cleaned(repo, worktree)
+
+    hook.unlink()
+
+    second = close_feature(repo, worktree, bin_dir)
+
+    assert second.returncode == 0, second.stdout
+    assert commit_count(repo) == before
+    assert f"- [x] {SLUG} - Validacion" in roadmap(repo, "origin/develop")
+    assert f"- [-] {SLUG}" not in roadmap(repo, "origin/develop")
+    assert not worktree.exists()
+    assert git(repo, "rev-parse", "--verify", "--quiet", BRANCH, check=False).returncode != 0
+
+
 def test_rerun_after_success_does_not_create_commit(tmp_path: Path):
     repo, _, worktree, bin_dir = make_case(tmp_path, f"- [-] {SLUG} - Validacion\n")
     first = close_feature(repo, worktree, bin_dir)

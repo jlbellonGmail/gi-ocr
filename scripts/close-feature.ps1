@@ -263,6 +263,16 @@ $closeState = Assert-RoadmapCanClose $roadmap $Slug
 
 if ($closeState -eq "already-closed") {
     Write-Host "==> $Slug ya esta marcada exactamente una vez como [x]. Reejecucion segura, sin commit vacio."
+
+    Write-Host "==> Verificando si el commit de cierre local ya llego a origin/$baseBranch..."
+    Invoke-Checked "git" @("fetch", "origin", $baseBranch)
+    $remoteRoadmapPreCheck = Get-CheckedOutput "git" @("show", "origin/$baseBranch`:ROADMAP.md")
+    $remoteStatePreCheck = Get-RoadmapState $remoteRoadmapPreCheck $Slug
+
+    if ($remoteStatePreCheck.Done -ne 1) {
+        Write-Host "==> El commit de cierre existe en el checkout local pero no llego a origin/$baseBranch (corte de red u otra interrupcion tras el commit). Reintentando push pendiente..."
+        Invoke-Checked "git" @("push", "origin", $baseBranch)
+    }
 }
 else {
     Write-Host "==> Marcando '$Slug' como completada en ROADMAP.md..."
