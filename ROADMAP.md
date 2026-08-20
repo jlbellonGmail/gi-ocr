@@ -1,4 +1,4 @@
-# Roadmap: gi-ocr (Smart Invoice Capture)
+﻿# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -106,6 +106,21 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       `release.yml`, destino) una vez que exista una decisión de
       infraestructura concreta. No se inicia sin esa decisión (ver
       `docs/tecnica/arquitectura.md`).
+- [-] 04-cierre-operativo-circuito-agentico — Endurecer el uso cotidiano
+      del circuito (`AGENTS.md`) con `scripts/preflight.ps1` (diagnostico
+      de herramientas y matriz worktree/rama/ROADMAP), `-Snapshot` no
+      bloqueante en `wait-pr-ci.ps1`, arranque sin ventana visible en
+      `start-local-reconciler.ps1`, reintento de push pendiente en
+      `close-feature.ps1`, y reutilizacion del diagnostico generico de
+      herramientas en `ready-for-pr.ps1`. Entrada de backlog agregada
+      durante la implementacion al detectar que faltaba (ver
+      `runs/04-cierre-operativo-circuito-agentico/decision.md`, seccion
+      "Nota sobre ROADMAP.md"): el `ROADMAP.md` de `develop` al momento de
+      arrancar esta feature ya no traia el backlog extendido que el spec
+      aprobado asumia (solo llegaba hasta `03-empaquetado-despliegue`,
+      tras el cierre de `02-mejora-precision-ocr`); se numero como `04`
+      (siguiente NN libre) en vez de reusar `03` para no colisionar con
+      `03-empaquetado-despliegue`, que se deja intacto.
 
 ## Cómo se usa este archivo
 
@@ -124,6 +139,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
