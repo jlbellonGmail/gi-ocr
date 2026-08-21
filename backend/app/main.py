@@ -12,9 +12,6 @@ os.environ.setdefault("GI_OCR_ORT_THREADS", "3")
 import asyncio
 import json
 import re
-import shutil
-import tempfile
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -25,10 +22,18 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import ocr_engine
+from .exif_privacy import anonymize_upload_bytes
+from .fs_permissions import secure_dir, secure_file
 from .inbound_watcher import SUPPORTED, InboundWatcher
 from .job_queue import JobQueue
 from .job_store import JOB_ID_RE, JobStore, sanitize_name
 from .review_service import confirm_review
+from .upload_validation import (
+    UploadValidationError,
+    max_upload_bytes,
+    random_upload_name,
+    validate_upload_content,
+)
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_DIR = BASE_DIR / "output"
@@ -36,7 +41,7 @@ INBOUND_DIR = BASE_DIR / "inbound"
 FRONTEND_DIR = BASE_DIR / "frontend"
 
 ALLOWED_EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".pdf"}
-MAX_BYTES = 30 * 1024 * 1024  # 30 MB
+MAX_BYTES = 30 * 1024 * 1024  # 30 MB, valor por defecto (ver upload_validation.max_upload_bytes)
 
 store = JobStore(DATA_DIR)
 queue = JobQueue(store, workers=2)
@@ -65,27 +70,44 @@ class ConfirmPayload(BaseModel):
 
 
 def _validate_upload(filename: str, size: int) -> str:
+    """Valida extensión (sin cambios) y tamaño máximo configurable
+    (`GI_OCR_MAX_UPLOAD_BYTES`, ver `upload_validation.max_upload_bytes`).
+    Devuelve el nombre sanitizado (sin path traversal). No valida firma de
+    archivo ni Content-Type: eso lo hace `upload_validation.
+    validate_upload_content` sobre el contenido real, en `_save_upload`."""
     ext = Path(filename).suffix.lower()
     if ext not in ALLOWED_EXTS:
         raise HTTPException(400, f"Extensión no soportada: {ext}")
-    if size > MAX_BYTES:
-        raise HTTPException(413, "Archivo demasiado grande (máx 30MB)")
+    limit = max_upload_bytes()
+    if size > limit:
+        raise HTTPException(413, f"Archivo demasiado grande (máx {limit} bytes)")
     return sanitize_name(filename)
 
 
 def _save_upload(upload: UploadFile) -> Path:
+    """Valida (extensión, tamaño, firma real, Content-Type declarado) y
+    persiste el upload en `output/uploads/` con nombre aleatorio no
+    predecible, tras anonimizar metadata EXIF identificatoria (JPEG/TIFF).
+
+    Si cualquier validación falla, no queda ningún archivo nuevo en
+    `output/uploads/` (la validación completa ocurre antes de escribir a
+    disco)."""
     content = upload.file.read()
-    _validate_upload(upload.filename or "doc", len(content))
-    name = sanitize_name(upload.filename or "doc")
-    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=Path(name).suffix)
-    tmp.write(content)
-    tmp.close()
-    # mover a directorio de uploads persistente (output/uploads, gitignored)
+    filename = upload.filename or "doc"
+    name = _validate_upload(filename, len(content))
+    try:
+        family = validate_upload_content(filename, content, upload.content_type)
+    except UploadValidationError as e:
+        raise HTTPException(status_code=e.status_code, detail={"reason": e.reason, "message": e.message})
+
+    content = anonymize_upload_bytes(content, family)
+
     uploads = DATA_DIR / "uploads"
     uploads.mkdir(parents=True, exist_ok=True)
-    safe = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}_{name}"
-    dest = uploads / safe
-    shutil.move(tmp.name, dest)
+    secure_dir(uploads)
+    dest = uploads / random_upload_name(Path(name).suffix)
+    dest.write_bytes(content)
+    secure_file(dest)
     return dest
 
 
