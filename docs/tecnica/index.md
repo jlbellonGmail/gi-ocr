@@ -11,3 +11,4 @@ decisiones de diseño.
 - [Cierre Operativo del Circuito Agentico](cierre-operativo-circuito-agentico.md)
 - [Empaquetado y Despliegue](empaquetado-despliegue.md)
 - [Extension de Roadmap Profesional](extensionn-roadmap.md)
+- [Corrección de orientación EXIF](correccion-orientacion-exif.md)
