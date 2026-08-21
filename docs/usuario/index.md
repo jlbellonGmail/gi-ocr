@@ -9,3 +9,4 @@ ejemplos.
 - [Cierre Operativo del Circuito Agentico](cierre-operativo-circuito-agentico.md)
 - [Empaquetado y Despliegue](empaquetado-despliegue.md)
 - [Extension de Roadmap Profesional](extensionn-roadmap.md)
+- [Administracion de Servicios y Documentos](administracion-servicios-documentos.md)
