@@ -41,8 +41,16 @@ sistemas externos/legacy por filesystem (`storage_bridge/`).
   evaluador DATA, detección de zonas) y el motor ejecutable del circuito
   agéntico (`scripts/*.ps1`, ver más abajo).
 - `runs/`: artefactos por feature (`spec.md`, `audit-N.md`,
-  `test-report-N.md`, `decision.md`). No es código de producción, es
+  `test-report-N.md`, `decision.md`, y cuando aplique `post-hitl-gate-N.md`,
+  `run.yaml` + `model-routing.jsonl`). No es código de producción, es
   historial del circuito.
+- `.agentic/`: fuente canónica multiherramienta para roles, modelos,
+  fallback, MCP y skills portables. Los adaptadores específicos
+  (`.claude/agents/*.md`, `.codex/*.toml`, `.mcp.json`, `opencode.json`)
+  se regeneran desde ahí — no se editan a mano.
+- `.agents/skills/`: ubicación canónica de skills Agent Skills portables.
+  Las copias requeridas por herramientas específicas se generan, no se
+  editan manualmente.
 - `docs/tecnica/`: un `.md` por servicio/documento OCR, nombrado solo con
   el slug sin número (ej. `gas.md`, no `01-gas.md`), con el algoritmo
   usado, casos borde y decisiones de diseño. Para quien mantiene el código.
@@ -121,7 +129,21 @@ estado correcto de `ROADMAP.md`, rama `feature/<NN>-<slug>`, PR contra
    - Si decide `NO MERGE` → vuelve a 3 con observaciones concretas para
      que `builder-agent` corrija la implementación o, si corresponde, la
      spec.
-   - Si decide `MERGE` → la PR se mergea a `develop` en GitHub.
+   - Si decide `MERGE` aprobando la PR en GitHub → se dispara el gate
+     post-HITL común. Ese gate vuelve a esperar los checks de Actions
+     posteriores a la aprobación y solo ejecuta el merge si están verdes.
+     Script común:
+     `scripts/complete-approved-pr.ps1 -Slug <NN>-<slug> -PrNumber <n>`.
+     En GitHub Actions lo invoca
+     `.github/workflows/post-hitl-merge-gate.yml` con código confiable de
+     `develop`.
+   - Si esos checks post-HITL fallan → NO se mergea. El gate produce
+     `runs/<NN>-<slug>/post-hitl-gate-N.md` con veredicto `rejected`,
+     comenta la PR cuando corre en GitHub Actions y vuelve a 3:
+     `builder-agent` corrige con ese error, luego QA/ready-for-pr siguen
+     el circuito sin pedir otro checkpoint humano.
+   - Si esos checks post-HITL quedan verdes → el gate mergea la PR a
+     `develop`. No se marca `[x]` antes del merge.
 9. **Cierre automático post-merge remoto:** GitHub Actions dispara
    `.github/workflows/post-merge-close-feature.yml` cuando una PR hacia
    `develop` se cierra como mergeada. El workflow corre código confiable
@@ -221,6 +243,11 @@ merge solo puede quedar pendiente `[ ]` o `READY_FOR_PR` `[-]`.
   Pages. Público, sin gate por ahora.
 - **Post-merge close** (`.github/workflows/post-merge-close-feature.yml`):
   ver paso 9 del circuito.
+- **Post-HITL merge gate**
+  (`.github/workflows/post-hitl-merge-gate.yml`): se dispara cuando el
+  humano aprueba la PR hacia `develop`; invoca
+  `scripts/complete-approved-pr.ps1`, espera checks post-aprobación,
+  mergea solo si están verdes y devuelve feedback a builder si fallan.
 - **Release**: pendiente (ver sección Versionado). No hay `Dockerfile` ni
   `release.yml` todavía.
 
@@ -243,6 +270,9 @@ Cada ciclo de feature genera su carpeta en `runs/<NN>-<slug>/` con:
 - `test-report-N.md` (uno por intento del qa-agent)
 - `decision.md` (archivo canónico obligatorio con decisiones demostrables
   y evidencia de cierre/merge; no debe quedar vacío ni ornamental)
+- `post-hitl-gate-N.md` (cuando el gate posterior a la aprobación humana
+  necesita dejar evidencia de merge aprobado o feedback automático para
+  builder si Actions falla después del HITL)
 
 Ningún agente sobreescribe el artefacto de otro. Cada intento se numera.
 El número y slug de cada feature sale de `ROADMAP.md`.
@@ -262,17 +292,40 @@ feedback:
 
 ## Configuración de modelos (Claude Code, opencode, Codex)
 
-Para opencode, `model`, `reasoningEffort` y `permission` de cada agente NO
-están en `.opencode/agent/*.md` — viven centralizados en `opencode.json`.
-Los `.md` de opencode solo tienen `description` y `mode`; el rol/prompt es
-igual al de Claude Code. Motivo: así cambiar de proveedor es editar una
-sola línea en `opencode.json`, sin tocar los 4 archivos de rol. El modelo
-configurado en `opencode.json` es un valor de ejemplo — ajustarlo al
-proveedor real disponible antes de usar opencode en este repo.
+`AGENTS.md` sigue siendo la fuente canónica de reglas compartidas del
+repo. Las definiciones funcionales por rol viven una sola vez en
+`.agentic/roles/*.md` (incluyen las reglas de dominio OCR propias de este
+proyecto); los metadatos, permisos y modelos por herramienta viven en
+`.agentic/agents.json`; el router OpenCode vive en `.agentic/models.json`;
+y la fuente MCP vive en `.agentic/mcp.json`.
+
+Después de editar `.agentic/`, regenerar y validar adaptadores:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-agentic-adapters.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-agentic-adapters.ps1 -Check
+```
+
+No editar manualmente archivos generados en `.claude/agents/*.md`,
+`.codex/*.config.toml`, `.codex/config.toml`, `.mcp.json` ni
+`opencode.json`. El modo `-Check` falla si detecta divergencia o
+adaptadores legacy en `.codex/prompts/` o `.opencode/agent/`.
+
+Para OpenCode, `opencode.json` consume `AGENTS.md` mediante
+`instructions` y referencia los prompts canónicos con
+`prompt: "{file:./.agentic/roles/<role>.md}"`. `model`,
+`reasoningEffort`, `permission` y MCP son adaptador de OpenCode generado,
+no fuente de verdad manual. El modelo por defecto configurado hoy es
+`anthropic/claude-sonnet-4-5` (ya en uso real en este repo); Go, Zen y
+OpenRouter quedan declarados en `.agentic/models.json` como fallback
+autorizado para cuando se conecten con `/connect`.
 
 Para Claude Code, `model` y `effort` sí quedan en el frontmatter de cada
 `.claude/agents/*.md`, porque Claude Code no tiene un mecanismo
-equivalente de override centralizado por agente.
+equivalente de override centralizado por agente de proyecto. El cuerpo de
+esos archivos se genera desde `.agentic/roles/*.md`. `CLAUDE.md`
+mantiene `@AGENTS.md` porque Claude Code lee `CLAUDE.md` como memoria de
+proyecto y soporta imports `@`.
 
 Para ejecutar el circuito completo hasta `git push`, creación de PR,
 consulta/espera de CI y cierre post-merge, Claude debe correr como
@@ -281,20 +334,52 @@ Claude Code en un entorno con permisos reales sobre el repo Git y GitHub.
 Para Codex, la configuración nativa del repo vive en `.codex/`. Ese
 directorio se usa como `CODEX_HOME` reproducible del proyecto:
 
-- `.codex/config.toml`: defaults comunes de Codex.
+- `.codex/config.toml`: defaults comunes de Codex y MCP generado.
 - `.codex/<role>.config.toml`: perfil por agente, invocado con
   `codex exec -p <role>`.
-- `.codex/prompts/<role>.md`: prompt mínimo específico del rol.
+- `.agentic/roles/<role>.md`: prompt canónico canalizado al ejecutar el
+  perfil Codex.
 
 Ejemplo desde PowerShell, ejecutado por el Main Agent al delegar:
 
 ```powershell
 $env:CODEX_HOME = (Resolve-Path .\.codex).Path
-Get-Content .\.codex\prompts\analyst-agent.md -Raw | codex exec -p analyst-agent -C . -
+Get-Content .\.agentic\roles\analyst-agent.md -Raw | codex exec -p analyst-agent -C . -
 ```
 
 Los perfiles Codex fijan modelo y esfuerzo; las reglas comunes del
 circuito siguen viviendo en este `AGENTS.md`, para evitar duplicación.
+
+Para resolver modelos OpenCode antes de iniciar una etapa, usar:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\resolve-agentic-model.ps1 `
+  -Role analyst-agent `
+  -Feature <NN>-<slug>
+```
+
+La declaración mínima previa a `spec.md` es
+`runs/<NN>-<slug>/run.yaml`, basada en `.agentic/run.example.yaml`.
+`model: default` usa el default del rol; un modelo explícito debe estar en
+allowlist. La variante (`variant`) se valida aparte del modelo. El
+fallback se declara como lista controlada (`go`, `zen`,
+`openrouter-free`) y OpenRouter solo se usa si aparece explícitamente en
+la declaración o en `-Fallback`.
+
+El router registra evidencia en
+`runs/<NN>-<slug>/model-routing.jsonl`: feature, agente, etapa,
+proveedor, modelo, variante, origen de selección, fallback aplicado,
+motivo, fecha UTC, duración, resultado y costo si la herramienta lo
+entrega de forma confiable. No inventa costos.
+
+Credenciales: no se guardan secretos en el repo. El modelo directo
+Anthropic usa `ANTHROPIC_API_KEY` o la marca `AGENTIC_ANTHROPIC_READY=1`
+para entornos ya conectados. OpenCode Go/Zen se conectan fuera del repo
+con `/connect`; para automatización local se usan marcas no secretas
+`AGENTIC_OPENCODE_GO_READY=1` y `AGENTIC_OPENCODE_ZEN_READY=1`.
+OpenRouter usa `OPENROUTER_API_KEY` o la marca
+`AGENTIC_OPENROUTER_READY=1` cuando el entorno ya está conectado sin
+exponer tokens.
 
 ## Reglas adicionales
 
@@ -302,7 +387,8 @@ Ver `.claude/rules/` para instrucciones modulares por dominio (OCR,
 seguridad de `storage_bridge`, estilo). Vacío por ahora — se completa a
 medida que el proyecto lo necesite, no de entrada. opencode las lee vía el
 campo `instructions` de `opencode.json`. Si `.claude/rules/` deja de estar
-vacío, Codex debe referenciar esas reglas desde `.codex/prompts/*.md`.
+vacío, Codex debe referenciar esas reglas desde `.agentic/roles/*.md`
+(canalizado a los perfiles `.codex/<role>.config.toml`).
 
 ## Reglas de dominio OCR (no negociables por ningún agente)
 

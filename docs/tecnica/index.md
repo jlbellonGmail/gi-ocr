@@ -15,3 +15,5 @@ decisiones de diseño.
 - [Seguridad y Privacidad de Documentos](seguridad-privacidad-documentos.md)
 - [Administracion de Servicios y Documentos](administracion-servicios-documentos.md)
 - [Calidad de CI y Supply Chain](calidad-ci-supply-chain.md)
+- [Circuito agentico](circuito-agentico.md)
+- [Fuente unica router modelos](fuente-unica-router-modelos.md)

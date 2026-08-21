@@ -1,23 +1,31 @@
 # Codex agent profiles
 
-`AGENTS.md` is the shared normative source for the project circuit. This
-directory only contains Codex-specific execution wiring:
+`AGENTS.md` is the shared normative source for the project circuit. The
+role prompts live once in `.agentic/roles/*.md`; this directory only keeps
+Codex-specific execution wiring generated from `.agentic/agents.json` and
+`.agentic/mcp.json`.
 
-- `config.toml`: repo-local Codex defaults.
+- `config.toml`: repo-local Codex defaults and generated MCP config.
 - `<role>.config.toml`: per-role Codex profile loaded with `-p <role>`.
-- `prompts/<role>.md`: minimal role prompt used when delegating from the
-  Main Agent.
 
-Use this directory as `CODEX_HOME` to make the profiles reproducible from
-the repo:
+Use this directory as `CODEX_HOME` and pipe the canonical role prompt:
 
 ```powershell
 $env:CODEX_HOME = (Resolve-Path .\.codex).Path
-Get-Content .\.codex\prompts\analyst-agent.md -Raw | codex exec -p analyst-agent -C . -
-Get-Content .\.codex\prompts\reviewer-agent.md -Raw | codex exec -p reviewer-agent -C . -
-Get-Content .\.codex\prompts\builder-agent.md -Raw | codex exec -p builder-agent -C . -
-Get-Content .\.codex\prompts\qa-agent.md -Raw | codex exec -p qa-agent -C . -
+Get-Content .\.agentic\roles\analyst-agent.md -Raw | codex exec -p analyst-agent -C . -
+Get-Content .\.agentic\roles\reviewer-agent.md -Raw | codex exec -p reviewer-agent -C . -
+Get-Content .\.agentic\roles\builder-agent.md -Raw | codex exec -p builder-agent -C . -
+Get-Content .\.agentic\roles\qa-agent.md -Raw | codex exec -p qa-agent -C . -
 ```
+
+Regenerate and validate adapters from the repo root:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-agentic-adapters.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-agentic-adapters.ps1 -Check
+```
+
+Do not edit generated Codex profiles manually. Edit `.agentic/` instead.
 
 Profiles:
 
@@ -27,7 +35,3 @@ Profiles:
 | `reviewer-agent` | `gpt-5.5` | `high` |
 | `builder-agent` | `gpt-5.5` | `high` |
 | `qa-agent` | `gpt-5.5` | `medium` |
-
-The Main Agent delegates by selecting the matching profile and piping the
-matching prompt. Codex profiles provide reproducible model and reasoning
-settings; the role boundaries and circuit rules remain in `AGENTS.md`.

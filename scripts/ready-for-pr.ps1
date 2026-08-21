@@ -201,6 +201,7 @@ $body = @"
 ## Checklist
 
 - [ ] CI verde en GitHub Actions
+- [ ] Aprobacion HITL: si se aprueba la PR, `post-hitl-merge-gate.yml` vuelve a esperar Actions y mergea solo en verde
 - [ ] Tests reportados en $($info.RunDir)/test-report-N.md
 - [ ] Criterios de aceptacion cubiertos
 - [ ] Decisiones documentadas en $($info.Decision)
@@ -208,6 +209,10 @@ $body = @"
 - [ ] Roadmap en READY_FOR_PR, no [x]
 
 ## Post-merge
+
+Despues de la aprobacion humana, `post-hitl-merge-gate.yml` invoca
+`scripts/complete-approved-pr.ps1`: si Actions queda verde, mergea; si falla,
+devuelve feedback a builder y no mergea.
 
 El cierre remoto de ROADMAP.md lo ejecuta GitHub Actions con `scripts/close-feature.ps1`.
 El reconciliador local iniciado por `ready-for-pr.ps1` solo limpia worktree/rama cuando
