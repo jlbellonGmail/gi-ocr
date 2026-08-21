@@ -22,12 +22,19 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import ocr_engine
+from .document_services import normalize_service_id
 from .exif_privacy import anonymize_upload_bytes
 from .fs_permissions import secure_dir, secure_file
 from .inbound_watcher import SUPPORTED, InboundWatcher
 from .job_queue import JobQueue
 from .job_store import JOB_ID_RE, JobStore, sanitize_name
 from .review_service import confirm_review
+from .services_config import (
+    ServiceNotFoundError,
+    ServicesConfigError,
+    get_service_schema,
+    list_services_schema,
+)
 from .upload_validation import (
     UploadValidationError,
     max_upload_bytes,
@@ -130,6 +137,35 @@ async def health():
         "queue_workers": queue.workers,
         "inbound": watcher.status(),
     }
+
+
+@app.get("/api/v1/services")
+async def list_services():
+    """Lista de solo lectura de los servicios/documentos configurados en
+    backend/config/services.ini, con su esquema validado (id, title,
+    fields). No incluye datos de comprobantes ni requiere autenticación
+    (config de solo lectura, ver docs/tecnica/administracion-servicios-documentos.md).
+    """
+    try:
+        return {"services": list_services_schema()}
+    except ServicesConfigError as e:
+        raise HTTPException(500, str(e))
+
+
+@app.get("/api/v1/services/{service_id}")
+async def get_service(service_id: str):
+    """Esquema validado de un único servicio (normaliza service_id igual
+    que document_services.normalize_service_id: strip().upper())."""
+    try:
+        normalized = normalize_service_id(service_id)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    try:
+        return get_service_schema(normalized)
+    except ServiceNotFoundError as e:
+        raise HTTPException(404, str(e))
+    except ServicesConfigError as e:
+        raise HTTPException(500, str(e))
 
 
 @app.post("/api/v1/jobs")

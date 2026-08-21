@@ -11,3 +11,4 @@ ejemplos.
 - [Extension de Roadmap Profesional](extensionn-roadmap.md)
 - [Corrección de orientación EXIF](correccion-orientacion-exif.md)
 - [Seguridad y Privacidad de Documentos](seguridad-privacidad-documentos.md)
+- [Administracion de Servicios y Documentos](administracion-servicios-documentos.md)
