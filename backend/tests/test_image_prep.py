@@ -1,8 +1,6 @@
 """Tests de corrección de orientación/perspectiva/escala (image_prep)."""
-import numpy as np
-import pytest
-from PIL import Image
 
+import numpy as np
 from backend.app import image_prep
 
 

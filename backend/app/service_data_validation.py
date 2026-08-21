@@ -4,6 +4,7 @@ Validaciones específicas por tipo de servicio para el flujo DATA evaluator.
 Este módulo proporciona validaciones de datos extraídos según reglas
 propias de cada servicio/documento, complementando la extracción OCR genérica.
 """
+
 import re
 from typing import Any, Dict, List, Optional
 
@@ -32,7 +33,7 @@ def validate_service_data(
             "errors": List[str],
         }
     """
-    result = {
+    result: Dict[str, Any] = {
         "service_id": service_id,
         "is_valid": True,
         "validated_fields": {},
@@ -56,8 +57,7 @@ def validate_service_data(
                 }
                 result["errors"].append(f"Field '{field}': {error}")
 
-    result["is_valid"] = (len(result["errors"]) == 0 and
-                         len(result["missing_fields"]) == 0)
+    result["is_valid"] = len(result["errors"]) == 0 and len(result["missing_fields"]) == 0
 
     return result
 

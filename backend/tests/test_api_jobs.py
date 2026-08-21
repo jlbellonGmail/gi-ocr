@@ -1,10 +1,10 @@
 """Tests de integración de la APIREST (TestClient): carga, procesamiento, confirmación, descarga."""
+
 import time
 
 import pytest
-from fastapi.testclient import TestClient
-
 from backend.app.main import app
+from fastapi.testclient import TestClient
 
 c = TestClient(app)
 
@@ -24,8 +24,7 @@ def test_jobs_empty():
 
 
 def test_upload_rejects_bad_ext():
-    r = c.post("/api/v1/jobs",
-               files={"files": ("bad.exe", b"\x00\x00", "application/octet-stream")})
+    r = c.post("/api/v1/jobs", files={"files": ("bad.exe", b"\x00\x00", "application/octet-stream")})
     assert r.status_code == 400
 
 

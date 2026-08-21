@@ -3,12 +3,11 @@
 Permite seguir cargando documentos mientras otros se procesan (no bloqueante).
 Estados: queued, processing, ready, confirmed, failed. Reintentos individuales.
 """
+
 from __future__ import annotations
 
 import asyncio
-import os
 import threading
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -26,7 +25,7 @@ class JobQueue:
     def __init__(self, store: JobStore, workers: int = 2):
         self.store = store
         self.workers = workers
-        self._queue: "asyncio.Queue[str]" = None  # created on first start
+        self._queue: Optional["asyncio.Queue[str]"] = None  # created on first start
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._thread: Optional[threading.Thread] = None
         self._stop = False
@@ -74,7 +73,7 @@ class JobQueue:
             "attempts": 0,
         }
         self.store.put(job)
-        if self._loop:
+        if self._loop and self._queue:
             self._loop.call_soon_threadsafe(self._queue.put_nowait, job_id)
         return job_id
 
@@ -88,7 +87,7 @@ class JobQueue:
         job["error"] = None
         job["updated_at"] = _now()
         self.store.put(job)
-        if self._loop:
+        if self._loop and self._queue:
             self._loop.call_soon_threadsafe(self._queue.put_nowait, job_id)
         return True
 
@@ -133,9 +132,7 @@ class JobQueue:
             if not Path(file_path).exists():
                 raise FileNotFoundError(f"Archivo no encontrado: {file_path}")
             loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(
-                None, process_document, file_path, job["original_name"]
-            )
+            result = await loop.run_in_executor(None, process_document, file_path, job["original_name"])
             with self._lock:
                 job["status"] = "ready"
                 job["result"] = result

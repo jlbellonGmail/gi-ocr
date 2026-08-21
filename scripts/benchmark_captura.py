@@ -10,6 +10,7 @@ Uso:
   python scripts/benchmark_captura.py --dataset local --docs 400 \
       --out _bench/local.json --report-md _bench/local.md
 """
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +23,6 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Callable, Sequence
 
-import numpy as np
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,9 +39,7 @@ OPERATIVE_P95_THRESHOLD_S = 5.0
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Benchmark de precision OCR por lote, proveedor y campo."
-    )
+    parser = argparse.ArgumentParser(description="Benchmark de precision OCR por lote, proveedor y campo.")
     parser.add_argument(
         "--docs",
         type=int,
@@ -301,7 +299,9 @@ def evaluate_document_result(
     allowed_missing = set(case.get("allowed_missing_fields", []))
     must_reject = set(case.get("must_reject_fields", []))
 
-    field_names = sorted(set(expected_fields) | set(candidate) | set(validated) | set(rejected) | set(missing) | must_reject)
+    field_names = sorted(
+        set(expected_fields) | set(candidate) | set(validated) | set(rejected) | set(missing) | must_reject
+    )
     field_results: dict[str, dict[str, Any]] = {}
     false_positives_avoided: list[dict[str, Any]] = []
 
@@ -577,7 +577,9 @@ def render_markdown_report(report: dict[str, Any]) -> str:
         f"- Dataset: `{summary['dataset']}`",
         f"- Documentos: {summary['docs']}",
         f"- Cold start: {summary['cold_start_s']}",
-        f"- Hot p50/p95/media/max: {summary['hot_p50_s']}s / {summary['hot_p95_s']}s / {summary['hot_mean_s']}s / {summary['hot_max_s']}s",
+        "- Hot p50/p95/media/max: "
+        f"{summary['hot_p50_s']}s / {summary['hot_p95_s']}s / "
+        f"{summary['hot_mean_s']}s / {summary['hot_max_s']}s",
         f"- Throughput: {summary['docs_per_minute']} docs/min",
         f"- Memoria RSS aprox.: {summary['process_rss_mb']} MB",
         f"- Falsos positivos evitados: {summary['false_positives_avoided_count']}",
@@ -596,7 +598,10 @@ def render_markdown_report(report: dict[str, Any]) -> str:
         lines.append(f"- Errores: {data['errors']}")
         lines.append(f"- Falsos positivos evitados: {data['false_positives_avoided']}")
         lines.append("")
-        lines.append("| Campo | validated_match | validated_mismatch | rejected | rejected_expected | missing_allowed | missing_unexpected |")
+        lines.append(
+            "| Campo | validated_match | validated_mismatch | rejected | "
+            "rejected_expected | missing_allowed | missing_unexpected |"
+        )
         lines.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |")
         for field, counts in sorted(data["fields"].items()):
             lines.append(
@@ -665,7 +670,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     cold = None if args.skip_cold_start or use_controlled else cold_start()
     processor = synthetic_controlled_result if use_controlled else None
     if use_controlled:
-        dataset_note = dataset_note or "Dataset sintetico/controlado sin OCR real; usar --synthetic-mode ocr para procesar imagenes generadas."
+        dataset_note = dataset_note or (
+            "Dataset sintetico/controlado sin OCR real; usar --synthetic-mode ocr para procesar imagenes generadas."
+        )
     report = run_benchmark(cases, dataset_kind, dataset_note, cold, processor=processor)
 
     out = Path(args.out)

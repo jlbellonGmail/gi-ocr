@@ -11,20 +11,16 @@ Cobertura:
 from __future__ import annotations
 
 import json
-import os
 import sys
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
-
-import pytest
 
 # Add project root to path for imports
 _ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.process_document import main, run_pipeline, print_summary
+from scripts.process_document import main, print_summary, run_pipeline
 
 
 class TestProcessDocumentCLI:
@@ -89,7 +85,14 @@ class TestProcessDocumentCLI:
 
     def test_invalid_input_nonexistent_file(self):
         """Caso inválido: archivo de entrada que no existe."""
-        with patch.object(sys, "argv", ["process_document.py", "--input", "nonexistent_fixture.jpg", "--output", "output.json"]):
+        fake_argv = [
+            "process_document.py",
+            "--input",
+            "nonexistent_fixture.jpg",
+            "--output",
+            "output.json",
+        ]
+        with patch.object(sys, "argv", fake_argv):
             exit_code = main()
 
         assert exit_code == 1, f"Expected exit code 1, got {exit_code}"
@@ -144,13 +147,11 @@ class TestPrintSummary:
     def test_print_summary_outputs_correctly(self, capsys):
         """Verificar que el resumen se imprime correctamente."""
         result = {
-            "structured_output": {
-                "validated_fields": {"cliente": "12345678", "importe": "123.45"}
-            },
+            "structured_output": {"validated_fields": {"cliente": "12345678", "importe": "123.45"}},
             "field_report": {
                 "summary_counts": {"accepted_count": 3, "rejected_count": 0, "missing_count": 2},
-                "accepted_fields": ["cliente", "importe", "a_pagar_hasta"]
-            }
+                "accepted_fields": ["cliente", "importe", "a_pagar_hasta"],
+            },
         }
 
         print_summary(result, "test_document.jpg", "test_output.json")

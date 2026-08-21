@@ -4,9 +4,9 @@ No procesa dos veces el mismo archivo (registro de hashes/nombres). No sobrescri
 pierde originales. Usa watchfiles si está disponible (dependencia de uvicorn[standard]),
 si no, polling ligero.
 """
+
 from __future__ import annotations
 
-import asyncio
 import hashlib
 import threading
 import time

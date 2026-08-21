@@ -3,10 +3,11 @@
 Preserva valores originales del servidor. Valida estados confirmed/corrected/unresolved.
 Genera nombre de archivo seguro. Persiste JSON confirmado separado del original.
 """
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from .job_store import JobStore
 

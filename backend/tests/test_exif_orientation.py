@@ -14,6 +14,7 @@ Cubre:
 Todas las imágenes usadas son 100% sintéticas, generadas en memoria con PIL/
 OpenCV. No se versionan fotos reales de celular.
 """
+
 from __future__ import annotations
 
 import tempfile
@@ -21,10 +22,9 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from PIL import Image, ImageDraw
-
 from backend.app import image_prep
 from backend.app.capture_pipeline import process_document
+from PIL import Image, ImageDraw
 
 ORIENTATION_TAG = 0x0112  # 274, EXIF "Orientation"
 
@@ -75,9 +75,7 @@ def test_apply_exif_orientation_all_8_values(orientation):
     corrected, applied = image_prep.apply_exif_orientation(raw)
     corrected_arr = np.array(corrected.convert("RGB"))
 
-    assert np.array_equal(corrected_arr, canonical_arr), (
-        f"orientation={orientation} no reprodujo la imagen canónica"
-    )
+    assert np.array_equal(corrected_arr, canonical_arr), f"orientation={orientation} no reprodujo la imagen canónica"
     # El marcador debe seguir en la esquina superior izquierda (0..9, 0..9).
     assert tuple(corrected_arr[0, 0]) == (255, 0, 0)
     if orientation == 1:

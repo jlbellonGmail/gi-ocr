@@ -9,6 +9,7 @@ los tests, simplemente no aplican ninguna restricción (Windows no usa el
 mismo modelo de permisos owner/group/other que POSIX; ver
 `docs/tecnica/seguridad-privacidad-documentos.md`).
 """
+
 from __future__ import annotations
 
 import os

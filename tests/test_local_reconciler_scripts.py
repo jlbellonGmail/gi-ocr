@@ -195,8 +195,7 @@ def test_start_reconciler_in_main_checkout(tmp_path, cleanup_reconcilers):
     assert result.returncode == 0, result.stdout + result.stderr
     wait_for_reconciler_running(main, SLUG)
     wait_until(
-        lambda: (state_dir(main) / f"{SLUG}.log").exists()
-        and (state_dir(main) / f"{SLUG}.err.log").exists(),
+        lambda: (state_dir(main) / f"{SLUG}.log").exists() and (state_dir(main) / f"{SLUG}.err.log").exists(),
         30,
         "El reconciliador no escribio sus logs.",
     )

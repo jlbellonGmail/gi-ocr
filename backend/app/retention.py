@@ -22,12 +22,13 @@ despliegue — ADR-009 no define un scheduler propio, queda a criterio del
 operador). No agrega un scheduler propio ni un endpoint HTTP: el criterio
 de aceptación pide "invocable", no "automatizado dentro del proceso".
 """
+
 from __future__ import annotations
 
 import os
 import time
 from pathlib import Path
-from typing import Callable, Dict, Iterable, List, Optional
+from typing import Callable, Dict, List, Optional
 
 _PROTECTED_NAMES = frozenset({".gitkeep", "readme.md", ".gitignore"})
 

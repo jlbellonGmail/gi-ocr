@@ -11,6 +11,7 @@ Ver `docs/tecnica/seguridad-privacidad-documentos.md` para la tabla de
 firmas completa, el criterio de contraste Content-Type/magic-bytes y el
 esquema de nombre aleatorio elegido.
 """
+
 from __future__ import annotations
 
 import os
@@ -128,7 +129,8 @@ def validate_upload_content(filename: str, content: bytes, content_type: Optiona
         if declared_family != family:
             raise UploadValidationError(
                 "content_type_mismatch",
-                f"Content-Type declarado ('{content_type}') no coincide con el contenido real de '{filename}' (detectado: {family})",
+                f"Content-Type declarado ('{content_type}') no coincide con el contenido "
+                f"real de '{filename}' (detectado: {family})",
                 415,
             )
 

@@ -11,9 +11,7 @@ Verifica que la capa de exportación:
 from __future__ import annotations
 
 import json
-import os
 import sys
-import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -24,7 +22,7 @@ _ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from backend.app.document_result_exporter import save_json_result, load_json_result
+from backend.app.document_result_exporter import load_json_result, save_json_result
 
 
 class TestSaveJsonResult:
@@ -38,12 +36,10 @@ class TestSaveJsonResult:
                 "candidate_fields": {"cliente": "123"},
                 "validated_fields": {"cliente": "123"},
                 "rejected_fields": {},
-                "missing_fields": {}
+                "missing_fields": {},
             },
-            "field_report": {
-                "summary_counts": {"accepted_count": 1, "rejected_count": 0, "missing_count": 0}
-            },
-            "processing_metadata": {"timestamp": "2024-01-01T00:00:00Z"}
+            "field_report": {"summary_counts": {"accepted_count": 1, "rejected_count": 0, "missing_count": 0}},
+            "processing_metadata": {"timestamp": "2024-01-01T00:00:00Z"},
         }
 
         output_file = tmp_path / "output.json"
@@ -60,10 +56,7 @@ class TestSaveJsonResult:
 
     def test_save_preserves_unicode(self, tmp_path):
         """Verificar que el JSON preserva caracteres Unicode."""
-        result = {
-            "raw_ocr_text": "Importe $123.45 — Total",
-            "field_report": {"summary_counts": {"accepted_count": 1}}
-        }
+        result = {"raw_ocr_text": "Importe $123.45 — Total", "field_report": {"summary_counts": {"accepted_count": 1}}}
 
         output_file = tmp_path / "unicode_output.json"
         save_json_result(result, str(output_file))
@@ -111,19 +104,16 @@ class TestSaveJsonResult:
                 "candidate_fields": {"importe": "123.45", "cliente": "12345678"},
                 "validated_fields": {"importe": "123.45", "cliente": "12345678"},
                 "rejected_fields": {},
-                "missing_fields": {"periodo": None}
+                "missing_fields": {"periodo": None},
             },
             "field_report": {
                 "document_type": "invoice",
                 "accepted_fields": ["importe", "cliente"],
                 "rejected_fields": [],
                 "missing_fields": ["periodo"],
-                "summary_counts": {"accepted_count": 2, "rejected_count": 0, "missing_count": 1}
+                "summary_counts": {"accepted_count": 2, "rejected_count": 0, "missing_count": 1},
             },
-            "processing_metadata": {
-                "timestamp": "2024-01-01T00:00:00Z",
-                "pipeline_version": "T3.2+T3.3"
-            }
+            "processing_metadata": {"timestamp": "2024-01-01T00:00:00Z", "pipeline_version": "T3.2+T3.3"},
         }
 
         output_file = tmp_path / "t34_output.json"
@@ -158,7 +148,7 @@ class TestLoadJsonResult:
         original = {
             "raw_ocr_text": "test",
             "structured_output": {"validated_fields": {"cliente": "123"}},
-            "field_report": {"summary_counts": {"accepted_count": 1}}
+            "field_report": {"summary_counts": {"accepted_count": 1}},
         }
 
         output_file = tmp_path / "round_trip.json"

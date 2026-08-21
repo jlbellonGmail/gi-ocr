@@ -7,6 +7,7 @@ desplazamiento, rotación, escala, iluminación y compresión. Campo define:
   extract: regex de captura del valor
   validator: función de validators.py
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -20,7 +21,11 @@ class FieldTemplate:
     name: str
     band: Tuple[float, float, float, float]  # (y1,y2,x1,x2)
     extract: Optional[str] = None  # regex con grupo 1 para el valor
-    validator: Optional[Callable[[str], Tuple[Optional[str], Optional[str]]]] = None
+    # El validador devuelve (valor_normalizado, motivo_rechazo). El valor
+    # normalizado puede ser str (fecha/periodo/cuenta/medidor) o float
+    # (monto, ver validators.validate_amount); el llamador siempre lo
+    # castea a str antes de guardarlo (ver capture_pipeline.py).
+    validator: Optional[Callable[[str], Tuple[Optional[str] | Optional[float], Optional[str]]]] = None
     score_min: float = 0.3
     anchor: Optional[str] = None  # regex que debe aparecer cerca (texto ancla)
 
@@ -56,28 +61,48 @@ def litoral_gas_template() -> ProviderTemplate:
         service="GAS",
         document_type="LITORAL_GAS_BILL",
         required_fields=[
-            "provider", "cliente", "periodo", "comprobante",
-            "fecha_emision", "vencimiento", "total",
+            "provider",
+            "cliente",
+            "periodo",
+            "comprobante",
+            "fecha_emision",
+            "vencimiento",
+            "total",
         ],
         classify_bands=[(0.165, 0.205, 0.40, 0.62)],
         classify_keywords=["litoral gas", "litoralgas", "litoral"],
         fields=[
-            FieldTemplate("provider", (0.165, 0.205, 0.40, 0.62),
-                          extract=r"(litoral\s*gas)", validator=None),
-            FieldTemplate("comprobante", (0.185, 0.215, 0.70, 0.88),
-                          extract=r"(\d{4}-\d{8})", validator=validators.validate_comprobante),
-            FieldTemplate("fecha_emision", (0.198, 0.228, 0.72, 0.86),
-                          extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-                          validator=validators.validate_date),
-            FieldTemplate("vencimiento", (0.252, 0.288, 0.77, 0.90),
-                          extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-                          validator=validators.validate_date),
-            FieldTemplate("cliente", (0.270, 0.305, 0.66, 0.82),
-                          extract=r"(\d{8,10})", validator=validators.validate_account),
-            FieldTemplate("periodo", (0.265, 0.305, 0.78, 0.90),
-                          extract=r"(\d{1,2}[/-]\d{4})", validator=validators.validate_period),
-            FieldTemplate("total", (0.845, 0.895, 0.72, 0.90),
-                          extract=r"(\d[\d.,]{3,}\d)", validator=validators.validate_amount),
+            FieldTemplate("provider", (0.165, 0.205, 0.40, 0.62), extract=r"(litoral\s*gas)", validator=None),
+            FieldTemplate(
+                "comprobante",
+                (0.185, 0.215, 0.70, 0.88),
+                extract=r"(\d{4}-\d{8})",
+                validator=validators.validate_comprobante,
+            ),
+            FieldTemplate(
+                "fecha_emision",
+                (0.198, 0.228, 0.72, 0.86),
+                extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
+                validator=validators.validate_date,
+            ),
+            FieldTemplate(
+                "vencimiento",
+                (0.252, 0.288, 0.77, 0.90),
+                extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
+                validator=validators.validate_date,
+            ),
+            FieldTemplate(
+                "cliente", (0.270, 0.305, 0.66, 0.82), extract=r"(\d{8,10})", validator=validators.validate_account
+            ),
+            FieldTemplate(
+                "periodo",
+                (0.265, 0.305, 0.78, 0.90),
+                extract=r"(\d{1,2}[/-]\d{4})",
+                validator=validators.validate_period,
+            ),
+            FieldTemplate(
+                "total", (0.845, 0.895, 0.72, 0.90), extract=r"(\d[\d.,]{3,}\d)", validator=validators.validate_amount
+            ),
         ],
     )
 
@@ -88,33 +113,66 @@ def cevt_template() -> ProviderTemplate:
         service="ELECTRICITY",
         document_type="CEVT_ELECTRICITY_BILL",
         required_fields=[
-            "provider", "cliente", "medidor", "periodo", "comprobante",
-            "fecha_emision", "vencimiento", "codigo_pago_electronico", "total",
+            "provider",
+            "cliente",
+            "medidor",
+            "periodo",
+            "comprobante",
+            "fecha_emision",
+            "vencimiento",
+            "codigo_pago_electronico",
+            "total",
         ],
         classify_bands=[(0.02, 0.075, 0.05, 0.46), (0.795, 0.820, 0.53, 0.66)],
         classify_keywords=["cevt", "cooperativa", "electri"],
         fields=[
-            FieldTemplate("comprobante", (0.02, 0.075, 0.45, 0.72),
-                          extract=r"(\d{4}-\d{8})", validator=validators.validate_comprobante),
-            FieldTemplate("periodo", (0.02, 0.075, 0.45, 0.72),
-                          extract=r"periodo[:\s]*(\d{1,2}[/-]\d{4})",
-                          validator=validators.validate_period),
-            FieldTemplate("fecha_emision", (0.058, 0.090, 0.55, 0.70),
-                          extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-                          validator=validators.validate_date),
-            FieldTemplate("vencimiento", (0.078, 0.108, 0.55, 0.70),
-                          extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
-                          validator=validators.validate_date),
-            FieldTemplate("codigo_pago_electronico", (0.158, 0.188, 0.60, 0.76),
-                          extract=r"(\d{8,10})", validator=validators.validate_account),
-            FieldTemplate("medidor", (0.198, 0.238, 0.22, 0.42),
-                          anchor=r"medidor",
-                          extract=r"(\d{7,18})", validator=validators.validate_meter),
-            FieldTemplate("cliente", (0.478, 0.512, 0.10, 0.30),
-                          anchor=r"cliente",
-                          extract=r"(\d{8,10})", validator=validators.validate_account),
-            FieldTemplate("total", (0.320, 0.352, 0.60, 0.78),
-                          extract=r"(\d[\d.,]{3,}\d)", validator=validators.validate_amount),
+            FieldTemplate(
+                "comprobante",
+                (0.02, 0.075, 0.45, 0.72),
+                extract=r"(\d{4}-\d{8})",
+                validator=validators.validate_comprobante,
+            ),
+            FieldTemplate(
+                "periodo",
+                (0.02, 0.075, 0.45, 0.72),
+                extract=r"periodo[:\s]*(\d{1,2}[/-]\d{4})",
+                validator=validators.validate_period,
+            ),
+            FieldTemplate(
+                "fecha_emision",
+                (0.058, 0.090, 0.55, 0.70),
+                extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
+                validator=validators.validate_date,
+            ),
+            FieldTemplate(
+                "vencimiento",
+                (0.078, 0.108, 0.55, 0.70),
+                extract=r"(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})",
+                validator=validators.validate_date,
+            ),
+            FieldTemplate(
+                "codigo_pago_electronico",
+                (0.158, 0.188, 0.60, 0.76),
+                extract=r"(\d{8,10})",
+                validator=validators.validate_account,
+            ),
+            FieldTemplate(
+                "medidor",
+                (0.198, 0.238, 0.22, 0.42),
+                anchor=r"medidor",
+                extract=r"(\d{7,18})",
+                validator=validators.validate_meter,
+            ),
+            FieldTemplate(
+                "cliente",
+                (0.478, 0.512, 0.10, 0.30),
+                anchor=r"cliente",
+                extract=r"(\d{8,10})",
+                validator=validators.validate_account,
+            ),
+            FieldTemplate(
+                "total", (0.320, 0.352, 0.60, 0.78), extract=r"(\d[\d.,]{3,}\d)", validator=validators.validate_amount
+            ),
         ],
     )
 

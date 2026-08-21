@@ -4,6 +4,7 @@ Mantiene la firma histórica (extract_text_from_image, extract_text_from_zone,
 extract_fields_from_zones, parse_zones_from_config, preprocess_image) para que el
 pipeline legacy y los tests T3.1–T3.5 funcionen sobre el nuevo motor local, sin EasyOCR.
 """
+
 from __future__ import annotations
 
 import asyncio

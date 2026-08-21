@@ -29,6 +29,7 @@ distintas):
   explícita, dejando el resto del archivo (incluyendo todos los datos de
   píxel) byte a byte sin modificar.
 """
+
 from __future__ import annotations
 
 import io

@@ -5,14 +5,13 @@ runs/16-administracion-servicios-documentos/spec.md: validación de esquema
 formal y la corrección del bug de desconexión entre Field.<nombre>.Regex y
 extraction_engine.py.
 """
+
 from __future__ import annotations
 
 import pytest
-
 from backend.app import services_config
 from backend.app.extraction_engine import _extract_generic, extract_service_fields
 from backend.app.services_config import ServicesConfigError, validate_services_schema
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -118,8 +117,7 @@ def test_field_without_block_fails_naming_section_and_field(tmp_path, monkeypatc
 
 def test_orphan_field_block_fails(tmp_path, monkeypatch):
     content = (
-        _valid_section("TEST", "importe")
-        + "\nField.huerfano.Label=Huerfano\n"
+        _valid_section("TEST", "importe") + "\nField.huerfano.Label=Huerfano\n"
         "Field.huerfano.Type=text\n"
         "Field.huerfano.Required=false\n"
         "Field.huerfano.Example=x\n"
@@ -324,16 +322,11 @@ async def test_extract_service_fields_cevt_uses_declared_regex():
 
 
 @pytest.mark.anyio
-async def test_extract_generic_still_used_as_fallback_without_declared_regex(
-    tmp_path, monkeypatch
-):
+async def test_extract_generic_still_used_as_fallback_without_declared_regex(tmp_path, monkeypatch):
     """_extract_generic se mantiene como fallback defensivo cuando un
     campo llega a extract_service_fields sin Field.<nombre>.Regex
     declarada (config no validada, editada a mano)."""
-    content = (
-        "[TEST]\nTitle=Servicio de prueba\nFields=cliente\n\n"
-        "Field.cliente.Label=Cliente\n"
-    )
+    content = "[TEST]\nTitle=Servicio de prueba\nFields=cliente\n\nField.cliente.Label=Cliente\n"
     _write_ini(tmp_path, content, monkeypatch)
     text = "Cliente 12345678"
     result = await extract_service_fields("TEST", text)
@@ -357,9 +350,7 @@ def test_corrupt_encoding_fails_with_clear_message(tmp_path, monkeypatch):
 
 
 def test_duplicate_section_fails_with_clear_message(tmp_path, monkeypatch):
-    content = (
-        "[GAS]\nTitle=Gas\nFields=importe\n\n[GAS]\nTitle=Gas otra vez\nFields=importe\n"
-    )
+    content = "[GAS]\nTitle=Gas\nFields=importe\n\n[GAS]\nTitle=Gas otra vez\nFields=importe\n"
     _write_ini(tmp_path, content, monkeypatch)
     with pytest.raises(ServicesConfigError) as exc_info:
         services_config.list_services()

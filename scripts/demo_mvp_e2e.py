@@ -5,6 +5,7 @@ GI-OCR / TGI-OCR — Demo MVP End-to-End
 Demuestra el flujo completo del MVP desde fixture hasta salida estructurada:
 Imagen → OCR → Texto bruto → Candidatos → Validación → Validados/Rechazados/No encontrados → .DATA
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -22,12 +23,9 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 # Import pipeline components
-from backend.app.ocr import extract_text_from_image
 from backend.app.gas_extractor import extract_gas_fields
+from backend.app.ocr import extract_text_from_image
 from backend.app.service_data_validation import validate_service_data
-from backend.app.storage_bridge_writer import (
-    build_data_content,
-)
 
 # GAS service fields
 GAS_FIELDS = ("importe", "a_pagar_hasta", "cliente", "periodo", "nro_medidor")
@@ -230,7 +228,9 @@ async def main_async() -> int:
     # 4. Validation
     print("\nValidando campos semanticamente...")
     validation_result = run_validation(extraction_result.get("fields", {}))
-    print(f"Validacion completada: {len(validation_result.get('validated_fields', {}))} validados, {len(validation_result.get('rejected_fields', {}))} rechazados")
+    n_validados = len(validation_result.get("validated_fields", {}))
+    n_rechazados = len(validation_result.get("rejected_fields", {}))
+    print(f"Validacion completada: {n_validados} validados, {n_rechazados} rechazados")
 
     # 5. Build demo output
     demo_output = build_demo_output(

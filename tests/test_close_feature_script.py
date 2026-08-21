@@ -72,10 +72,7 @@ def git(repo: Path, *args: str, check: bool = True):
 
 def write_fake_gh(bin_dir: Path, state: str = "MERGED", base: str = "develop") -> None:
     bin_dir.mkdir()
-    payload = (
-        f'{{"state":"{state}","mergedAt":"2026-08-17T19:00:00Z",'
-        f'"baseRefName":"{base}","headRefName":"{BRANCH}"}}'
-    )
+    payload = f'{{"state":"{state}","mergedAt":"2026-08-17T19:00:00Z","baseRefName":"{base}","headRefName":"{BRANCH}"}}'
     if os.name == "nt":
         gh = bin_dir / "gh.cmd"
         gh.write_text(f"@echo off\necho {payload}\n", encoding="utf-8")
@@ -185,9 +182,7 @@ def test_already_closed_feature_is_idempotent_and_does_not_create_empty_commit(t
         (f"- [-] {SLUG} - Uno\n- [x] {SLUG} - Dos\n", "mas de una coincidencia"),
     ],
 )
-def test_invalid_roadmap_states_fail_before_cleanup(
-    tmp_path: Path, roadmap_text: str, expected: str
-):
+def test_invalid_roadmap_states_fail_before_cleanup(tmp_path: Path, roadmap_text: str, expected: str):
     repo, _, worktree, bin_dir = make_case(tmp_path, roadmap_text)
 
     result = close_feature(repo, worktree, bin_dir)
@@ -208,9 +203,7 @@ def test_pending_feature_fails_because_only_ready_can_be_closed(tmp_path: Path):
 
 
 def test_pr_not_merged_fails_before_cleanup(tmp_path: Path):
-    repo, _, worktree, bin_dir = make_case(
-        tmp_path, f"- [-] {SLUG} - Validacion\n", gh_state="OPEN"
-    )
+    repo, _, worktree, bin_dir = make_case(tmp_path, f"- [-] {SLUG} - Validacion\n", gh_state="OPEN")
 
     result = close_feature(repo, worktree, bin_dir)
 
@@ -220,9 +213,7 @@ def test_pr_not_merged_fails_before_cleanup(tmp_path: Path):
 
 
 def test_pr_merged_into_another_base_stops_without_cleanup(tmp_path: Path):
-    repo, _, worktree, bin_dir = make_case(
-        tmp_path, f"- [-] {SLUG} - Validacion\n", gh_base="main"
-    )
+    repo, _, worktree, bin_dir = make_case(tmp_path, f"- [-] {SLUG} - Validacion\n", gh_base="main")
 
     result = close_feature(repo, worktree, bin_dir)
 

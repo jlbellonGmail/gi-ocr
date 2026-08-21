@@ -10,11 +10,12 @@ Contenido:
 
 No se usa JSON ni comas como separador de columnas.
 """
+
 from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "output"
 
@@ -54,10 +55,7 @@ def write_data_file(
 
     # Construir líneas
     header_line = ";".join(fields)
-    values_line = ";".join(
-        "" if values.get(field) is None else str(values.get(field))
-        for field in fields
-    )
+    values_line = ";".join("" if values.get(field) is None else str(values.get(field)) for field in fields)
 
     # Escribir archivo
     with open(filepath, "w", encoding="utf-8") as f:

@@ -1,11 +1,8 @@
 """Tests del watcher de carpeta inbound: dedupe y detección segura."""
-import threading
+
 import time
-from pathlib import Path
 
-import pytest
-
-from backend.app.inbound_watcher import InboundWatcher, SUPPORTED, file_hash
+from backend.app.inbound_watcher import SUPPORTED, InboundWatcher, file_hash
 
 
 def test_file_hash_stable(tmp_path):

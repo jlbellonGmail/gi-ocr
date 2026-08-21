@@ -10,9 +10,10 @@ heurística de contenido (varianza de gradiente) que opera sobre el array ya sin
 metadata. Ver `docs/tecnica/correccion-orientacion-exif.md` para el detalle
 completo y la relación entre ambas.
 """
+
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -54,11 +55,7 @@ def apply_exif_orientation(image: Image.Image) -> Tuple[Image.Image, bool]:
     if transposed is None:
         return image, False
 
-    applied = (
-        isinstance(orientation_tag, int)
-        and not isinstance(orientation_tag, bool)
-        and 2 <= orientation_tag <= 8
-    )
+    applied = isinstance(orientation_tag, int) and not isinstance(orientation_tag, bool) and 2 <= orientation_tag <= 8
     return transposed, applied
 
 
@@ -108,8 +105,17 @@ def deskew(image_np: np.ndarray) -> np.ndarray:
     img = to_rgb(image_np)
     try:
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        # cv2.cvtColor(..., COLOR_RGB2GRAY) siempre devuelve un ndarray
+        # uint8 en runtime; los stubs de cv2/numpy no lo tipan lo bastante
+        # preciso y mypy infiere un dtype que incluye floating, para el
+        # cual '~' (invert bit a bit) no esta definido -> type: ignore.
         bw = cv2.adaptiveThreshold(
-            ~gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, -2
+            ~gray,  # type: ignore[misc]
+            255,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY,
+            15,
+            -2,
         )
         h, w = bw.shape
         # kernel horizontal largo -> detecta líneas de texto
@@ -125,9 +131,7 @@ def deskew(image_np: np.ndarray) -> np.ndarray:
             return img
         (h2, w2) = img.shape[:2]
         M = cv2.getRotationMatrix2D((w2 / 2, h2 / 2), angle, 1.0)
-        return cv2.warpAffine(
-            img, M, (w2, h2), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE
-        )
+        return cv2.warpAffine(img, M, (w2, h2), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
     except Exception:
         return img
 

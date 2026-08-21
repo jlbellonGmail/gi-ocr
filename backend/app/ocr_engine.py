@@ -6,16 +6,18 @@ Carga única (singleton) al iniciar el servicio. Arquitectura two-pass ROI-focal
   2) reconocimiento (text_recognizer) selectivo sobre cajas dentro de bandas del template.
 OCR completo como fallback para documentos desconocidos / bandas sin anclas.
 """
+
 from __future__ import annotations
 
 import os
 import threading
-from typing import List, Optional, Tuple
+from typing import List
 
 import numpy as np
 
 try:
     import onnxruntime as _ort
+
     # Cap de threads intra-op de onnxruntime antes de que RapidOCR cree sesiones.
     # Sin este cap, cada inferencia usa todos los núcleos físicos; al concatenar
     # workers ocurre oversubscription disastrous. Con intra_op reducido, los workers
@@ -36,13 +38,12 @@ try:
 except Exception:
     pass
 
+_IMPORT_ERROR: Exception | None = None
 try:
     from rapidocr_onnxruntime import RapidOCR
 except Exception as e:  # pragma: no cover - entorno sin rapidocr
     RapidOCR = None
     _IMPORT_ERROR = e
-else:
-    _IMPORT_ERROR = None
 
 _ENGINE_LOCK = threading.Lock()
 _engine = None
@@ -151,7 +152,7 @@ def select_boxes_in_bands(norm_boxes, bands):
     seen = set()
     for nb in norm_boxes:
         cx, cy = nb["cx"], nb["cy"]
-        for (y1, y2, x1, x2) in bands:
+        for y1, y2, x1, x2 in bands:
             if y1 <= cy <= y2 and x1 <= cx <= x2:
                 key = (
                     round(nb["x1"], 3),

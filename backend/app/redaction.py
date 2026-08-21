@@ -10,6 +10,7 @@ estructurado — eso es el ítem de roadmap `13-observabilidad-operacion`;
 este helper existe para que esa feature futura pueda reutilizarlo sin
 tener que re-decidir la política de qué es sensible.
 """
+
 from __future__ import annotations
 
 import re

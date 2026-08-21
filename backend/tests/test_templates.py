@@ -1,5 +1,6 @@
 """Tests unitarios de plantillas: ROI, anclas, registro, campos requeridos."""
-from backend.app.templates import all_templates, get_template, litoral_gas_template, cevt_template, unknown_template
+
+from backend.app.templates import all_templates, cevt_template, get_template, litoral_gas_template, unknown_template
 
 
 def test_registry_keys():

@@ -4,6 +4,7 @@ Levanta el servidor uvicorn en un proceso separado, abre Chromium, carga las fac
 privadas locales (si existen), verifica accepted/rejected/missing, edita+corrige el
 periodo de GAS, confirma y descarga. Genera capturas en e2e_evidence/ (gitignored).
 """
+
 from __future__ import annotations
 
 import json
@@ -46,13 +47,17 @@ def server():
     env["GI_OCR_ORT_THREADS"] = "3"
     proc = subprocess.Popen(
         [sys.executable, "-m", "uvicorn", "backend.app.main:app", "--host", "127.0.0.1", "--port", str(port)],
-        cwd=str(ROOT), env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        cwd=str(ROOT),
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
     )
     base = f"http://127.0.0.1:{port}"
     # esperar arranque
     for _ in range(60):
         try:
             import urllib.request
+
             urllib.request.urlopen(base + "/api/v1", timeout=1)
             break
         except Exception:
@@ -101,7 +106,7 @@ def test_e2e_litoral_gas(server, tmp_path):
         assert "periodo" in resp["result"]["structured_output"]["missing_fields"]
         # corregir periodo
         page.click("#refresh-btn")
-        page.click(f".qitem >> nth=0")
+        page.click(".qitem >> nth=0")
         page.wait_for_selector("input[data-f='periodo']")
         page.fill("input[data-f='periodo']", "01/2026")
         page.select_option("select[data-state='periodo']", "corrected")
@@ -132,7 +137,7 @@ def test_e2e_cevt_all_fields(server):
         assert sv["total"] == "47061.59"
         # confirmar todos
         page.click("#refresh-btn")
-        page.click(f".qitem >> nth=0")
+        page.click(".qitem >> nth=0")
         page.wait_for_selector("#confirm-btn")
         page.click("#confirm-btn")
         page.wait_for_function("() => document.querySelector('.sbadge.ok') !== null", timeout=15000)

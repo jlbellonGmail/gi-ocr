@@ -2,12 +2,11 @@
 """
 Tests for MVP End-to-End Demo pipeline
 """
-import pytest
-import os
-import tempfile
+
 from pathlib import Path
 
-from scripts.demo_mvp_e2e import run_demo, main_async
+import pytest
+from scripts.demo_mvp_e2e import run_demo
 
 
 def test_run_demo_returns_dict():

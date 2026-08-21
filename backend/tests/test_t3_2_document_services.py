@@ -1,18 +1,17 @@
 """
 T3.2 document services – controlled fixture to structured output.
 
-Validates the complete pipeline: documento/fixture controlado → OCR/texto bruto → campos candidatos → validación semántica → campos validados/rechazados/no encontrados → salida estructurada.
+Validates the complete pipeline: documento/fixture controlado → OCR/texto
+bruto → campos candidatos → validación semántica → campos
+validados/rechazados/no encontrados → salida estructurada.
 """
 
 import json
 import tempfile
 from pathlib import Path
 
-import numpy as np
-import pytest
-from PIL import Image
-
 from backend.app import t3_2_orchestrator
+from PIL import Image
 
 
 def _create_test_image_with_text(text: str) -> Path:
@@ -63,7 +62,15 @@ class TestT32DocumentServices:
         result = t3_2_orchestrator.orquestar_documento_controlado(fixture_path)
 
         # Verify output structure
-        required_keys = {"raw_ocr_text", "candidate_fields", "validated_fields", "rejected_fields", "missing_fields", "document_type", "fixture_source"}
+        required_keys = {
+            "raw_ocr_text",
+            "candidate_fields",
+            "validated_fields",
+            "rejected_fields",
+            "missing_fields",
+            "document_type",
+            "fixture_source",
+        }
         assert set(result.keys()) == required_keys, f"Keys incorrectos: {set(result.keys())}"
 
         # Verify OCR text
@@ -97,7 +104,6 @@ class TestT32DocumentServices:
 
         # Check that at least one expected GAS field appears in extracted data
         extracted = result["candidate_fields"]
-        expected_fields = {"importe", "cliente", "a_pagar_hasta", "periodo", "nro_medidor"}
 
         # We don't require all fields to be found, but at least one should
         assert any(val is not None for val in extracted.values()), "No fields extracted from controlled fixture"
@@ -133,15 +139,25 @@ class TestT32DocumentServices:
 
         # 2. Campo extraído debe estar entre campos permitidos relevantes de GI-OCR
         relevant_fields = {
-            "cliente", "número de comprobante", "fecha", "vencimiento", "importe", "total",
-            "servicio", "código de pago", "identificador de cuenta", "período", "estado del comprobante",
+            "cliente",
+            "número de comprobante",
+            "fecha",
+            "vencimiento",
+            "importe",
+            "total",
+            "servicio",
+            "código de pago",
+            "identificador de cuenta",
+            "período",
+            "estado del comprobante",
         }
         candidate_fields = result["candidate_fields"]
         extracted_fields = {k: v for k, v in candidate_fields.items() if v is not None}
         extracted_field_names = set(extracted_fields.keys())
         # At least one extracted field should be relevant
-        assert any(field in relevant_fields for field in extracted_field_names), \
+        assert any(field in relevant_fields for field in extracted_field_names), (
             f"Extracted fields {list(extracted_field_names)} do not match any defined field in {relevant_fields}"
+        )
 
         # 3. Tipo de documento siempre presente
         assert "document_type" in result
@@ -195,7 +211,8 @@ class TestT32DocumentServices:
         assert "missing_fields" in parsed
 
     def test_reproducible_con_fixture_local(self):
-        """Garantiza que T3.2 puede ejecutarse reproduciblemente con el fixture local definido por GAS de bottom line."""
+        """Garantiza que T3.2 puede ejecutarse reproduciblemente con el
+        fixture local definido por GAS de bottom line."""
         # Use the real local fixture path defined by the project
         local_fixture_path = Path("backend/tests/fixtures/gas_sample.jpg")
         if not local_fixture_path.exists():

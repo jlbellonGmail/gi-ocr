@@ -4,11 +4,11 @@ Sólo corre si existen backend/tests/fixtures/_local_samples/real/{GAS.jpeg,cevt
 y el contrato expected.local.json (gitignored). No hardcodea valores en el extractor:
 el contrato se lee desde expected.local.json.
 """
+
 import json
 from pathlib import Path
 
 import pytest
-
 from backend.app import capture_pipeline, ocr_engine
 
 REAL = Path(__file__).resolve().parent / "fixtures" / "_local_samples" / "real"
@@ -56,7 +56,18 @@ def test_cevt_all_fields(contract, engine_warm):
     res, doc = _run("CEVT", contract)
     sv = res["structured_output"]["validated_fields"]
     exp = doc["fields"]
-    for k in ["provider", "cliente", "medidor", "periodo", "comprobante", "fecha_emision", "vencimiento", "codigo_pago_electronico", "total"]:
+    campos = [
+        "provider",
+        "cliente",
+        "medidor",
+        "periodo",
+        "comprobante",
+        "fecha_emision",
+        "vencimiento",
+        "codigo_pago_electronico",
+        "total",
+    ]
+    for k in campos:
         if k == "total":
             assert abs(float(sv[k]) - float(exp[k])) < 0.01
         else:
@@ -75,7 +86,7 @@ def test_no_gas_confusion_for_cevt(contract, engine_warm):
 def test_unknown_not_gas(tmp_path):
     # imagen sin anclas claras no debe clasificarse como GAS por defecto
     from PIL import Image
-    import numpy as np
+
     img = Image.new("RGB", (400, 600), "white")
     p = tmp_path / "blank.png"
     img.save(p)

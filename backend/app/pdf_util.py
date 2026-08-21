@@ -2,6 +2,7 @@
 
 Soporta PDF multipágina. Usa pypdfium2 (licencia BSD-3-Clause / Apache-2.0).
 """
+
 from __future__ import annotations
 
 from typing import List
@@ -43,9 +44,7 @@ def extract_text_and_render(path: str) -> List[dict]:
             if needs_ocr:
                 pil = page.render(scale=2.0).to_pil().convert("RGB")
                 image = np.array(pil)
-            pages_out.append(
-                {"page": i, "text": raw, "needs_ocr": needs_ocr, "image": image}
-            )
+            pages_out.append({"page": i, "text": raw, "needs_ocr": needs_ocr, "image": image})
             page.close()
     finally:
         pdf.close()

@@ -1,6 +1,6 @@
 """Tests de seguridad: sanitización de nombres, path traversal, job_id."""
-import pytest
-from backend.app.job_store import sanitize_name, JOB_ID_RE, new_job_id
+
+from backend.app.job_store import JOB_ID_RE, new_job_id, sanitize_name
 
 
 def test_sanitize_removes_traversal():

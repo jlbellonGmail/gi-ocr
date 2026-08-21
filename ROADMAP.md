@@ -1,4 +1,4 @@
-# Roadmap: gi-ocr (Smart Invoice Capture)
+﻿# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -179,7 +179,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       mobile para upload, captura, polling de jobs, revision humana y
       confirmacion. Debe contemplar fixtures publicos y saltos explicitos
       para muestras privadas.
-- [ ] 18-calidad-ci-supply-chain — Incorporar lint, formato, type checks,
+- [-] 18-calidad-ci-supply-chain — Incorporar lint, formato, type checks,
       dependencias fijadas, auditoria basica de vulnerabilidades y CI
       reproducible, sin romper el baseline actual.
 - [ ] 19-operacion-cola-reintentos-dlq — Robustecer cola/jobs:
@@ -239,5 +239,4 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
-
 
