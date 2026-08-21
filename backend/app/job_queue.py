@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional
 
 from .capture_pipeline import process_document
 from .job_store import JobStore, new_job_id, sanitize_name
+from .redaction import redact_exception
 
 
 def _now() -> str:
@@ -143,12 +144,16 @@ class JobQueue:
             self.store.save_original(job_id, result)
             self._notify({"job_id": job_id, "status": "ready"})
         except Exception as e:
+            # Redacción: evitar filtrar el nombre de archivo original del
+            # cliente o rutas absolutas del filesystem del servidor en un
+            # mensaje de excepción crudo (ver backend/app/redaction.py).
+            safe_error = redact_exception(e)
             with self._lock:
                 job["status"] = "failed"
-                job["error"] = str(e)
+                job["error"] = safe_error
                 job["updated_at"] = _now()
                 self.store.put(job)
-            self._notify({"job_id": job_id, "status": "failed", "error": str(e)})
+            self._notify({"job_id": job_id, "status": "failed", "error": safe_error})
 
 
 __all__ = ["JobQueue"]

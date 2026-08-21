@@ -121,7 +121,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       tras el cierre de `02-mejora-precision-ocr`); se numero como `04`
       (siguiente NN libre) en vez de reusar `03` para no colisionar con
       `03-empaquetado-despliegue`, que se deja intacto.
-- [ ] 05-correccion-orientacion-exif — Aplicar correctamente EXIF
+- [x] 05-correccion-orientacion-exif — Aplicar correctamente EXIF
       Orientation antes de OCR para fotos reales de celular. Debe cubrir
       orientaciones 90/180/270 y espejadas, tests sinteticos con EXIF,
       reemplazo o subordinacion de la heuristica actual por lectura
@@ -163,7 +163,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       trazabilidad por job/documento: tiempos OCR, estado de cola, errores
       por etapa, campos aceptados/rechazados/no encontrados,
       health/readiness y runbook operativo.
-- [ ] 14-seguridad-privacidad-documentos — Endurecer uploads y
+- [x] 14-seguridad-privacidad-documentos — Endurecer uploads y
       almacenamiento: extension, MIME, firma de archivo, tamaño maximo,
       nombres aleatorios, permisos, retencion, anonimizacion y redaccion de
       datos sensibles en logs.
@@ -239,3 +239,4 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
