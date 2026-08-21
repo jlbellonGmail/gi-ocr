@@ -10,3 +10,4 @@ ejemplos.
 - [Empaquetado y Despliegue](empaquetado-despliegue.md)
 - [Extension de Roadmap Profesional](extensionn-roadmap.md)
 - [Corrección de orientación EXIF](correccion-orientacion-exif.md)
+- [Seguridad y Privacidad de Documentos](seguridad-privacidad-documentos.md)
