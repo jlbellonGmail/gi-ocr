@@ -17,3 +17,4 @@ decisiones de diseño.
 - [Calidad de CI y Supply Chain](calidad-ci-supply-chain.md)
 - [Circuito agentico](circuito-agentico.md)
 - [Fuente unica router modelos](fuente-unica-router-modelos.md)
+- [Calidad de Captura Mobile](calidad-captura-mobile.md)

@@ -13,7 +13,7 @@ completo y la relación entre ambas.
 
 from __future__ import annotations
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 import cv2
 import numpy as np
@@ -136,6 +136,86 @@ def deskew(image_np: np.ndarray) -> np.ndarray:
         return img
 
 
+def _document_edge_contours(image_np: np.ndarray):
+    """Contornos crudos (sin ordenar ni filtrar) sobre el mapa de bordes
+    (Canny) de la imagen: base compartida por `correct_perspective`
+    (deskew/perspectiva) y por el control de calidad de captura
+    (`quality_gate.py`, feature `06-calidad-captura-mobile`) para detectar
+    el borde del documento fotografiado, sin duplicar la lógica de
+    detección en dos lugares. Cada función que la usa ordena estos
+    contornos según el criterio que le interesa (ver `find_document_contour`
+    y `largest_contour_bounding_box`).
+    """
+    img = to_rgb(image_np)
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+    edges = cv2.Canny(gray, 75, 200)
+    cnts, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    return cnts
+
+
+def find_document_contour(image_np: np.ndarray, min_area_ratio: float = 0.3) -> Optional[np.ndarray]:
+    """Cuadrilátero del documento detectado por bordes (Canny + findContours +
+    approxPolyDP), ordenado `(tl, tr, br, bl)` como `np.ndarray` de forma
+    `(4, 2)`, o `None` si no se encuentra un cuadrilátero de 4 lados con área
+    mayor a `min_area_ratio` del total de la imagen.
+
+    Candidatos ordenados por área ENCERRADA (`cv2.contourArea`, mayor
+    primero): para un documento fotografiado de forma normal (contorno
+    cerrado), esa área domina ampliamente sobre cualquier trazo de texto u
+    otro ruido de la imagen.
+
+    `correct_perspective` la usa con su umbral histórico (`0.3`, sin cambio de
+    comportamiento). `quality_gate.py` la reutiliza con un umbral más laxo
+    para las señales de "mala perspectiva" y "encuadre insuficiente" (ver
+    `docs/tecnica/calidad-captura-mobile.md`).
+    """
+    img = to_rgb(image_np)
+    h, w = img.shape[:2]
+    try:
+        cnts = sorted(_document_edge_contours(img), key=cv2.contourArea, reverse=True)[:5]
+        for c in cnts:
+            peri = cv2.arcLength(c, True)
+            approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+            if len(approx) == 4 and cv2.contourArea(c) > min_area_ratio * h * w:
+                return _order_points(approx.reshape(4, 2).astype(np.float32))
+    except Exception:
+        return None
+    return None
+
+
+def largest_contour_bounding_box(image_np: np.ndarray) -> Optional[Tuple[int, int, int, int]]:
+    """Bounding box `(x, y, w, h)` del contorno de bordes con mayor extensión
+    espacial (`w * h` del bounding box, no área encerrada), sin exigir que
+    cierre en un cuadrilátero de 4 lados.
+
+    Un documento que se sale del encuadre produce un contorno de bordes
+    *abierto* (no hay gradiente detectable exactamente en el borde del
+    frame, ver `docs/tecnica/calidad-captura-mobile.md`), cuya área
+    ENCERRADA es casi nula (es apenas el trazo del borde, no el interior del
+    documento) — por eso esta función ordena por área de *bounding box* y no
+    por `cv2.contourArea` como `find_document_contour`: así el contorno
+    abierto del documento (que sí tiene un bounding box grande, aunque
+    encierre poca área) no pierde frente a un trazo de texto pequeño pero
+    cerrado. Devuelve `None` si no hay ningún contorno detectable.
+    """
+    img = to_rgb(image_np)
+    try:
+        cnts = _document_edge_contours(img)
+        if not cnts:
+            return None
+        best = max(cnts, key=lambda c: _bbox_area(c))
+        x, y, cw, ch = cv2.boundingRect(best)
+        return int(x), int(y), int(cw), int(ch)
+    except Exception:
+        return None
+
+
+def _bbox_area(contour: np.ndarray) -> int:
+    _, _, w, h = cv2.boundingRect(contour)
+    return int(w) * int(h)
+
+
 def correct_perspective(image_np: np.ndarray) -> np.ndarray:
     """Corrección de perspectiva basada en detección del borde del documento.
 
@@ -144,21 +224,9 @@ def correct_perspective(image_np: np.ndarray) -> np.ndarray:
     """
     img = to_rgb(image_np)
     try:
-        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        gray = cv2.GaussianBlur(gray, (5, 5), 0)
-        edges = cv2.Canny(gray, 75, 200)
-        cnts, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:5]
-        screen = None
-        for c in cnts:
-            peri = cv2.arcLength(c, True)
-            approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-            if len(approx) == 4 and cv2.contourArea(c) > 0.3 * img.shape[0] * img.shape[1]:
-                screen = approx.reshape(4, 2)
-                break
-        if screen is None:
+        rect = find_document_contour(img, min_area_ratio=0.3)
+        if rect is None:
             return img
-        rect = _order_points(screen.astype(np.float32))
         (tl, tr, br, bl) = rect
         width = max(np.linalg.norm(br - bl), np.linalg.norm(tr - tl))
         height = max(np.linalg.norm(tr - br), np.linalg.norm(tl - bl))
@@ -228,6 +296,8 @@ __all__ = [
     "correct_orientation",
     "deskew",
     "correct_perspective",
+    "find_document_contour",
+    "largest_contour_bounding_box",
     "normalize_scale",
     "to_rgb",
 ]

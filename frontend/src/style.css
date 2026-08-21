@@ -22,7 +22,7 @@ body {
 .sub { margin: 2px 0 0; font-size: 12px; color: #94a3b8; }
 .topstats { display: flex; gap: 8px; flex-wrap: wrap; }
 .badge { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: #1e293b; color: #e2e8f0; }
-.badge.ok { background: #14532d; } .badge.bad { background: #7f1d1d; }
+.badge.ok { background: #14532d; } .badge.bad { background: #7f1d1d; } .badge.warn { background: #78350f; }
 
 .layout { display: grid; grid-template-columns: 360px 1fr; gap: 14px; padding: 14px; }
 @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
@@ -65,6 +65,7 @@ body {
 .pill.ready { background: var(--ok); }
 .pill.confirmed { background: #0891b2; }
 .pill.failed { background: var(--bad); }
+.pill.needs_new_photo { background: var(--warn); }
 .qitem .retry { font-size: 11px; }
 
 .empty { color: var(--muted); text-align: center; padding: 30px; }
@@ -93,5 +94,7 @@ body {
   font-size: 11px; max-height: 160px; overflow-y: auto; white-space: pre-wrap; word-break: break-word;
 }
 .error-box { color: var(--bad); font-size: 13px; background: #fee2e2; padding: 10px; border-radius: 8px; }
+.warn-box { color: #92400e; font-size: 13px; background: #fef3c7; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+.warn-box ul, .error-box ul { margin: 6px 0 0; padding-left: 18px; }
 .foot { text-align: center; padding: 14px; color: var(--muted); font-size: 12px; }
 .foot a { color: var(--primary); text-decoration: none; }

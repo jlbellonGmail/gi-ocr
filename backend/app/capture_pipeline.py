@@ -14,7 +14,7 @@ from typing import Any, Dict, Optional
 import numpy as np
 from PIL import Image
 
-from . import image_prep, ocr_engine, pdf_util
+from . import image_prep, ocr_engine, pdf_util, quality_gate
 from .field_reporting_processor import generate_field_report
 from .templates import get_template, unknown_template
 
@@ -207,7 +207,20 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
 
 
 def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, Any]:
-    """Procesa imagen o PDF. Devuelve resultado estructurado (página 0 por convención)."""
+    """Procesa imagen o PDF. Devuelve resultado estructurado (página 0 por convención).
+
+    Sobre el camino de imagen (no PDF, ver `docs/tecnica/
+    correccion-orientacion-exif.md`, "Fuera de alcance"), corre el control de
+    calidad de captura (`quality_gate.evaluate`, feature
+    `06-calidad-captura-mobile`) justo después de la corrección EXIF y ANTES
+    de `image_prep.prepare`/OCR: un veredicto `reject` no invoca OCR y
+    devuelve un resultado mínimo con `processing_metadata.quality_gate`
+    (consumido por `job_queue.JobQueue._process` para dejar el job en el
+    estado `quality_gate.REJECTED_JOB_STATUS`, sin llamar `save_original`,
+    igual que el camino `failed` existente). Un veredicto `ok`/`warn` sigue
+    el pipeline normal y agrega `processing_metadata.quality_gate` al
+    resultado final.
+    """
     src = source_ref or path
     if pdf_util.is_pdf(path):
         return _process_pdf(path, src)
@@ -215,8 +228,40 @@ def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, A
     img, exif_applied = image_prep.apply_exif_orientation(img)
     img = img.convert("RGB")
     arr = np.array(img)
+
+    quality = quality_gate.evaluate(arr)
+    if quality["verdict"] == "reject":
+        return _quality_rejected_result(src, quality)
+
     prepared = image_prep.prepare(arr, exif_orientation_applied=exif_applied)
-    return process_image(prepared, src)
+    result = process_image(prepared, src)
+    result["processing_metadata"]["quality_gate"] = quality
+    return result
+
+
+def _quality_rejected_result(src: str, quality: Dict[str, Any]) -> Dict[str, Any]:
+    """Resultado mínimo para un veredicto `reject` de `quality_gate`: no se
+    invocó OCR (`ocr_engine`/`process_image`), por lo que no hay campos
+    extraídos. Mismo "shape" que el resultado normal (todas las claves
+    presentes, vacías) para que el resto del código (frontend, exportadores)
+    no tenga que distinguir dos formatos distintos de resultado."""
+    return {
+        "processing_metadata": {
+            "quality_gate": quality,
+            "engine": None,
+        },
+        "raw_ocr_text": "",
+        "structured_output": {
+            "document_type": None,
+            "source_document_reference": src,
+            "candidate_fields": {},
+            "validated_fields": {},
+            "rejected_fields": {},
+            "missing_fields": {},
+        },
+        "field_report": None,
+        "field_scores": {},
+    }
 
 
 def _process_pdf(path: str, src: str) -> Dict[str, Any]:
@@ -317,3 +362,4 @@ def __import_templates():
 
 
 __all__ = ["process_image", "process_document"]
+
