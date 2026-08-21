@@ -221,6 +221,10 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       monitoreo, escalabilidad de OCR/jobs, costos por documento,
       cumplimiento legal y migracion desde modo local/on-premise. No
       bloquea el MVP local.
+- [x] 27-adopcion-fuente-unica-circuito-agentico — Adoptar el refactor
+      de `template` que centraliza roles, permisos, modelos y MCP en
+      `.agentic/`, agregar el router de modelos OpenCode y el gate
+      post-HITL antes de mergear. PR #11, mergeada a `develop`.
 
 ## Cómo se usa este archivo
 
