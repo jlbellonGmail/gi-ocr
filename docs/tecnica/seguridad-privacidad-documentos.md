@@ -327,10 +327,16 @@ ningún momento**:
    vigente) — no se recorta el archivo para simplificar la implementación
    y evitar reubicar offsets de datos de píxel.
 
-Esto garantiza preservación **byte a byte** de los datos de imagen
-(verificado en test comparando pixel arrays antes/después vía `numpy`) y
-preservación exacta del tag `Orientation` (no pasa nunca por el camino de
-`load_end()` que lo transpondría/eliminaría).
+Esto garantiza preservación **byte a byte** de los datos de imagen, ya
+que la implementación nunca decodifica ni reescribe los píxeles (no hay
+ninguna llamada a `Image.load()`/`Image.save()` en el camino principal
+`_strip_tiff_ifd0`). El test correspondiente
+(`test_exif_anonymization_tiff_preserves_size_and_mode`) verifica la
+ausencia de degradación comparando `.size` y `.mode` del archivo fuente
+contra el resultante — la verificación suficiente para este formato,
+tal como lo define el spec — y preservación exacta del tag
+`Orientation` (no pasa nunca por el camino de `load_end()` que lo
+transpondría/eliminaría).
 
 **Fallback (estructura no parseable de forma segura):** si el header/IFD
 no tiene una estructura TIFF reconocible (`II`/`MM` + magic `42`) o los
