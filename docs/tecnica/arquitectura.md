@@ -143,9 +143,53 @@ Reglas vigentes:
   esquema `<NN>-<slug>`; se cierran con su nombre actual (ver
   `ROADMAP.md`, sección Historial).
 
-## Nota sobre release/despliegue
+## ADR-009 — Empaquetado Docker y pipeline de release
 
-No hay todavía `Dockerfile` ni pipeline de release (`release.yml`): el MVP
-se opera localmente con `uvicorn backend.app.main:app`. Empaquetar y
-definir el destino de despliegue es una decisión pendiente, no inventada
-en esta migración (ver `ROADMAP.md`).
+Estado: **resuelta** (feature `03-empaquetado-despliegue`, ver
+[docs/tecnica/empaquetado-despliegue.md](empaquetado-despliegue.md)).
+
+Destino de despliegue: **servidor o equipo propio del usuario, con
+Docker**. Sin PaaS gestionado (Railway/Render/Fly.io), sin Kubernetes ni
+otro orquestador — dato de entrada fijo del dueño del producto para el
+caso de uso real (llevar el sistema a probar a distintos clientes en
+equipos que ellos mismos administran).
+
+Implementación:
+
+- `Dockerfile` en la raíz: imagen `python:3.12-slim` (Debian, no Alpine,
+  por los wheels manylinux de `onnxruntime`/`opencv-python-headless`),
+  instala `backend/requirements.txt` excluyendo `easyocr` (y, por
+  arrastre transitivo, `torch`) — RapidOCR/ONNX Runtime sigue siendo el
+  único motor OCR instalado y activo, dentro y fuera del contenedor; no
+  reabre ADR-006. Copia `backend/` y `frontend/`, asegura los
+  directorios de estado runtime, expone el puerto `8000` y arranca con
+  `uvicorn backend.app.main:app --host 0.0.0.0 --port 8000`.
+- `docker-compose.yml`: un servicio, con volúmenes de host (rutas
+  relativas) para los **tres** directorios de estado identificados en el
+  código real (`storage_bridge/`, `output/`, `inbound/` de raíz — no solo
+  el primero), y bind mount de archivo individual para
+  `backend/config/services.ini` (ADR-007: configuración externa, no
+  horneada, para ajustar campos por cliente sin reconstruir la imagen).
+- `.github/workflows/release.yml`: build + publish a
+  `ghcr.io/<owner>/<repo>`, disparado únicamente por `push` de tags
+  `v*` — nunca en cada commit. El humano tagea manualmente después de
+  mergear a `main` (ver `ROADMAP.md`, sección Versionado); los agentes
+  nunca crean tags.
+
+Motivo:
+
+- Permite distribuir el sistema sin exigir Python/venv/dependencias
+  instaladas a mano en el equipo del cliente.
+- Mantiene la imagen liviana para distribución, excluyendo un motor OCR
+  fallback (`easyocr`/`torch`) que no se usa en el camino activo.
+- Preserva la configurabilidad por cliente de `services.ini` (ADR-007)
+  sin acoplarla al ciclo de build de la imagen.
+- No introduce infraestructura de orquestación (PaaS/K8s) no solicitada
+  para el caso de uso real de esta etapa del producto.
+
+Explícitamente fuera de esta ADR (ver
+[docs/tecnica/empaquetado-despliegue.md](empaquetado-despliegue.md) para
+el detalle): autenticación/TLS/reverse proxy delante del contenedor,
+resiliencia de `JobQueue` ante restart, soporte garantizado
+`linux/arm64`, backup/rotación de `storage_bridge/ready/` (sigue siendo
+responsabilidad del sistema legacy, ADR-001 sin cambios).
