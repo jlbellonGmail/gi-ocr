@@ -8,3 +8,4 @@ ejemplos.
 - [Mejora Precision OCR](mejora-precision-ocr.md)
 - [Cierre Operativo del Circuito Agentico](cierre-operativo-circuito-agentico.md)
 - [Empaquetado y Despliegue](empaquetado-despliegue.md)
+- [Extension de Roadmap Profesional](extensionn-roadmap.md)
