@@ -11,6 +11,8 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from .fs_permissions import secure_dir, secure_file
+
 JOB_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 _MAX_NAME = 120
 _UNSAFE = re.compile(r"[^A-Za-z0-9._-]+")
@@ -39,6 +41,7 @@ class JobStore:
         self.inbound_dir = self.base / "inbound"
         for d in (self.jobs_dir, self.confirmed_dir):
             d.mkdir(parents=True, exist_ok=True)
+            secure_dir(d)
         self._state: Dict[str, Dict[str, Any]] = {}
 
     # --- estado en memoria ---
@@ -77,6 +80,7 @@ class JobStore:
     def save_original(self, job_id: str, result: Dict[str, Any]) -> None:
         path = self.job_path(job_id)
         path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        secure_file(path)
 
     def load_original(self, job_id: str) -> Optional[Dict[str, Any]]:
         path = self.job_path(job_id)
@@ -87,6 +91,7 @@ class JobStore:
     def save_confirmed(self, job_id: str, doc: Dict[str, Any]) -> Path:
         path = self.confirmed_path(job_id)
         path.write_text(json.dumps(doc, ensure_ascii=False, indent=2), encoding="utf-8")
+        secure_file(path)
         return path
 
     def load_confirmed(self, job_id: str) -> Optional[Dict[str, Any]]:

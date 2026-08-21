@@ -5,6 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Mapping, Sequence
 
+from .fs_permissions import secure_dir, secure_file
+
 SEPARATOR = ";"
 
 DEFAULT_BRIDGE_DIR = Path("storage_bridge")
@@ -93,6 +95,9 @@ def write_atomic_data_file(
     inbound_path.mkdir(parents=True, exist_ok=True)
     ready_path.mkdir(parents=True, exist_ok=True)
     failed_path.mkdir(parents=True, exist_ok=True)
+    secure_dir(inbound_path)
+    secure_dir(ready_path)
+    secure_dir(failed_path)
 
     temp_file = inbound_path / f"{filename}.tmp"
     final_file = ready_path / filename
@@ -103,12 +108,15 @@ def write_atomic_data_file(
 
     with temp_file.open("w", encoding="utf-8", newline="\n") as handle:
         handle.write(content)
+    secure_file(temp_file)
 
     try:
         os.replace(temp_file, final_file)
+        secure_file(final_file)
     except Exception:
         if temp_file.exists():
             os.replace(temp_file, failed_file)
+            secure_file(failed_file)
         raise
 
     return final_file

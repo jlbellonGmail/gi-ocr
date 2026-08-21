@@ -211,9 +211,11 @@ def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, A
     src = source_ref or path
     if pdf_util.is_pdf(path):
         return _process_pdf(path, src)
-    img = Image.open(path).convert("RGB")
+    img = Image.open(path)
+    img, exif_applied = image_prep.apply_exif_orientation(img)
+    img = img.convert("RGB")
     arr = np.array(img)
-    prepared = image_prep.prepare(arr)
+    prepared = image_prep.prepare(arr, exif_orientation_applied=exif_applied)
     return process_image(prepared, src)
 
 

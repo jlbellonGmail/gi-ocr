@@ -13,6 +13,8 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Dict, Optional
 
+from .fs_permissions import secure_dir, secure_file
+
 SUPPORTED = (".jpg", ".jpeg", ".png", ".tif", ".tiff", ".pdf")
 
 
@@ -28,7 +30,10 @@ class InboundWatcher:
     def __init__(self, inbound_dir: Path, on_new: Callable[[Path], None], poll_interval: float = 1.5):
         self.inbound_dir = Path(inbound_dir)
         self.inbound_dir.mkdir(parents=True, exist_ok=True)
-        (self.inbound_dir / ".gitkeep").touch(exist_ok=True)
+        secure_dir(self.inbound_dir)
+        gitkeep = self.inbound_dir / ".gitkeep"
+        gitkeep.touch(exist_ok=True)
+        secure_file(gitkeep)
         self.on_new = on_new
         self.poll_interval = poll_interval
         self._seen: Dict[str, str] = {}  # filename -> sha256
