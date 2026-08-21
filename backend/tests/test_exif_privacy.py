@@ -8,16 +8,16 @@ para validar la integración completa, no solo la función de anonimización
 en aislamiento (esa cobertura unitaria vive igual, vía las mismas
 aserciones sobre el archivo persistido).
 """
+
 from __future__ import annotations
 
 import io
 from pathlib import Path
 
-from fastapi.testclient import TestClient
-from PIL import Image
-
 from backend.app.exif_privacy import anonymize_upload_bytes
 from backend.app.main import DATA_DIR, app
+from fastapi.testclient import TestClient
+from PIL import Image
 
 c = TestClient(app)
 

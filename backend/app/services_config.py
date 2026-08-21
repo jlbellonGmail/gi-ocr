@@ -64,13 +64,10 @@ def _load_parser() -> configparser.ConfigParser:
     except configparser.DuplicateOptionError as exc:
         raise ServicesConfigError(
             f"Clave duplicada '{exc.option}' en la sección '[{exc.section}]' de "
-            f"'{SERVICES_INI}'"
-            + (f" (línea {exc.lineno})." if exc.lineno else ".")
+            f"'{SERVICES_INI}'" + (f" (línea {exc.lineno})." if exc.lineno else ".")
         ) from exc
     except configparser.Error as exc:
-        raise ServicesConfigError(
-            f"Error al parsear '{SERVICES_INI}': {exc}"
-        ) from exc
+        raise ServicesConfigError(f"Error al parsear '{SERVICES_INI}': {exc}") from exc
     return cfg
 
 
@@ -205,7 +202,7 @@ def _iter_field_block_names(cfg: configparser.ConfigParser, section: str) -> set
     for option in cfg.options(section):
         if not option.startswith(prefix):
             continue
-        remainder = option[len(prefix):]
+        remainder = option[len(prefix) :]
         if "." not in remainder:
             continue
         name, _key = remainder.split(".", 1)
@@ -219,8 +216,7 @@ def _validate_field_block(cfg: configparser.ConfigParser, section: str, name: st
     label = cfg.get(section, f"Field.{name}.Label", fallback="").strip()
     if not label:
         raise ServicesConfigError(
-            f"Sección [{section}], campo '{name}': falta 'Field.{name}.Label' "
-            "(no puede estar vacío)."
+            f"Sección [{section}], campo '{name}': falta 'Field.{name}.Label' (no puede estar vacío)."
         )
 
     field_type = cfg.get(section, f"Field.{name}.Type", fallback="").strip()
@@ -240,8 +236,7 @@ def _validate_field_block(cfg: configparser.ConfigParser, section: str, name: st
     example = cfg.get(section, f"Field.{name}.Example", fallback="").strip()
     if not example:
         raise ServicesConfigError(
-            f"Sección [{section}], campo '{name}': falta 'Field.{name}.Example' "
-            "(no puede estar vacío)."
+            f"Sección [{section}], campo '{name}': falta 'Field.{name}.Example' (no puede estar vacío)."
         )
 
     regex_raw = cfg.get(section, f"Field.{name}.Regex", fallback="").strip()
@@ -280,9 +275,7 @@ def _validate_section_schema(cfg: configparser.ConfigParser, section: str) -> No
     """Valida el esquema completo de una sección de services.ini."""
     title = cfg.get(section, "Title", fallback="").strip()
     if not title:
-        raise ServicesConfigError(
-            f"Sección [{section}]: falta la clave 'Title' (no puede estar vacía)."
-        )
+        raise ServicesConfigError(f"Sección [{section}]: falta la clave 'Title' (no puede estar vacía).")
 
     fields_raw = cfg.get(section, "Fields", fallback="").strip().strip('"')
     if not fields_raw:
@@ -294,17 +287,14 @@ def _validate_section_schema(cfg: configparser.ConfigParser, section: str) -> No
     field_names = [f.strip() for f in fields_raw.split(",")]
     if any(not name for name in field_names):
         raise ServicesConfigError(
-            f"Sección [{section}]: 'Fields' contiene un nombre de campo vacío "
-            "(revisar comas duplicadas o finales)."
+            f"Sección [{section}]: 'Fields' contiene un nombre de campo vacío (revisar comas duplicadas o finales)."
         )
 
     seen: set = set()
     for name in field_names:
         key = name.lower()
         if key in seen:
-            raise ServicesConfigError(
-                f"Sección [{section}]: campo duplicado '{name}' en 'Fields'."
-            )
+            raise ServicesConfigError(f"Sección [{section}]: campo duplicado '{name}' en 'Fields'.")
         seen.add(key)
 
     declared_blocks = _iter_field_block_names(cfg, section)
@@ -385,7 +375,5 @@ def get_service_schema(service: str) -> Dict[str, Any]:
     cfg = _load_parser()
     section = _find_section_case_insensitive(cfg, service)
     if section is None:
-        raise ServiceNotFoundError(
-            f"Servicio '{service}' no está configurado en services.ini."
-        )
+        raise ServiceNotFoundError(f"Servicio '{service}' no está configurado en services.ini.")
     return _build_service_schema(cfg, section)

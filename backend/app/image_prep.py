@@ -55,11 +55,7 @@ def apply_exif_orientation(image: Image.Image) -> Tuple[Image.Image, bool]:
     if transposed is None:
         return image, False
 
-    applied = (
-        isinstance(orientation_tag, int)
-        and not isinstance(orientation_tag, bool)
-        and 2 <= orientation_tag <= 8
-    )
+    applied = isinstance(orientation_tag, int) and not isinstance(orientation_tag, bool) and 2 <= orientation_tag <= 8
     return transposed, applied
 
 

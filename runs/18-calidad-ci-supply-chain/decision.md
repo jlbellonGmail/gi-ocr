@@ -198,3 +198,154 @@ CI y Supply Chain") ya pasaba sin problemas.
 - `docs/tecnica/calidad-ci-supply-chain.md`
 - `docs/usuario/calidad-ci-supply-chain.md`
 - `runs/18-calidad-ci-supply-chain/decision.md`
+
+## Sincronización Post-Aprobación De QA Con `develop` (2026-08-21)
+
+### Motivo
+
+Después de que QA aprobó la implementación (`test-report-1.md`, commit
+`63ca062`) y se creó la PR #10 hacia `develop`, se detectó que la rama
+`feature/18-calidad-ci-supply-chain` estaba basada en un punto de
+`develop` ~20 commits atrás, sin las features `03-empaquetado-despliegue`,
+`05-correccion-orientacion-exif`, `14-seguridad-privacidad-documentos` y
+`16-administracion-servicios-documentos`, ya mergeadas. La PR quedó con
+`mergeable_state: dirty` (conflictos reales) y CI nunca corrió sobre una
+versión mergeable. Esta sección documenta el merge de sincronización que
+resuelve eso, sin reimplementar la feature.
+
+### Conflictos Encontrados Y Resolución
+
+- **`ROADMAP.md`**: conflicto trivial de una línea en blanco al final del
+  archivo (ambas ramas tocaron el mismo punto de EOF por separado); todas
+  las entradas de features (`03`, `05`, `14`, `16`, `18`) ya convivían sin
+  conflicto real en el resto del archivo. Se resolvió tomando el contenido
+  sin la línea en blanco duplicada. El estado `[-] 18-calidad-ci-supply-chain`
+  se preservó intacto; no se tocó el estado de ninguna otra feature.
+- **`backend/app/image_prep.py`**: HEAD (feature 18) agregaba
+  `from __future__ import annotations`; `develop` (feature 05) agregaba
+  `from typing import Optional, Tuple` para el nuevo
+  `apply_exif_orientation() -> Tuple[Image.Image, bool]`. Se verificó que
+  `Optional` no se usa en ningún lugar del archivo (ni en esta rama ni en
+  `develop`) — import muerto ya presente en `develop`. Resolución: se
+  combinaron ambos imports (`from __future__ import annotations` +
+  `from typing import Tuple`, sin `Optional`), preservando la lógica real
+  de `apply_exif_orientation`/`correct_orientation`/`deskew`/
+  `correct_perspective` tal como vienen de `develop`, sin revertir nada.
+- **`backend/app/main.py`**: dos bloques de imports en conflicto. (1) HEAD
+  agregaba `shutil`/`tempfile`/`datetime` (usados por código previo a
+  feature 18 que en esta rama seguía existiendo) y `develop` agregaba
+  `re` (para código de la feature 14); se verificó con grep sobre el
+  archivo resultante que **ninguno** de los cinco (`shutil`, `tempfile`,
+  `re`, `datetime`, y también `Any`/`Dict`/`SUPPORTED`/`timezone` del
+  segundo bloque) se usa realmente en el `main.py` de `develop` post
+  features 14/16 — son imports muertos que la feature 18 ya venía
+  identificando y limpiando como parte de su alcance declarado ("Aplica
+  fixes de lint/formato al codigo existente: imports no usados, orden de
+  imports, espaciado, sin cambiar logica ni aserciones de test"). Se
+  eliminaron todos. (2) HEAD tenía solo
+  `from .inbound_watcher import InboundWatcher`; `develop` agregaba
+  además `from .document_services import normalize_service_id`,
+  `from .exif_privacy import anonymize_upload_bytes`,
+  `from .fs_permissions import secure_dir, secure_file`, y
+  `SUPPORTED` junto a `InboundWatcher`. Se verificó uso real de cada
+  símbolo: `normalize_service_id`, `anonymize_upload_bytes`,
+  `secure_dir`, `secure_file` sí se usan (feature 14/16, preservados tal
+  cual); `SUPPORTED` no se usa en ningún punto del archivo — se omitió
+  igual que el resto de imports muertos. El refactor propio de feature 18
+  en este archivo (`_on_new_inbound` como función nombrada en vez de
+  lambda inline, chequeo `doc is None` en `download_confirmed`) se
+  preservó sin cambios, integrado sobre la base funcional de `develop`
+  (endpoints de servicios, upload seguro, EXIF, etc.).
+- **`backend/app/services_config.py`**: conflicto puramente aditivo.
+  Feature 18 no había tocado nada después de `get_service_config()`;
+  `develop` (feature 16) agregó ahí toda la validación de esquema formal
+  (`_iter_field_block_names`, `_validate_field_block`,
+  `_validate_section_schema`, `validate_services_schema`,
+  `_find_section_case_insensitive`, `_build_service_schema`,
+  `list_services_schema`, `get_service_schema`). Se tomó el bloque
+  completo de `develop` sin modificaciones.
+- **`docs/tecnica/index.md` y `docs/usuario/index.md`**: conflicto de
+  listas de enlaces — HEAD solo tenía la entrada de esta feature 18;
+  `develop` tenía las de `05`/`14`/`16`. Se combinaron ambos conjuntos de
+  entradas (orden: primero las de `develop` en el orden que ya traían,
+  después la de `18` al final), sin duplicados y sin perder ninguna.
+
+### Limpieza De Lint/Tipos Adicional Requerida Por El Merge
+
+El código traído por `develop` (features 05/14/16) nunca había pasado por
+el gate de `ruff`/`mypy` porque ese gate no existía todavía cuando esas
+features se mergearon. Al integrarlo en esta rama (que sí trae el gate),
+aparecieron los siguientes hallazgos — todos fixes mecánicos de
+lint/formato/tipos, sin cambiar lógica ni aserciones de test, mismo
+criterio que ya aplicaba el commit original de esta feature:
+
+- `ruff check` (7 errores): `typing.Iterable` sin usar en
+  `backend/app/retention.py`; una línea de 133 caracteres (>120) en
+  `backend/app/upload_validation.py`; 5 archivos de test
+  (`test_upload_security.py`, `test_exif_orientation.py`,
+  `test_exif_privacy.py`, `test_services_admin_api.py`,
+  `test_services_config_schema.py`) con bloques de import
+  desordenados (`I001`). Se corrigieron con `ruff check --fix` (6 de
+  7 automáticos) y edición manual de la línea larga (se partió el
+  f-string en dos literales concatenados, mismo mensaje de error final).
+- `ruff format --check` (13 archivos): diferencias de formato (línea en
+  blanco tras docstring antes de imports, colapso de paréntesis
+  innecesarios) en los mismos archivos nuevos de features 05/14/16 más
+  `test_retention.py`. Se corrigieron con `ruff format` (sin tocar
+  lógica).
+- `mypy backend/app` (2 errores): en `backend/app/capture_pipeline.py`,
+  la variable `img` se infería como `PIL.ImageFile.ImageFile` (por
+  `Image.open(path)`) y luego se reasignaba con el `Image.Image` más
+  genérico que devuelve `image_prep.apply_exif_orientation()` (código de
+  la feature 05). Se corrigió anotando explícitamente
+  `img: Image.Image = Image.open(path)` en la primera asignación, sin
+  cambiar el comportamiento en runtime.
+
+Todos estos cambios son de la misma naturaleza que el alcance ya aprobado
+de esta feature (lint/formato/tipos sobre código existente) — no
+reabren ni modifican el comportamiento funcional de las features 05/14/16.
+
+### Verificación Real Post-Merge
+
+- `git merge origin/develop` → 6 archivos con conflicto real
+  (`ROADMAP.md`, `backend/app/image_prep.py`, `backend/app/main.py`,
+  `backend/app/services_config.py`, `docs/tecnica/index.md`,
+  `docs/usuario/index.md`), todos resueltos manualmente como se describe
+  arriba. Merge commit `84cc366`.
+- `pip install -r backend/requirements-dev.txt` (mismo `.venv` de esta
+  rama, Python 3.14.7) → sin cambios de versión (los `requirements*.txt`
+  no cambiaron por el merge), solo instaló `playwright`/`greenlet`/`pyee`
+  (dependencias de test E2E de la feature 17, ya presentes en
+  `requirements-dev.txt` de `develop`, sin fijar — fuera del alcance de
+  esta feature).
+- `ruff check backend/app backend/tests scripts tests` → `All checks
+  passed!` (tras el fix descripto arriba).
+- `ruff check .` (desde la raíz, con `extend-exclude = ["runs", "docs"]`
+  ya en `pyproject.toml`) → `All checks passed!`.
+- `ruff format --check backend/app backend/tests scripts tests` → `76
+  files already formatted` (tras aplicar `ruff format`).
+- `ruff format --check .` (desde la raíz) → `101 files already
+  formatted`.
+- `mypy backend/app` → `Success: no issues found in 29 source files`
+  (tras el fix de anotación en `capture_pipeline.py`).
+- `pytest -v --basetemp=<scratch propio>` completo (`backend/tests/` +
+  `tests/`) → **`341 passed, 10 skipped, 0 failed, 40 warnings in
+  522.31s`**. Los 10 `skip` son los esperados: muestras privadas locales
+  gitignored (features previas), permisos POSIX que no aplican en
+  Windows (feature 14), y Playwright sin navegador instalado como
+  paquete real (feature 17, fuera de alcance). Ningún test falló.
+- `Get-FeatureContractStatus -Slug '18-calidad-ci-supply-chain' -Title
+  'Calidad de CI y Supply Chain'` → `IsComplete: True`, `Problems: {}`.
+
+### Alcance No Modificado En Esta Sincronización
+
+- No se tocó `ROADMAP.md` más allá de resolver el conflicto de merge
+  (ninguna otra entrada cambió de estado).
+- No se corrió `ready-for-pr.ps1` de nuevo (la rama ya estaba marcada y
+  la PR #10 ya existe).
+- No se cerró ni se recreó la PR.
+- No se revirtió ni se modificó ninguna lógica funcional de las features
+  `03`/`05`/`14`/`16` ya mergeadas a `develop` — únicamente se
+  eliminaron imports muertos, se corrigió formato y se agregó una
+  anotación de tipo explícita, todo verificado con la suite de tests
+  completa en verde.

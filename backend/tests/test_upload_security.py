@@ -7,6 +7,7 @@ aleatorio no predecible), 6 (permisos de filesystem POSIX), 7 (purga por
 retención) y 8 (redacción de errores). El criterio 9 (anonimización EXIF,
 JPEG + TIFF) vive en `test_exif_privacy.py`.
 """
+
 from __future__ import annotations
 
 import io
@@ -16,11 +17,10 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from fastapi.testclient import TestClient
-from PIL import Image
-
 from backend.app.job_store import sanitize_name
 from backend.app.main import DATA_DIR, app, queue, store
+from fastapi.testclient import TestClient
+from PIL import Image
 
 c = TestClient(app)
 

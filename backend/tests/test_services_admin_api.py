@@ -4,12 +4,12 @@ Cubre el criterio de aceptación 12 de
 runs/16-administracion-servicios-documentos/spec.md:
 GET /api/v1/services y GET /api/v1/services/{service_id}.
 """
-from __future__ import annotations
 
-from fastapi.testclient import TestClient
+from __future__ import annotations
 
 from backend.app import services_config
 from backend.app.main import app
+from fastapi.testclient import TestClient
 
 c = TestClient(app)
 

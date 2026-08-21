@@ -2,6 +2,7 @@
 `14-seguridad-privacidad-documentos`): targets, defaults, exclusiones
 (`storage_bridge/ready/` nunca se toca, jobs `queued`/`processing` nunca se
 purgan, retención `<=0` deshabilita en vez de purgar todo)."""
+
 from __future__ import annotations
 
 import os
