@@ -1,0 +1,53 @@
+name: Post-HITL merge gate
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+concurrency:
+  group: post-hitl-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  complete-approved-pr:
+    if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'develop'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Derivar slug de feature
+        id: feature
+        shell: bash
+        run: |
+          head_ref='${{ github.event.pull_request.head.ref }}'
+          if [[ "$head_ref" =~ ^feature/([0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*)$ ]]; then
+            echo "slug=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+            echo "branch=$head_ref" >> "$GITHUB_OUTPUT"
+          else
+            echo "La rama '$head_ref' no sigue feature/NN-slug; no hay merge automatico."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout trusted develop
+        if: steps.feature.outputs.skip != 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Completar PR aprobada si CI esta verde
+        if: steps.feature.outputs.skip != 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./scripts/complete-approved-pr.ps1 `
+            -Slug '${{ steps.feature.outputs.slug }}' `
+            -Branch '${{ steps.feature.outputs.branch }}' `
+            -PrNumber ${{ github.event.pull_request.number }} `
+            -SkipLocalCleanup `
+            -CommentOnFailure
