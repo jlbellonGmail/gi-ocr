@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -102,7 +102,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       benchmark de lote (`scripts/benchmark_captura.py`, 400 documentos,
       p50/p95, memoria) y robustez con facturas reales adicionales más
       allá del fixture usado en desarrollo.
-- [-] 03-empaquetado-despliegue — Decisión de despliegue (Dockerfile,
+- [x] 03-empaquetado-despliegue — Decisión de despliegue (Dockerfile,
       `release.yml`, destino) una vez que exista una decisión de
       infraestructura concreta. No se inicia sin esa decisión (ver
       `docs/tecnica/arquitectura.md`).
@@ -139,6 +139,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
