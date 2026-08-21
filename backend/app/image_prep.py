@@ -2,13 +2,64 @@
 
 Mejoras robustas (OpenCV) que no dependen de píxeles absolutos. Las plantillas usan
 coordenadas normalizadas; la corrección aquí hace que el layout se alinee a esas bandas.
+
+La corrección de orientación EXIF (`apply_exif_orientation`) es un paso previo y
+distinto a `correct_orientation`: opera sobre la imagen PIL original (con metadata)
+ANTES de convertir a `np.ndarray`, mientras que `correct_orientation` es una
+heurística de contenido (varianza de gradiente) que opera sobre el array ya sin
+metadata. Ver `docs/tecnica/correccion-orientacion-exif.md` para el detalle
+completo y la relación entre ambas.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Tuple
 
 import cv2
 import numpy as np
+from PIL import Image, ImageOps
+
+
+def apply_exif_orientation(image: Image.Image) -> Tuple[Image.Image, bool]:
+    """Aplica el tag EXIF `Orientation` (1-8) a una imagen PIL recién abierta.
+
+    Usa `PIL.ImageOps.exif_transpose`, que interpreta los 8 valores estándar
+    (rotaciones de 90/180/270 y variantes espejadas) y devuelve una nueva
+    imagen ya orientada "de pie". Si la imagen no tiene EXIF, no tiene el tag
+    `Orientation`, o el valor es inválido/corrupto, Pillow simplemente no
+    modifica nada (degrada con gracia, no lanza excepción en el caso normal).
+
+    Devuelve una tupla `(imagen_corregida, se_aplico_correccion)`:
+    - `se_aplico_correccion` es `True` únicamente cuando el tag `Orientation`
+      estaba presente con un valor distinto de 1 (es decir, cuando
+      `exif_transpose` efectivamente transformó los píxeles). Esto permite a
+      quien orquesta el pipeline decidir si subordinar heurísticas
+      posteriores de orientación por contenido (ver `correct_orientation`).
+
+    No debe lanzar excepción por EXIF corrupto: cualquier error inesperado al
+    leer el tag se trata como "sin corrección EXIF disponible" y se devuelve
+    la imagen original sin modificar.
+    """
+    orientation_tag = None
+    try:
+        exif = image.getexif()
+        if exif:
+            orientation_tag = exif.get(0x0112)  # 274, tag EXIF "Orientation"
+    except Exception:
+        orientation_tag = None
+
+    try:
+        transposed = ImageOps.exif_transpose(image)
+    except Exception:
+        return image, False
+    if transposed is None:
+        return image, False
+
+    applied = (
+        isinstance(orientation_tag, int)
+        and not isinstance(orientation_tag, bool)
+        and 2 <= orientation_tag <= 8
+    )
+    return transposed, applied
 
 
 def to_rgb(image_np: np.ndarray) -> np.ndarray:
@@ -19,11 +70,20 @@ def to_rgb(image_np: np.ndarray) -> np.ndarray:
     return image_np
 
 
-def correct_orientation(image_np: np.ndarray) -> np.ndarray:
+def correct_orientation(image_np: np.ndarray, skip: bool = False) -> np.ndarray:
     """Corrigerotación 0/90/180/270 usando OSD del detector de texto de OpenCV
     (no siempre disponible). Fallback: detecta orientación por densidad de bordes
-    comparando proyecciones (heurística ligera, no destructiva)."""
+    comparando proyecciones (heurística ligera, no destructiva).
+
+    `skip=True` subordina esta heurística: se usa cuando aguas arriba
+    (`apply_exif_orientation`) ya se aplicó una corrección EXIF válida sobre la
+    misma imagen, para evitar doble corrección (EXIF ya dejó la imagen "de pie";
+    volver a rotarla por heurística de contenido la desorientaría de nuevo). Si
+    no hubo corrección EXIF utilizable, esta heurística sigue corriendo igual
+    que antes (comportamiento sin regresión)."""
     img = to_rgb(image_np)
+    if skip:
+        return img
     try:
         gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
         # Heurística de orientación: el texto tiende a tener más bordes horizontales
@@ -132,14 +192,25 @@ def normalize_scale(image_np: np.ndarray, max_side: int = 1600) -> np.ndarray:
     return cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
 
 
-def prepare(image_np: np.ndarray, max_side: int = 1600, apply_perspective: bool = False) -> np.ndarray:
+def prepare(
+    image_np: np.ndarray,
+    max_side: int = 1600,
+    apply_perspective: bool = False,
+    exif_orientation_applied: bool = False,
+) -> np.ndarray:
     """Pipeline de preparación: orientación -> skew -> (perspectiva opcional) -> escala.
 
     La corrección de perspectiva es OPT-OUT por defecto: sólo se aplica cuando el
     borde del documento se detecta con claridad y se solicita explícitamente, evitando
     warps espurios que desalineen las ROI normalizadas de las plantillas.
+
+    `exif_orientation_applied` indica que, antes de llegar acá, ya se corrigió la
+    orientación de la imagen usando su tag EXIF (ver
+    `image_prep.apply_exif_orientation`, invocado en
+    `capture_pipeline.process_document`). En ese caso se subordina la heurística
+    `correct_orientation` (no se ejecuta) para evitar doble corrección.
     """
-    out = correct_orientation(image_np)
+    out = correct_orientation(image_np, skip=exif_orientation_applied)
     out = deskew(out)
     if apply_perspective:
         out = correct_perspective(out)
@@ -149,6 +220,7 @@ def prepare(image_np: np.ndarray, max_side: int = 1600, apply_perspective: bool 
 
 __all__ = [
     "prepare",
+    "apply_exif_orientation",
     "correct_orientation",
     "deskew",
     "correct_perspective",
