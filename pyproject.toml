@@ -1,0 +1,67 @@
+# Configuracion de herramientas de calidad de CI (feature
+# 18-calidad-ci-supply-chain). No incluye [build-system]: el proyecto
+# sigue usando pip + backend/requirements.txt / requirements-dev.txt como
+# gestor de paquetes (ver AGENTS.md, "Gestor de paquetes"). Este archivo
+# es unicamente configuracion de tooling (lint/formato/type-check), texto
+# plano TOML, no configuracion persistente de dominio OCR.
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+# Rutas cubiertas por el gate de CI (ver .github/workflows/ci.yml):
+# backend/app, backend/tests, scripts y tests. backend/config,
+# storage_bridge, output y demas artefactos generados no son codigo
+# Python fuente y no se lintean.
+src = ["backend/app", "backend/tests", "scripts", "tests"]
+
+# ruff >=0.16 formatea por defecto bloques de codigo Python embebidos en
+# Markdown. runs/ es historial del circuito agentico (evidencia de
+# features ya cerradas, ver AGENTS.md): ningun agente debe reescribir el
+# artefacto de otra feature al correr `ruff check .` / `ruff format
+# --check .` desde la raiz (criterio 10 del spec de esta feature). docs/
+# se excluye por el mismo motivo: es documentacion de referencia, no
+# codigo fuente cubierto por el gate de CI (criterios 2-3).
+extend-exclude = ["runs", "docs"]
+
+[tool.ruff.lint]
+# Subconjunto deliberadamente acotado para esta primera iteracion (ver
+# docs/tecnica/calidad-ci-supply-chain.md, seccion "Reglas de ruff"):
+#   E - pycodestyle errors (estilo/espaciado)
+#   F - Pyflakes (imports/variables no usadas, errores logicos evidentes)
+#   W - pycodestyle warnings (whitespace, EOF)
+#   I - isort (orden de imports)
+# No se activan otras categorias (B - bugbear, UP - pyupgrade, C90 -
+# complexity, ANN - anotaciones obligatorias, D - docstrings, etc.) en
+# esta iteracion para no forzar una reescritura masiva no pedida por el
+# spec de esta feature; queda declarado como mejora incremental futura.
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+# E402 (import no ubicado al inicio del archivo) se excluye puntualmente
+# en los scripts ejecutables standalone de scripts/, que insertan la raiz
+# del repo en sys.path ANTES de importar backend/app o scripts propios,
+# para poder correrse sin instalar el paquete
+# (`python scripts/proceso.py`). Es un patron intencional documentado,
+# no deuda de lint (ver tambien docs/tecnica/calidad-ci-supply-chain.md).
+"scripts/*.py" = ["E402"]
+# Mismo patron sys.path.insert() previo al import en tests que ejecutan
+# scripts/backend fuera del paquete instalado, o import condicionado a un
+# pytest.importorskip() previo (pypdfium2/playwright ausentes en algunos
+# entornos, ver criterios de aceptacion sobre pip-audit informativo).
+"backend/tests/test_document_result_exporter.py" = ["E402"]
+"backend/tests/test_pdf_util.py" = ["E402"]
+"backend/tests/test_process_document_cli.py" = ["E402"]
+"tests/e2e/test_e2e_playwright.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.12"
+files = ["backend/app"]
+# Configuracion inicial deliberadamente permisiva (ver spec, "Alcance"):
+# no es una migracion a tipado estricto completo. Foco en detectar
+# errores de tipo evidentes sin bloquear CI el mismo dia de adopcion.
+ignore_missing_imports = true
+disallow_untyped_defs = false
+check_untyped_defs = false
+warn_unused_ignores = true
+warn_redundant_casts = true

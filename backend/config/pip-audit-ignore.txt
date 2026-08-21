@@ -1,0 +1,32 @@
+# Lista de excepciones de pip-audit para el gate obligatorio contra
+# backend/requirements.txt (ver .github/workflows/ci.yml, paso
+# "Auditoria de vulnerabilidades - runtime (pip-audit, gate)").
+#
+# POLITICA (feature 18-calidad-ci-supply-chain): esta lista NO es una
+# declaracion de una sola vez. Debe revisarse cada vez que se modifica
+# backend/requirements.txt (agregar, quitar o cambiar de version
+# cualquier dependencia), para confirmar que cada excepcion activa sigue
+# siendo necesaria, que no quedo obsoleta por un upgrade ya disponible, y
+# que no se introdujeron vulnerabilidades nuevas sin registrar aqui. Ver
+# tambien docs/tecnica/calidad-ci-supply-chain.md, seccion "Politica de
+# excepciones de pip-audit".
+#
+# Formato: un ID de vulnerabilidad (CVE-XXXX-NNNNN o GHSA-xxxx-xxxx-xxxx)
+# por linea, seguido opcionalmente de un comentario con el motivo despues
+# de '#'. Lineas vacias y lineas que empiezan enteramente con '#' se
+# ignoran (no son un ID activo).
+#
+# Ejemplo de como se declara una excepcion futura, si aplicara:
+#   CVE-0000-00000 # rapidocr-onnxruntime==1.2.3 fijado por incompatibilidad
+#                   # documentada en backend/app/ocr_engine.py; sin upgrade
+#                   # disponible que preserve la API interna usada. Revisar
+#                   # en cada bump de rapidocr-onnxruntime/onnxruntime.
+#
+# Sin excepciones activas al momento de esta feature
+# (18-calidad-ci-supply-chain, ver runs/18-calidad-ci-supply-chain/decision.md).
+# No se pudo ejecutar pip-audit contra el indice real de PyPI durante la
+# implementacion en el entorno de desarrollo usado (bloqueo de red/TLS
+# del entorno, ver docs/tecnica/calidad-ci-supply-chain.md, seccion
+# "pip-audit sin conexion a internet"); el paso de CI en GitHub Actions
+# (con acceso real a pypi.org) es la primera ejecucion efectiva del gate
+# y debe revisarse en el primer run de la PR de esta feature.

@@ -12,6 +12,7 @@ qa-agent con Docker Desktop activo y esta documentada en
 runs/03-empaquetado-despliegue/test-report-1.md; no se automatiza aqui
 porque requeriria Docker Engine en el entorno de CI.
 """
+
 from __future__ import annotations
 
 import shutil
@@ -41,8 +42,7 @@ def _read(path: Path) -> str:
 def test_dockerfile_exists_and_uses_slim_debian_base():
     content = _read(DOCKERFILE)
     assert "FROM python:3.12-slim" in content, (
-        "Dockerfile debe basarse en python:3.12-slim (Debian), no Alpine "
-        "(ver spec, criterio 1 y Riesgos/supuestos)."
+        "Dockerfile debe basarse en python:3.12-slim (Debian), no Alpine (ver spec, criterio 1 y Riesgos/supuestos)."
     )
 
 
@@ -71,9 +71,7 @@ def test_dockerfile_ensures_runtime_state_directories():
 def test_dockerfile_exposes_8000_and_binds_all_interfaces():
     content = _read(DOCKERFILE)
     assert "EXPOSE 8000" in content
-    assert '"--host", "0.0.0.0"' in content, (
-        "El CMD debe arrancar con --host 0.0.0.0, no 127.0.0.1 (criterio 2)."
-    )
+    assert '"--host", "0.0.0.0"' in content, "El CMD debe arrancar con --host 0.0.0.0, no 127.0.0.1 (criterio 2)."
     assert '"--port", "8000"' in content
 
 
@@ -120,8 +118,7 @@ def test_requirements_txt_still_declares_easyocr_for_local_dev():
 def test_dockerignore_excludes_sensitive_and_unnecessary_paths(excluded_entry):
     content = _read(DOCKERIGNORE)
     assert excluded_entry in content, (
-        f"'{excluded_entry}' debe estar excluido del contexto de build via "
-        ".dockerignore (criterio 4)."
+        f"'{excluded_entry}' debe estar excluido del contexto de build via .dockerignore (criterio 4)."
     )
 
 
@@ -180,9 +177,7 @@ def test_compose_services_ini_mount_path_matches_services_config_resolution():
 
     compose = _load_compose()
     service = compose["services"]["gi-ocr"]
-    mount_entry = next(
-        v for v in service["volumes"] if v.endswith(":/app/backend/config/services.ini")
-    )
+    mount_entry = next(v for v in service["volumes"] if v.endswith(":/app/backend/config/services.ini"))
     container_side = mount_entry.split(":", 1)[1]
     assert container_side == resolved_in_image == "/app/backend/config/services.ini"
 

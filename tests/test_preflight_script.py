@@ -1,6 +1,5 @@
 import os
 import shutil
-import stat
 import subprocess
 from pathlib import Path
 
@@ -234,7 +233,8 @@ def test_matrix_pending_no_branch_no_worktree_is_ok(tmp_path: Path):
     result = run_preflight(main, args=["-Slug", SLUG])
 
     assert "Feature no iniciada" in result.stdout
-    assert "[BLOCKING]" not in [line.split(" ", 1)[0] for line in result.stdout.splitlines() if "matriz" not in line.lower()]
+    prefixes = [line.split(" ", 1)[0] for line in result.stdout.splitlines() if "matriz" not in line.lower()]
+    assert "[BLOCKING]" not in prefixes
 
 
 def test_matrix_pending_with_branch_and_worktree_is_ok_informative(tmp_path: Path):

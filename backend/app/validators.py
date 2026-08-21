@@ -3,6 +3,7 @@
 Separan texto bruto OCR -> candidato -> validado / rechazado / no encontrado.
 Sin hardcodeo de valores de negocio: sólo normalización y validación genérica de tipos.
 """
+
 from __future__ import annotations
 
 import re

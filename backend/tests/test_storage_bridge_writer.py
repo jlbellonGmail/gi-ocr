@@ -1,11 +1,10 @@
 """Tests for atomic storage bridge .DATA writer."""
 
-from datetime import datetime
 import os
+from datetime import datetime
 from pathlib import Path
 
 import pytest
-
 from backend.app.storage_bridge_writer import (
     build_data_content,
     build_data_filename,

@@ -73,15 +73,15 @@ def write_fake_gh(bin_dir: Path, mode: str) -> None:
         if mode == "pr_exists":
             gh.write_text(
                 "@echo off\n"
-                "echo %* | findstr /C:\"pr view\" >nul && (\n"
-                "  echo {\"number\":77,\"url\":\"https://example.test/pull/77\",\"state\":\"OPEN\",\"mergeStateStatus\":\"CLEAN\"}\n"
+                'echo %* | findstr /C:"pr view" >nul && (\n'
+                '  echo {"number":77,"url":"https://example.test/pull/77","state":"OPEN","mergeStateStatus":"CLEAN"}\n'
                 "  exit /b 0\n"
                 ")\n"
-                "echo %* | findstr /C:\"--watch\" >nul && (\n"
+                'echo %* | findstr /C:"--watch" >nul && (\n'
                 "  echo all checks passed\n"
                 "  exit /b 0\n"
                 ")\n"
-                "echo %* | findstr /C:\"pr checks\" >nul && (\n"
+                'echo %* | findstr /C:"pr checks" >nul && (\n'
                 "  echo check-a\tpass\t1s\n"
                 "  exit /b 0\n"
                 ")\n"
@@ -92,7 +92,7 @@ def write_fake_gh(bin_dir: Path, mode: str) -> None:
         elif mode == "pr_missing":
             gh.write_text(
                 "@echo off\n"
-                "echo %* | findstr /C:\"pr view\" >nul && (\n"
+                'echo %* | findstr /C:"pr view" >nul && (\n'
                 "  echo no pull requests found for branch 1>&2\n"
                 "  exit /b 1\n"
                 ")\n"
@@ -103,7 +103,7 @@ def write_fake_gh(bin_dir: Path, mode: str) -> None:
         elif mode == "watch_success":
             gh.write_text(
                 "@echo off\n"
-                "echo %* | findstr /C:\"--watch\" >nul && (\n"
+                'echo %* | findstr /C:"--watch" >nul && (\n'
                 "  echo all checks passed\n"
                 "  exit /b 0\n"
                 ")\n"
@@ -114,7 +114,7 @@ def write_fake_gh(bin_dir: Path, mode: str) -> None:
         elif mode == "watch_failure":
             gh.write_text(
                 "@echo off\n"
-                "echo %* | findstr /C:\"--watch\" >nul && (\n"
+                'echo %* | findstr /C:"--watch" >nul && (\n'
                 "  echo some checks failed 1>&2\n"
                 "  exit /b 1\n"
                 ")\n"
@@ -129,38 +129,39 @@ def write_fake_gh(bin_dir: Path, mode: str) -> None:
         if mode == "pr_exists":
             gh.write_text(
                 "#!/bin/sh\n"
-                "case \"$*\" in\n"
-                "  *'pr view'*) echo '{\"number\":77,\"url\":\"https://example.test/pull/77\",\"state\":\"OPEN\",\"mergeStateStatus\":\"CLEAN\"}'; exit 0;;\n"
+                'case "$*" in\n'
+                '  *\'pr view\'*) echo \'{"number":77,"url":"https://example.test/pull/77",'
+                '"state":"OPEN","mergeStateStatus":"CLEAN"}\'; exit 0;;\n'
                 "  *'--watch'*) echo 'all checks passed'; exit 0;;\n"
                 "  *'pr checks'*) printf 'check-a\\tpass\\t1s\\n'; exit 0;;\n"
-                "  *) echo \"unexpected args: $*\" >&2; exit 1;;\n"
+                '  *) echo "unexpected args: $*" >&2; exit 1;;\n'
                 "esac\n",
                 encoding="utf-8",
             )
         elif mode == "pr_missing":
             gh.write_text(
                 "#!/bin/sh\n"
-                "case \"$*\" in\n"
+                'case "$*" in\n'
                 "  *'pr view'*) echo 'no pull requests found for branch' >&2; exit 1;;\n"
-                "  *) echo \"unexpected args: $*\" >&2; exit 1;;\n"
+                '  *) echo "unexpected args: $*" >&2; exit 1;;\n'
                 "esac\n",
                 encoding="utf-8",
             )
         elif mode == "watch_success":
             gh.write_text(
                 "#!/bin/sh\n"
-                "case \"$*\" in\n"
+                'case "$*" in\n'
                 "  *'--watch'*) echo 'all checks passed'; exit 0;;\n"
-                "  *) echo \"unexpected args: $*\" >&2; exit 1;;\n"
+                '  *) echo "unexpected args: $*" >&2; exit 1;;\n'
                 "esac\n",
                 encoding="utf-8",
             )
         elif mode == "watch_failure":
             gh.write_text(
                 "#!/bin/sh\n"
-                "case \"$*\" in\n"
+                'case "$*" in\n'
                 "  *'--watch'*) echo 'some checks failed' >&2; exit 1;;\n"
-                "  *) echo \"unexpected args: $*\" >&2; exit 1;;\n"
+                '  *) echo "unexpected args: $*" >&2; exit 1;;\n'
                 "esac\n",
                 encoding="utf-8",
             )

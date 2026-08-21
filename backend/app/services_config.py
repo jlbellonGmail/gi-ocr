@@ -4,12 +4,12 @@ Configuración de servicios OCR basada en backend/config/services.ini.
 Este módulo proporciona una capa de abstracción sobre ConfigParser para leer
 la configuración de servicios desde el archivo INI plano.
 """
+
 from __future__ import annotations
 
 import configparser
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "config"
 SERVICES_INI = CONFIG_DIR / "services.ini"

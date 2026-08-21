@@ -5,15 +5,8 @@ Tests for the integration of T3.2 orchestrator and T3.3 field reporting into a f
 """
 
 import json
-import pytest
-from pathlib import Path
 
 from backend.app.t3_2_orchestrator import orquestar_documento_controlado
-from backend.app.field_reporting_processor import (
-    classify_fields_from_t32_output,
-    generate_field_report,
-)
-
 
 FIXTURE_PATH = "backend/tests/fixtures/gas_sample.jpg"
 
@@ -95,10 +88,11 @@ def test_t34_uses_t32_orchestrator():
 
 def test_t34_visible_flow_handles_missing_fixture():
     """Test that T3.4 visible flow fails gracefully with missing fixture."""
-    from scripts.t3_4_visible_flow import main
-
     # Attempt to process non-existent fixture
     import sys
+
+    from scripts.t3_4_visible_flow import main
+
     old_argv = sys.argv
     sys.argv = ["t3_4_visible_flow.py", "nonexistent_fixture.jpg"]
 

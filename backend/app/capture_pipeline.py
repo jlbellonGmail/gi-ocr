@@ -4,18 +4,19 @@ validación tipada -> accepted/rejected/missing -> reporte.
 Integra OCR (ocr_engine), extracción (templates/regex), validación semántica
 (validators) y reporte (field_reporting_processor). Mide tiempos por etapa.
 """
+
 from __future__ import annotations
 
 import re
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 import numpy as np
 from PIL import Image
 
-from . import classifier, image_prep, ocr_engine, pdf_util
+from . import image_prep, ocr_engine, pdf_util
 from .field_reporting_processor import generate_field_report
-from .templates import ProviderTemplate, get_template, unknown_template
+from .templates import get_template, unknown_template
 
 
 def _extract_field(field_tpl, texts, page_text_full=""):
@@ -59,6 +60,7 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
 
     # 2) clasificación: rec selectivo sobre bandas de clasificación de todas las plantillas
     from .templates import all_templates
+
     templates = all_templates()
     classify_bands = []
     for t in templates:
@@ -127,18 +129,26 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
             if ft.name in candidate_fields and candidate_fields[ft.name] is not None:
                 continue
             band_texts = [
-                r["text"] for r in box_results
-                if (ft.band[0] <= ((r["y1"] + r["y2"]) / 2) <= ft.band[1]
-                    and ft.band[2] <= ((r["x1"] + r["x2"]) / 2) <= ft.band[3])
+                r["text"]
+                for r in box_results
+                if (
+                    ft.band[0] <= ((r["y1"] + r["y2"]) / 2) <= ft.band[1]
+                    and ft.band[2] <= ((r["x1"] + r["x2"]) / 2) <= ft.band[3]
+                )
             ]
             cand, _src = _extract_field(ft, band_texts, page_text_full)
             candidate_fields[ft.name] = cand
             if cand is None:
                 continue
             score = max(
-                (r["score"] for r in box_results
-                 if (ft.band[0] <= ((r["y1"] + r["y2"]) / 2) <= ft.band[1]
-                     and ft.band[2] <= ((r["x1"] + r["x2"]) / 2) <= ft.band[3])),
+                (
+                    r["score"]
+                    for r in box_results
+                    if (
+                        ft.band[0] <= ((r["y1"] + r["y2"]) / 2) <= ft.band[1]
+                        and ft.band[2] <= ((r["x1"] + r["x2"]) / 2) <= ft.band[3]
+                    )
+                ),
                 default=0.0,
             )
             field_scores[ft.name] = round(score, 3)
@@ -261,35 +271,46 @@ def _process_pdf_native(pages, native_text, src):
             elif cand:
                 validated[ft.name] = cand
         validated["provider"] = template.provider
-    missing = {f: None for f in (template.required_fields if template else [])
-               if f not in validated and f not in rejected}
+    missing = {
+        f: None for f in (template.required_fields if template else []) if f not in validated and f not in rejected
+    }
     fr = generate_field_report(
-        raw_ocr_text=native_text, candidate_fields=candidate,
-        validated_fields=validated, rejected_fields=rejected,
-        missing_fields=missing, document_type=template.document_type if template else "MANUAL_REVIEW",
+        raw_ocr_text=native_text,
+        candidate_fields=candidate,
+        validated_fields=validated,
+        rejected_fields=rejected,
+        missing_fields=missing,
+        document_type=template.document_type if template else "MANUAL_REVIEW",
         source_document_reference=src,
         validation_rules=["native_pdf_text"],
     )
     return {
         "processing_metadata": {
-            "provider_detected": provider, "provider_confidence": conf,
-            "engine": "PDF-NATIVE-TEXT", "is_pdf": True,
-            "pdf_pages": len(pages), "pdf_pages_ocr": 0,
+            "provider_detected": provider,
+            "provider_confidence": conf,
+            "engine": "PDF-NATIVE-TEXT",
+            "is_pdf": True,
+            "pdf_pages": len(pages),
+            "pdf_pages_ocr": 0,
             "timings": {"total_s": round(time.time() - t_start, 3)},
         },
         "raw_ocr_text": native_text,
         "structured_output": {
             "document_type": template.document_type if template else "MANUAL_REVIEW",
-            "source_document_reference": src, "candidate_fields": candidate,
-            "validated_fields": validated, "rejected_fields": rejected,
+            "source_document_reference": src,
+            "candidate_fields": candidate,
+            "validated_fields": validated,
+            "rejected_fields": rejected,
             "missing_fields": missing,
         },
-        "field_report": fr, "field_scores": {},
+        "field_report": fr,
+        "field_scores": {},
     }
 
 
 def __import_templates():
     from .templates import all_templates
+
     return all_templates()
 
 

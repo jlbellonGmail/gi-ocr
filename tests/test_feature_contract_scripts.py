@@ -87,12 +87,8 @@ def make_contract_repo(tmp_path: Path, slug: str = "99-demo-feature", title: str
     (repo / "runs" / slug / "test-report-1.md").write_text("status: approved\n", encoding="utf-8")
     (repo / "docs" / "tecnica" / f"{doc_slug}.md").write_text("# Tecnica\n", encoding="utf-8")
     (repo / "docs" / "usuario" / f"{doc_slug}.md").write_text("# Usuario\n", encoding="utf-8")
-    (repo / "docs" / "tecnica" / "index.md").write_text(
-        "# Tecnica\n\nTexto externo\n", encoding="utf-8"
-    )
-    (repo / "docs" / "usuario" / "index.md").write_text(
-        "# Usuario\n\nTexto externo\n", encoding="utf-8"
-    )
+    (repo / "docs" / "tecnica" / "index.md").write_text("# Tecnica\n\nTexto externo\n", encoding="utf-8")
+    (repo / "docs" / "usuario" / "index.md").write_text("# Usuario\n\nTexto externo\n", encoding="utf-8")
     (repo / "ROADMAP.md").write_text(f"- [ ] {slug} - Demo\n", encoding="utf-8")
     return repo, slug, title
 
@@ -144,10 +140,7 @@ def test_index_update_fails_for_missing_destination_and_ambiguous_links(tmp_path
 
 def test_ready_gate_fails_when_decision_or_index_link_is_missing(tmp_path: Path):
     repo, slug, title = make_contract_repo(tmp_path)
-    command = (
-        f". '{CONTRACT}'; "
-        f"Assert-FeatureContract -Slug '{slug}' -Title '{title}'"
-    )
+    command = f". '{CONTRACT}'; Assert-FeatureContract -Slug '{slug}' -Title '{title}'"
 
     result = run_ps(command, repo)
 
@@ -195,14 +188,14 @@ def make_fake_tools(bin_dir: Path, mode: str):
             # soportan) imprime unicamente la URL de la PR en stdout.
             gh.write_text(
                 "@echo off\n"
-                "echo %* | findstr /C:\"pr view\" >nul && (echo no pull requests found 1>&2 & exit /b 1)\n"
+                'echo %* | findstr /C:"pr view" >nul && (echo no pull requests found 1>&2 & exit /b 1)\n'
                 "echo https://example.test/pull/123\n",
                 encoding="utf-8",
             )
         elif mode == "existing":
             gh.write_text(
                 "@echo off\n"
-                "echo {\"number\":45,\"url\":\"https://example.test/pull/45\",\"baseRefName\":\"develop\",\"state\":\"OPEN\"}\n",
+                'echo {"number":45,"url":"https://example.test/pull/45","baseRefName":"develop","state":"OPEN"}\n',
                 encoding="utf-8",
             )
         else:
@@ -224,7 +217,7 @@ def make_fake_tools(bin_dir: Path, mode: str):
         elif mode == "existing":
             gh.write_text(
                 "#!/bin/sh\n"
-                "echo '{\"number\":45,\"url\":\"https://example.test/pull/45\",\"baseRefName\":\"develop\",\"state\":\"OPEN\"}'\n",
+                'echo \'{"number":45,"url":"https://example.test/pull/45","baseRefName":"develop","state":"OPEN"}\'\n',
                 encoding="utf-8",
             )
         else:

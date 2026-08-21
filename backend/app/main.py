@@ -3,6 +3,7 @@
 Backend único (sin Node.js). Sirve API REST + SSE + frontend estático.
 Endpoints de jobs (multi-entrada), confirmación, descarga, export, watcher inbound.
 """
+
 from __future__ import annotations
 
 import os
@@ -11,12 +12,11 @@ os.environ.setdefault("GI_OCR_ORT_THREADS", "3")
 
 import asyncio
 import json
-import re
 import shutil
 import tempfile
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,7 +25,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import ocr_engine
-from .inbound_watcher import SUPPORTED, InboundWatcher
+from .inbound_watcher import InboundWatcher
 from .job_queue import JobQueue
 from .job_store import JOB_ID_RE, JobStore, sanitize_name
 from .review_service import confirm_review
@@ -41,7 +41,13 @@ MAX_BYTES = 30 * 1024 * 1024  # 30 MB
 store = JobStore(DATA_DIR)
 queue = JobQueue(store, workers=2)
 queue.start()
-watcher = InboundWatcher(INBOUND_DIR, on_new=lambda p: queue.enqueue(str(p), p.name, source="inbound"))
+
+
+def _on_new_inbound(p: Path) -> None:
+    queue.enqueue(str(p), p.name, source="inbound")
+
+
+watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
 watcher.start()
 
 app = FastAPI(title="Captura OCR Local Ágil", version="2.0.0")
@@ -178,7 +184,13 @@ async def download_confirmed(job_id: str):
     if not store.confirmed_exists(job_id):
         raise HTTPException(409, "Resultado no confirmado. Confirme la revisión antes de descargar.")
     doc = store.load_confirmed(job_id)
-    final_filename = doc.get("confirmation_metadata", {}).get("final_filename") or store.build_final_filename("doc", job_id)
+    if doc is None:
+        # Carrera improbable entre el chequeo confirmed_exists() y la
+        # lectura: el archivo desapareció justo después de confirmarse.
+        raise HTTPException(404, "Job no encontrado")
+    final_filename = doc.get("confirmation_metadata", {}).get("final_filename") or store.build_final_filename(
+        "doc", job_id
+    )
     return FileResponse(str(store.confirmed_path(job_id)), media_type="application/json", filename=final_filename)
 
 

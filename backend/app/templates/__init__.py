@@ -1,13 +1,14 @@
 """Plantillas de proveedores para captura OCR."""
+
 from .providers import (
+    REGISTRY,
     FieldTemplate,
     ProviderTemplate,
-    litoral_gas_template,
-    cevt_template,
-    unknown_template,
-    get_template,
     all_templates,
-    REGISTRY,
+    cevt_template,
+    get_template,
+    litoral_gas_template,
+    unknown_template,
 )
 
 __all__ = [

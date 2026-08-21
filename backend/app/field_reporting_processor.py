@@ -7,7 +7,7 @@ Genera reportes estructurados con campos aceptados, rechazados y no encontrados.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 
 def generate_field_report(
@@ -44,8 +44,7 @@ def generate_field_report(
         "source_document_reference": source_document_reference,
         "accepted_fields": accepted_field_ids,
         "rejected_fields": [
-            {"field": field, "reason": info.get("reason", "unknown")}
-            for field, info in rejected_fields.items()
+            {"field": field, "reason": info.get("reason", "unknown")} for field, info in rejected_fields.items()
         ],
         "missing_fields": missing_field_ids,
         "summary_counts": {

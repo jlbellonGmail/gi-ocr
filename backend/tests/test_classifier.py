@@ -3,11 +3,10 @@
 No requiere muestras privadas: genera imágenes con texto conocido para validar que
 Litoral/CEVT se detectan y un blanco no se asigna a GAS por defecto.
 """
-import numpy as np
-import pytest
-from PIL import Image, ImageDraw, ImageFont
 
+import numpy as np
 from backend.app import classifier, ocr_engine
+from PIL import Image, ImageDraw
 
 
 def _make_image(lines):

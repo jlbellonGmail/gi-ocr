@@ -1,0 +1,31 @@
+```yaml
+status: rejected
+attempt: 1
+feedback:
+  - "Criterio 7 / bullet 'Herramientas de desarrollo separadas del runtime' del Alcance describen backend/requirements-dev.txt como 'un archivo nuevo' a crear con '-r requirements.txt' + ruff/mypy/pip-audit fijados. Ese archivo YA EXISTE en el repo hoy, con contenido distinto (-r requirements.txt, pytest>=8.0.0, httpx>=0.27.0, playwright>=1.40.0 — aparente scaffolding de la feature 17-pruebas-e2e-mobile-real, aun [ ] pendiente en ROADMAP.md, no referenciado todavia por CI ni Dockerfile). El spec debe: (a) corregir 'archivo nuevo' por 'extender el archivo backend/requirements-dev.txt existente'; (b) decidir explicitamente que pasa con las entradas ya presentes: pytest/httpx quedarian duplicados con el criterio 6 (que los fija en requirements.txt, ya incluido via -r) -- se eliminan por redundantes o se dejan y por que; playwright se fija a version exacta tambien o queda fuera de 'dependencias fijadas' de esta feature y por que. Sin esta aclaracion el builder puede sobreescribir el archivo y romper trabajo relacionado con la feature 17, o dejar version flotante de playwright sin que quede documentado como decision."
+  - "Criterio 5 excluye explicitamente requirements-dev.txt del alcance de pip-audit ('no contra requirements-dev.txt'), pero ni 'Riesgos / supuestos' ni 'Casos borde' justifican esa exclusion -- pese a que requirements-dev.txt va a incluir playwright (automatizacion de navegador, superficie no trivial) ademas de ruff/mypy/pip-audit. Para una feature cuyo criterio de aceptacion es 'auditoria basica de vulnerabilidades', dejar sin ninguna auditoria (ni bloqueante ni informativa) todo el arbol de dependencias de desarrollo es un hueco no declarado. Pedir que se agregue una linea explicita en 'Riesgos / supuestos' justificando el limite a runtime deps, o que se sume un pip-audit informativo (no gate) sobre requirements-dev.txt."
+  - "Criterio 5 no aclara si las excepciones de pip-audit se revisan periodicamente o quedan declaradas una sola vez para siempre. Agregar una frase que exija revisar la lista de excepciones cada vez que se modifique backend/requirements.txt (no solo documentarla una vez), para que no se convierta en deuda permanente no revisada -- el propio spec ya identifica este riesgo en el ultimo caso borde ('Excepcion de pip-audit usada para ocultar deuda real') pero no cierra el mecanismo de revision en el tiempo."
+```
+
+## Resumen
+
+El spec está bien estructurado, con criterios verificables, casos borde razonables y respeta las restricciones fijadas en `AGENTS.md` (pip como gestor de paquetes, config nueva en TOML no JSON, no toca `services.ini`/motor OCR/ADR-006/ADR-007, exige que `pytest` siga pasando). Los criterios 11–14 exigen explícitamente `docs/tecnica/calidad-ci-supply-chain.md`, `docs/usuario/calidad-ci-supply-chain.md`, `runs/18-calidad-ci-supply-chain/decision.md` y enlaces exactos en ambos índices con el formato correcto (`- [Título](calidad-ci-supply-chain.md)`), consistente con el formato que exige `Assert-IndexLink` en `scripts/feature-contract.ps1`. **No aplica el rechazo automático por falta de documentación.**
+
+Sin embargo, se encontró un problema fáctico concreto verificando el estado real del repo (no solo el spec en aislamiento): `backend/requirements-dev.txt` ya existe (confirmado leyendo el archivo), con contenido que el spec ignora por completo al describirlo como "un archivo nuevo". Esto no es un detalle cosmético — es exactamente el tipo de cosa que un implementador necesitaría saber antes de tocar el archivo, y de no corregirse puede llevar al builder a sobrescribir dependencias de otra feature (17, aún pendiente) sin darse cuenta, o a dejar ambigüedad sobre si `playwright`/`pytest`/`httpx` deben fijarse también.
+
+Además, la exclusión de `requirements-dev.txt` del alcance de `pip-audit` (criterio 5) no está justificada en ningún lugar del spec, pese a que esta feature es específicamente sobre auditoría de vulnerabilidades — es un hueco de justificación, no necesariamente un hueco de seguridad real (dependencias dev no van a producción), pero el spec exige justificar exactamente este tipo de decisión para las excepciones de `pip-audit` y no aplica el mismo estándar a la exclusión completa del árbol dev.
+
+## Puntos verificados y aprobados (no requieren cambios)
+
+- Alcance con límites claros: excluye explícitamente Poetry/pip-tools, `mypy --strict` total, escaneo de imagen Docker, pre-commit hooks, Dependabot — cada exclusión con justificación razonable y ligada a la extensión declarada de esta feature (18, "básica").
+- Lista de dependencias directas a fijar (criterio 6) coincide exactamente con el contenido actual de `backend/requirements.txt` (verificado línea por línea).
+- `Dockerfile` actual (`backend/requirements.txt` filtrando `easyocr` vía `grep -v`) es compatible con el criterio 7 sin cambios.
+- `.gitattributes` ya fuerza `eol=lf` para `*.py`, `*.txt`, etc., lo que mitiga en gran parte el caso borde de CRLF/LF entre Windows y `ubuntu-latest` que el spec señala como riesgo a verificar — el caso borde está bien planteado como verificación, no como bloqueo.
+- Se resuelve a favor del spec la pregunta abierta que deja para el reviewer sobre el "ejemplo HTTP" en `docs/usuario/`: dado que esta feature no agrega ni modifica ningún endpoint, el equivalente funcional (comando + salida esperada) es una interpretación válida y con precedente (`docs/usuario/extensionn-roadmap.md`). No hace falta forzar el ejemplo de `GET /api/v1/health`.
+- Elección de herramientas (`ruff`, `mypy`, `pip-audit`) es razonable y estándar para el stack declarado; no se objeta la elección.
+
+## Siguiente paso
+
+Vuelve a `analyst-agent` con este feedback. Los tres puntos son acotados y no requieren repensar el alcance ni la estructura del spec — son correcciones puntuales sobre el estado real de `backend/requirements-dev.txt` y dos aclaraciones de justificación/política que ya están casi resueltas por el propio spec, solo falta cerrarlas explícitamente.
+
+Archivos revisados: `AGENTS.md`, `ROADMAP.md`, `backend/requirements.txt`, `backend/requirements-dev.txt`, `.github/workflows/ci.yml`, `docs/tecnica/index.md`, `docs/usuario/index.md`, `scripts/feature-contract.ps1`, `scripts/update-doc-indexes.ps1`, `scripts/ready-for-pr.ps1`, `.gitattributes`, `Dockerfile`.

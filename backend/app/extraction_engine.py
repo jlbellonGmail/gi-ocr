@@ -4,18 +4,16 @@ Motor de extracción OCR configurable.
 Este motor lee la configuración desde services.ini y aplica extracción
 genérica basada en zonas OCR y/o patrones regex configurables.
 """
+
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
-from .ocr import extract_text_from_zone, preprocess_image
+from .ocr import extract_text_from_zone
 from .services_config import (
-    get_service_fields,
-    get_service_patterns,
-    get_service_zones,
     get_service_config,
 )
 

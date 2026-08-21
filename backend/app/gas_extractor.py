@@ -1,9 +1,9 @@
 """Extractor específico para comprobantes GAS."""
+
 from __future__ import annotations
 
 import re
 from typing import Any
-
 
 FIELD_NAMES = (
     "importe",

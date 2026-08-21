@@ -1,5 +1,5 @@
 """Tests de utilidades PDF (texto nativo + render). Genera un PDF en memoria."""
-import tempfile
+
 from pathlib import Path
 
 import pytest

@@ -3,13 +3,13 @@
 Estrategia: OCR focalizado en bandas de clasificación de cada plantilla -> texto ->
 keywords. Nunca asigna GAS por defecto a un documento desconocido (devuelve UNKNOWN).
 """
+
 from __future__ import annotations
 
-import re
 from typing import List, Optional, Tuple
 
 from . import ocr_engine
-from .templates import ProviderTemplate, all_templates, unknown_template
+from .templates import ProviderTemplate, all_templates
 
 
 def classify(image_np, templates: Optional[List[ProviderTemplate]] = None) -> Tuple[str, float]:
@@ -58,6 +58,7 @@ def classify_and_pick(image_np):
     """Clasifica y devuelve (provider, template)."""
     provider, conf = classify(image_np)
     from .templates import get_template
+
     return provider, get_template(provider), conf
 
 
