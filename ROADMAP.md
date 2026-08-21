@@ -1,4 +1,4 @@
-# Roadmap: gi-ocr (Smart Invoice Capture)
+﻿# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -163,7 +163,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       trazabilidad por job/documento: tiempos OCR, estado de cola, errores
       por etapa, campos aceptados/rechazados/no encontrados,
       health/readiness y runbook operativo.
-- [ ] 14-seguridad-privacidad-documentos — Endurecer uploads y
+- [-] 14-seguridad-privacidad-documentos — Endurecer uploads y
       almacenamiento: extension, MIME, firma de archivo, tamaño maximo,
       nombres aleatorios, permisos, retencion, anonimizacion y redaccion de
       datos sensibles en logs.
@@ -239,3 +239,4 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
