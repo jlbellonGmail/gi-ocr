@@ -171,7 +171,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       practicas de accesibilidad: errores claros, estados accesibles,
       contraste, reflow, targets tactiles, confirmaciones, foco visible y
       reduccion de entrada repetida.
-- [ ] 16-administracion-servicios-documentos — Profesionalizar altas de
+- [-] 16-administracion-servicios-documentos — Profesionalizar altas de
       proveedores/documentos en `services.ini`: validacion, documentacion
       automatica, campos requeridos/opcionales, reglas semanticas,
       ejemplos y tests contractuales.
