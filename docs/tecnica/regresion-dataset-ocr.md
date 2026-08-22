@@ -198,6 +198,45 @@ porque no es sintético reproducible por código (es una captura real
 anonimizada usada por otras features previas); estos cuatro fixtures sí lo
 son, así que no hay necesidad de persistirlos como binario.
 
+### 5. Fix post-CI: separación `cliente`/`periodo` sensible a `image_prep.prepare`
+
+Tras el primer merge de esta feature, CI (`ubuntu-latest`, Python 3.12)
+falló con 5 tests rojos, todos sobre `periodo` en `LITORAL_GAS` (los 22
+pasaban en Windows local). Diagnóstico con evidencia real (reproducido en
+un entorno Linux equivalente, ver `runs/08-regresion-dataset-ocr/decision.md`,
+"Fix post-CI: separación `cliente`/`periodo`", para el detalle completo):
+
+La causa **no** fue la fuente TrueType faltante (hipótesis inicial
+razonable, descartada con evidencia: el bounding box de `periodo` apenas
+varía unos píxeles entre `arial.ttf`, `DejaVuSans.ttf` y el fallback
+`ImageFont.load_default(size=...)`). La causa real es que
+`capture_pipeline.process_document` corre `image_prep.prepare` (feature
+`07-preprocesamiento-documental-no-destructivo`, `normalize_scale`) antes
+de OCR, reescalando este fixture de 1400x1960 a 1142x1600. Ese reescalado
+angosta aún más el ya ajustado hueco horizontal (~44-52px) entre el texto
+de `cliente` (banda x:0.66-0.82) y el de `periodo` (banda adyacente/con
+solape parcial x:0.78-0.90): el detector de texto (RapidOCR/DBNet) fusiona
+ambas cajas en una sola (`"12345678 06/2026"`), cuyo centro cae sólo
+dentro de la banda de `cliente` -- `periodo` termina en `missing_fields`
+sin haber sido nunca candidato. `cliente` sigue validando bien (su regex
+matchea igual dentro del texto fusionado), lo que explica que sólo
+`periodo` fallara.
+
+Es una condición de carrera geométrica real entre bandas ROI adyacentes
+con muy poco margen, sensible a diferencias de bajo nivel entre
+plataformas (antialiasing de FreeType empaquetado por wheel de Pillow,
+sensibilidad numérica del post-procesamiento de DBNet) que Windows/Python
+3.14 local no disparaba pero Linux/Python 3.12 sí. **Fix**: `periodo` se
+dibuja con fuente más chica (22 en vez de 32) y desplazado a la derecha
+dentro de su propia banda (`x=0.85, y=0.283`), duplicando con margen el
+hueco horizontal frente a `cliente` (de ~44px a ~103px, medido con
+`DejaVuSans.ttf`). No se tocó `cliente` ni ninguna banda ROI de
+`backend/app/templates/providers.py`. Verificado empíricamente en un
+entorno Linux real (no sólo en Windows): 22/22 tests verdes, 3 corridas
+consecutivas sin flakiness, más la suite completa (`backend/tests/`) en
+ambos entornos sin fallas nuevas -- ver decision.md para el detalle
+completo de la reproducción y verificación.
+
 ## Determinismo
 
 `test_synthetic_fixtures_are_deterministic` genera cada fixture dos veces

@@ -107,6 +107,31 @@ def build_litoral_gas_image(periodo: str = "06/2026") -> Tuple[Image.Image, Dict
     arriba en su propia banda para que el centro de su caja OCR no caiga
     dentro de la banda de `periodo`, que de otro modo capturaría por
     sustring el propio valor de `vencimiento` en vez del de `periodo`).
+
+    `periodo` se dibuja con fuente más chica (22, contra 32 del resto) y
+    desplazado a la derecha dentro de su propia banda (x=0.85 en vez de
+    0.80) para maximizar, en píxeles absolutos, la separación horizontal
+    con el texto de `cliente` -- ambos comparten casi el mismo rango Y de
+    banda (`cliente` y:0.270-0.305, `periodo` y:0.265-0.305, prácticamente
+    la misma fila) y sus bandas X son adyacentes (`cliente` hasta x=0.82,
+    `periodo` desde x=0.78). Con la posición original (fuente 32, x=0.80)
+    el hueco entre el texto de `cliente` y el de `periodo` era de sólo
+    ~44-52px: `image_prep.prepare` reescala la imagen (`normalize_scale`,
+    ver `docs/tecnica/preprocesamiento-documental-no-destructivo.md`) antes
+    de OCR, y ese reescalado angosta aún más ese hueco. Verificado en un
+    entorno Linux real (WSL Ubuntu 22.04, Python 3.12, mismas versiones de
+    `backend/requirements.txt` que CI) que ese hueco angosto post-escalado
+    hace que el detector de texto (RapidOCR/DBNet) fusione ambas cajas en
+    una sola (`"12345678 06/2026"`), cuyo centro cae sólo dentro de la
+    banda de `cliente` (no de `periodo`): `periodo` termina en
+    `missing_fields` sin haber sido nunca candidato -- ver
+    runs/08-regresion-dataset-ocr/decision.md, "Fix post-CI: separación
+    cliente/periodo". Con esta posición calibrada el hueco horizontal
+    (medido con `PIL.ImageDraw.textbbox`, fuente `DejaVuSans.ttf`, la
+    misma que usa el runner Linux) pasa de ~44px a ~103px -- verificado
+    empíricamente que ya no fusiona las cajas ni en Windows (fuente
+    `arial.ttf`) ni en Linux (fuente `DejaVuSans.ttf`/fallback), en ambos
+    casos con y sin el reescalado de `image_prep.prepare` de por medio.
     """
     img = _canvas()
     _draw_text(img, 0.42, 0.170, "Litoral Gas", 32)
@@ -114,7 +139,7 @@ def build_litoral_gas_image(periodo: str = "06/2026") -> Tuple[Image.Image, Dict
     _draw_text(img, 0.72, 0.205, "05/06/2026", 32)
     _draw_text(img, 0.77, 0.249, "20/06/2026", 30)
     _draw_text(img, 0.66, 0.280, "12345678", 32)
-    _draw_text(img, 0.80, 0.278, periodo, 32)
+    _draw_text(img, 0.85, 0.283, periodo, 22)
     _draw_text(img, 0.72, 0.855, "$ 12.345,67", 32)
     expected_fields: Dict[str, Any] = {
         "provider": "LITORAL_GAS",

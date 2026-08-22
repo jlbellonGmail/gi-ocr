@@ -182,6 +182,158 @@ feature.
   cambio (ver `test-report` de QA para el detalle completo por si hace
   falta re-verificar en su propio entorno).
 
+## Fix post-CI: separación `cliente`/`periodo` en `build_litoral_gas_image`
+
+CI (`.github/workflows/ci.yml`, `ubuntu-latest`, Python 3.12.14, PR #14,
+[run 32574915254](https://github.com/jlbellonGmail/gi-ocr/actions/runs/32574915254/job/97035712131))
+falló con 5 tests rojos, todos sobre `periodo` en `LITORAL_GAS` (los 22
+tests pasaban en Windows local, Python 3.14). Diagnóstico con evidencia
+real (no supuesto), reproducido con un entorno Linux equivalente (WSL
+Ubuntu 22.04, Python 3.12.12, mismas versiones exactas de
+`backend/requirements.txt` relevantes para OCR/imagen que usa CI):
+
+### Causa raíz real (verificada, no la hipótesis inicial de fuente faltante)
+
+La hipótesis inicial razonable era la fuente TrueType faltante
+(`arial.ttf`/`DejaVuSans.ttf` ausentes en el runner, cayendo a
+`ImageFont.load_default(size=...)`). **Se descartó con evidencia**: el
+runner Linux de prueba (WSL Ubuntu 22.04) sí tiene `DejaVuSans.ttf`
+instalada (`fonts-dejavu-core`, típico también en runners `ubuntu-latest`
+de GitHub Actions), y comparando `PIL.ImageDraw.textbbox` de
+`arial.ttf` (Windows) vs `DejaVuSans.ttf` (Linux) vs el fallback
+`ImageFont.load_default(size=...)`, el bounding box de `periodo` variaba
+apenas unos pocos píxeles entre los tres — no alcanza para explicar un
+campo que pasa de extraerse siempre a no extraerse nunca.
+
+La causa raíz real: `capture_pipeline.process_document` corre
+`image_prep.prepare` (feature `07-preprocesamiento-documental-no-
+destructivo`) **antes** de OCR, que incluye `normalize_scale` -- en este
+fixture concreto reescala el canvas de 1400x1960 a 1142x1600 (factor
+~0.8163). Con la posición original de `periodo` (fuente 32, x=0.80), el
+hueco horizontal entre el texto de `cliente` (`"12345678"`, banda
+x:0.66-0.82) y el de `periodo` (banda x:0.78-0.90, banda adyacente/con
+solape parcial x:0.78-0.82) era de sólo ~44-52px **antes** del
+reescalado; después del reescalado de `normalize_scale` ese hueco se
+angosta aún más (~36px). A esa distancia, el detector de texto
+(RapidOCR/DBNet, `ocr_engine.detect_page`) fusiona ambas cajas en una
+sola detección: `"12345678 06/2026"`, cuyo centro (`cx≈0.777`) cae **sólo**
+dentro de la banda de `cliente` (x hasta 0.82) y **no** dentro de la de
+`periodo` (x desde 0.78) -- confirmado imprimiendo `box_results` real
+(texto, score, bbox normalizado) en el entorno Linux de reproducción, con
+y sin `image_prep.prepare` de por medio:
+
+- **Sin** `image_prep.prepare` (llamando `capture_pipeline.process_image`
+  directo sobre el canvas 1400x1960 sin reescalar): `periodo` se detecta
+  como caja propia (`"06/2026"`, centro `(0.8464, 0.2883)`, dentro de su
+  banda) — el pipeline extrae y valida `periodo` correctamente.
+- **Con** `image_prep.prepare` (el camino real de
+  `capture_pipeline.process_document`, el que ejercita el test): las cajas
+  de `cliente` y `periodo` se fusionan en una sola (`"12345678 06/2026"`,
+  centro `(0.7771, 0.2894)`), que sólo cae en la banda de `cliente`.
+  `cliente` sigue validando bien (su regex `\d{8,10}` matchea
+  `"12345678"` igual dentro del texto fusionado), pero `periodo` termina
+  sin ninguna caja en su banda: `candidate_fields["periodo"] = None`,
+  reportado en `missing_fields`, nunca llega a `rejected_fields` ni a
+  `validated_fields`. Exactamente el síntoma de los 5 tests rojos de CI.
+
+Por qué no se veía en Windows/Python 3.14 local: el margen de ~44-52px
+(antes del reescalado) evidentemente queda, en ese entorno concreto
+(fuente `arial.ttf`, motor RapidOCR/ONNX Runtime sobre la misma versión
+fijada, pero con diferencias de bajo nivel de rendering/inferencia entre
+plataformas — antialiasing de FreeType empaquetado en el wheel de Pillow
+por plataforma, y/o sensibilidad numérica del post-procesamiento de DBNet)
+justo del lado seguro de la fusión; en Linux (CI real y la reproducción
+local de este fix) queda del lado que fusiona. Es una condición de
+carrera geométrica real entre bandas ROI adyacentes con muy poco margen,
+no un problema exclusivo de fuente -- la hipótesis de la fuente en el
+docstring original de `synthetic_ocr_documents.py` señalaba la clase
+correcta de riesgo (dependencia de renderizado entre plataformas) pero no
+el mecanismo exacto.
+
+### Fix aplicado
+
+`backend/tests/fixtures/synthetic_ocr_documents.py::build_litoral_gas_image`:
+`periodo` se dibuja con fuente más chica (22 en vez de 32) y desplazado a
+la derecha dentro de su propia banda ROI (`x=0.85, y=0.283` en vez de
+`x=0.80, y=0.278`). No se tocó `cliente` (sigue en `x=0.66, y=0.280,
+size=32`, ya funcionaba bien) ni ninguna banda ROI de
+`backend/app/templates/providers.py` (fuera de alcance: esas bandas son
+configuración de producción, no del fixture de test).
+
+Con esta posición, el hueco horizontal entre el texto de `cliente` y el
+de `periodo` (medido con `PIL.ImageDraw.textbbox`, fuente `DejaVuSans.ttf`,
+la misma que usa el runner Linux) pasa de ~44px a ~103px -- más del doble,
+calibrado mediante una búsqueda exhaustiva de combinaciones
+tamaño/posición que maximiza esa separación sin sacar el centro de la caja
+de la banda ROI de `periodo` (con margen de seguridad de al menos 0.01 en
+normalizado, ~14px en Y / ~14px en X, respecto de cada borde de banda) ni
+para el valor válido (`"06/2026"`) ni para el inválido (`"13/2026"`). No se
+modificó `vencimiento` (su separación respecto de `periodo`, ya calibrada
+en la ronda anterior, queda con ~40px de margen vertical, sin cambios).
+
+### Verificación empírica del fix (evidencia, no sólo argumento)
+
+1. **Reproducción real del bug** en un entorno Linux equivalente a CI: WSL
+   Ubuntu 22.04.5 LTS, intérprete standalone CPython 3.12.12
+   (`astral-sh/python-build-standalone`, misma versión menor que la
+   3.12.14 del runner de CI), mismas versiones exactas de
+   `backend/requirements.txt` relevantes para esta suite (`Pillow==12.3.0`,
+   `numpy==2.5.2`, `opencv-python-headless==5.0.0.93`,
+   `rapidocr-onnxruntime==1.2.3`, `onnxruntime==1.28.0`,
+   `pypdfium2==5.13.0`, `pytest==9.1.1`, `fastapi==0.141.1`,
+   `pydantic==2.13.4`, `pydantic-settings==2.15.0`, `httpx==0.28.1`,
+   `python-multipart==0.0.32`). Con el fixture **sin** el fix: los mismos 5
+   tests que falló CI fallan también ahí, con el mismo síntoma
+   (`periodo` en `missing_fields`, nunca candidato). Confirma que la causa
+   es real y reproducible fuera de GitHub Actions, no un artefacto
+   específico del runner de GitHub.
+2. **Con el fix aplicado**, en ese mismo entorno Linux de reproducción:
+   `pytest backend/tests/test_ocr_regression_dataset.py -v` -> **22
+   passed**, corrido 3 veces consecutivas sin flakiness
+   (~6 segundos cada corrida).
+3. **En Windows local** (`.venv`, Python 3.14, entorno original de la
+   feature): `pytest backend/tests/test_ocr_regression_dataset.py -v` ->
+   **22 passed** (sin regresión sobre el entorno donde ya pasaba).
+4. **Suite completa** (`pytest -q` sobre `backend/tests/` + `tests/`),
+   corrida en ambos entornos después del fix:
+   - Windows local (`.venv`, Python 3.14): **434 passed, 8 skipped** (0
+     fallas), 513s. Los `skipped` son los ya esperados en este entorno
+     (muestras privadas locales ausentes, `playwright` no instalado,
+     permisos POSIX no aplicables en Windows) -- ninguno nuevo ni
+     relacionado con este fix.
+   - Entorno Linux de reproducción (WSL Ubuntu 22.04, Python 3.12.12),
+     sólo `backend/tests/` (equivalente al alcance de esta feature; `tests/`
+     son los del circuito agéntico, no del producto OCR): **385 passed, 5
+     skipped** (0 fallas), 143s. Los `skipped` son las mismas muestras
+     privadas locales ausentes (gitignored), esperado en cualquier
+     checkout limpio.
+   - Ninguna falla nueva atribuible a este fix en ninguno de los dos
+     entornos; los `PytestUnraisableExceptionWarning` sobre
+     `JobQueue._worker`/`Event loop is closed` en ambos entornos son
+     preexistentes (limpieza de un worker asyncio al cerrar el event loop
+     de test), no relacionados con `synthetic_ocr_documents.py` ni con
+     este fix -- no se investigan ni se corrigen aquí (fuera de alcance de
+     esta feature).
+
+No se pudo ejecutar el job exacto de GitHub Actions localmente (no hay
+`act`/Docker Desktop funcional disponible en este entorno), pero la
+reproducción en WSL Ubuntu con las mismas versiones fijadas de
+dependencias relevantes, mismo Python 3.12.x, y el mismo síntoma exacto
+(5 tests, mismos nombres, mismo mensaje de assert) es la evidencia más
+fuerte disponible sin acceso directo al runner de GitHub.
+
+### Alcance del fix
+
+- Sólo se modificó `backend/tests/fixtures/synthetic_ocr_documents.py`
+  (posición/tamaño de `periodo` en `build_litoral_gas_image`) y su
+  docstring. No se tocó `backend/tests/test_ocr_regression_dataset.py`
+  (los asserts y expectativas de valor no cambiaron), ni
+  `backend/app/templates/providers.py`, ni `backend/app/image_prep.py`,
+  ni `backend/app/capture_pipeline.py`, ni `backend/app/ocr_engine.py`.
+- No se marcó `ROADMAP.md` (sigue en `READY_FOR_PR`), no se creó una PR
+  nueva (se reutiliza la PR #14 existente), no se hizo `git commit
+  --amend` (commit nuevo sobre la misma rama).
+
 ## Artefactos
 
 - `backend/tests/test_ocr_regression_dataset.py` (nuevo)
