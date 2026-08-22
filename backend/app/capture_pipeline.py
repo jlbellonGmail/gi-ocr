@@ -220,6 +220,16 @@ def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, A
     igual que el camino `failed` existente). Un veredicto `ok`/`warn` sigue
     el pipeline normal y agrega `processing_metadata.quality_gate` al
     resultado final.
+
+    No destructivo (feature `07-preprocesamiento-documental-no-destructivo`):
+    esta función solo lee `path` (`Image.open`); ningún paso de `image_prep`
+    escribe sobre esa ruta, todo corre en memoria (`np.ndarray`). Cuando el
+    pipeline efectivamente prepara la imagen (no hay `reject` de
+    `quality_gate` en el camino de imagen, y siempre en el camino PDF salvo
+    `_process_pdf_native`), el resultado incluye
+    `processing_metadata.preparation_trace`: una lista ordenada de los pasos
+    de `image_prep` efectivamente ejecutados, ver
+    `docs/tecnica/preprocesamiento-documental-no-destructivo.md`.
     """
     src = source_ref or path
     if pdf_util.is_pdf(path):
@@ -231,11 +241,33 @@ def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, A
 
     quality = quality_gate.evaluate(arr)
     if quality["verdict"] == "reject":
+        # Traza de preparación (feature `07-preprocesamiento-documental-no-
+        # destructivo`): un veredicto `reject` corta ANTES de
+        # `image_prep.prepare`, por lo que no se genera ninguna entrada de
+        # traza (ni siquiera la de EXIF, ver criterio 11 del spec) -- la
+        # clave `preparation_trace` queda ausente en este resultado, no una
+        # lista con pasos "inventados".
         return _quality_rejected_result(src, quality)
 
-    prepared = image_prep.prepare(arr, exif_orientation_applied=exif_applied)
+    # `preparation_trace` acumula, en orden, la corrección EXIF (paso previo a
+    # `image_prep.prepare`, sólo en este camino de imagen) y los pasos que
+    # corren dentro de `prepare()` (orientación por contenido, deskew,
+    # perspectiva, escala, contraste). Ver criterios 9-10 del spec.
+    trace: list = [
+        {
+            "step": "apply_exif_orientation",
+            "applied": exif_applied,
+            "reason": (
+                "corrección aplicada según tag EXIF Orientation"
+                if exif_applied
+                else "sin corrección EXIF necesaria/disponible"
+            ),
+        }
+    ]
+    prepared = image_prep.prepare(arr, exif_orientation_applied=exif_applied, trace=trace)
     result = process_image(prepared, src)
     result["processing_metadata"]["quality_gate"] = quality
+    result["processing_metadata"]["preparation_trace"] = trace
     return result
 
 
@@ -278,12 +310,25 @@ def _process_pdf(path: str, src: str) -> Dict[str, Any]:
     if page_to_process is None:
         # PDF con texto nativo: construir resultado a partir del texto nativo
         # (sin imagen). Clasificación por texto. Rec por regex sobre texto nativo.
+        # `image_prep.prepare` nunca se invoca en este sub-camino
+        # (`_process_pdf_native`) -- no se genera ninguna entrada de
+        # `preparation_trace` (misma convención que el veredicto `reject` de
+        # `quality_gate`, ver criterio 12/casos borde del spec).
         return _process_pdf_native(pages, native_text, src)
-    prepared = image_prep.prepare(page_to_process["image"])
+    # `image_prep.prepare()` es la MISMA función que usa el camino de imagen:
+    # corre (y se traza) `correct_orientation` (heurística de contenido, con
+    # `skip=False` porque este camino nunca pasa `exif_orientation_applied`),
+    # `deskew` (incondicional), `correct_perspective` (si se pide) y
+    # `normalize_scale`/`normalize_contrast`, igual que sobre imágenes. No se
+    # agrega una entrada `apply_exif_orientation` ni `quality_gate`: ninguno de
+    # los dos se invoca nunca en el camino PDF (ver criterio 12 del spec).
+    trace: list = []
+    prepared = image_prep.prepare(page_to_process["image"], trace=trace)
     result = process_image(prepared, src, page_text_full=native_text)
     result["processing_metadata"]["is_pdf"] = True
     result["processing_metadata"]["pdf_pages"] = len(pages)
     result["processing_metadata"]["pdf_pages_ocr"] = sum(1 for p in pages if p["needs_ocr"])
+    result["processing_metadata"]["preparation_trace"] = trace
     return result
 
 
