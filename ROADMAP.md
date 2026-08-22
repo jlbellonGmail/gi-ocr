@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -132,7 +132,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       documento cortado, mala perspectiva, mala iluminacion o encuadre
       insuficiente. Debe definir cuando procesar, cuando advertir y cuando
       pedir nueva foto.
-- [-] 07-preprocesamiento-documental-no-destructivo — Formalizar el
+- [x] 07-preprocesamiento-documental-no-destructivo — Formalizar el
       pipeline de imagen preservando siempre el original y generando
       versiones preparadas trazables. Debe registrar transformaciones
       aplicadas: EXIF, deskew, perspectiva, escala, contraste y
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
