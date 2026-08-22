@@ -1,8 +1,23 @@
 name: Post-HITL merge gate
 
+# Dos disparadores:
+# - pull_request_review (submitted): el HITL real, cuando el humano
+#   aprueba (o revisa) la PR.
+# - pull_request (synchronize): Builder pushea commits nuevos a una PR que
+#   YA estaba aprobada pero cuyos checks post-HITL habian fallado. Sin
+#   este segundo trigger, nada volveria a correr complete-approved-pr.ps1
+#   despues del fix, y pedir una segunda aprobacion humana violaria la
+#   regla de "unico HITL". El gateo real de "esta aprobada de verdad" no
+#   se hace en el YAML (el evento 'synchronize' no trae reviewDecision
+#   confiable) sino adentro de complete-approved-pr.ps1, que consulta
+#   'gh pr view' en vivo y lanza error claro si reviewDecision no es
+#   APPROVED -- eso es deseado y no bloquea el job, solo hace que termine
+#   sin mergear ni comentar como si fuera un segundo HITL.
 on:
   pull_request_review:
     types: [submitted]
+  pull_request:
+    types: [synchronize]
 
 permissions:
   contents: write
@@ -15,7 +30,9 @@ concurrency:
 
 jobs:
   complete-approved-pr:
-    if: github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'develop'
+    if: |
+      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'develop') ||
+      (github.event_name == 'pull_request' && github.event.action == 'synchronize' && github.event.pull_request.base.ref == 'develop')
     runs-on: ubuntu-latest
     steps:
       - name: Derivar slug de feature
