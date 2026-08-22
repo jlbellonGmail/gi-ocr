@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -127,7 +127,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       reemplazo o subordinacion de la heuristica actual por lectura
       confiable del tag, y evidencia de que RapidOCR recibe la imagen en
       orientacion correcta.
-- [-] 06-calidad-captura-mobile — Agregar control de calidad previo al OCR
+- [x] 06-calidad-captura-mobile — Agregar control de calidad previo al OCR
       para fotos tomadas rapido: blur, baja resolucion, reflejos, sombras,
       documento cortado, mala perspectiva, mala iluminacion o encuadre
       insuficiente. Debe definir cuando procesar, cuando advertir y cuando
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
