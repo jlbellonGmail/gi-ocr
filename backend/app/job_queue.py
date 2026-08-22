@@ -1,7 +1,9 @@
 """Cola de procesamiento asíncrona con workers concurrentes.
 
 Permite seguir cargando documentos mientras otros se procesan (no bloqueante).
-Estados: queued, processing, ready, confirmed, failed. Reintentos individuales.
+Estados: queued, processing, ready, confirmed, failed, needs_new_photo
+(rechazo del control de calidad de captura previo a OCR, feature
+`06-calidad-captura-mobile`, ver `quality_gate.py`). Reintentos individuales.
 """
 
 from __future__ import annotations
@@ -14,6 +16,7 @@ from typing import Any, Dict, List, Optional
 
 from .capture_pipeline import process_document
 from .job_store import JobStore, new_job_id, sanitize_name
+from .quality_gate import REJECTED_JOB_STATUS
 from .redaction import redact_exception
 
 
@@ -133,13 +136,32 @@ class JobQueue:
                 raise FileNotFoundError(f"Archivo no encontrado: {file_path}")
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(None, process_document, file_path, job["original_name"])
-            with self._lock:
-                job["status"] = "ready"
-                job["result"] = result
-                job["updated_at"] = _now()
-                self.store.put(job)
-            self.store.save_original(job_id, result)
-            self._notify({"job_id": job_id, "status": "ready"})
+            quality = (result.get("processing_metadata") or {}).get("quality_gate") or {}
+            if quality.get("verdict") == "reject":
+                # Veredicto `reject` del control de calidad: no hubo OCR, no
+                # hay resultado que confirmar. Igual que el camino `failed`,
+                # no se llama `save_original` (así `store.original_exists`
+                # sigue devolviendo False y `confirm_job`/`download_*` siguen
+                # respondiendo 404, ver criterio 18 de
+                # runs/06-calidad-captura-mobile/spec.md). El job queda
+                # reintentable (`retry`, criterio 19): `JobQueue.retry` solo
+                # bloquea `ready`/`confirmed`, así que este estado nuevo
+                # sigue siendo reintentable sin cambios adicionales.
+                with self._lock:
+                    job["status"] = REJECTED_JOB_STATUS
+                    job["result"] = result
+                    job["error"] = None
+                    job["updated_at"] = _now()
+                    self.store.put(job)
+                self._notify({"job_id": job_id, "status": REJECTED_JOB_STATUS})
+            else:
+                with self._lock:
+                    job["status"] = "ready"
+                    job["result"] = result
+                    job["updated_at"] = _now()
+                    self.store.put(job)
+                self.store.save_original(job_id, result)
+                self._notify({"job_id": job_id, "status": "ready"})
         except Exception as e:
             # Redacción: evitar filtrar el nombre de archivo original del
             # cliente o rutas absolutas del filesystem del servidor en un

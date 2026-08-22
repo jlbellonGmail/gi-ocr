@@ -81,6 +81,8 @@ function stats(jobs) {
   $("#stat-queued").textContent = `${c("queued") + c("processing")} en cola`;
   $("#stat-ready").textContent = `${c("ready") + c("confirmed")} listos`;
   $("#stat-failed").textContent = `${c("failed")} fallidos`;
+  const statQuality = $("#stat-quality");
+  if (statQuality) statQuality.textContent = `${c("needs_new_photo")} requieren nueva foto`;
 }
 function renderQueue(jobs) {
   stats(jobs);
@@ -101,7 +103,7 @@ function renderQueue(jobs) {
     const right = el("div");
     const pill = el("span", "pill " + j.status, j.status);
     right.appendChild(pill);
-    if (j.status === "failed") {
+    if (j.status === "failed" || j.status === "needs_new_photo") {
       const rb = el("button", "btn retry", "Reintentar");
       rb.onclick = async (e) => { e.stopPropagation(); await jpost(api + "/jobs/" + j.job_id + "/retry"); refresh(); };
       right.appendChild(rb);
@@ -121,10 +123,27 @@ async function showDetail(jobId) {
     if (j.status === "ready") renderReady(j);
     else if (j.status === "confirmed") renderReady(j);
     else if (j.status === "failed") d.innerHTML = `<div class="error-box">Error: ${fmt(j.error)}</div>`;
+    else if (j.status === "needs_new_photo") renderNeedsNewPhoto(j);
     else d.innerHTML = `<div class="empty">Estado: ${j.status}…</div>`;
   } catch (e) {
     d.innerHTML = '<div class="error-box">No se pudo cargar el detalle.</div>';
   }
+}
+function renderNeedsNewPhoto(j) {
+  // Documento rechazado por el control de calidad de captura (feature
+  // 06-calidad-captura-mobile): mismo patrón visual que "failed"
+  // (pill/error-box), pero con las razones concretas del rechazo.
+  const d = $("#detail");
+  const res = j.result || {};
+  const qg = (res.processing_metadata || {}).quality_gate || {};
+  const reasons = qg.reasons || [];
+  let html = `<div class="cardhead"><h2>${fmt(j.original_name)}</h2><span class="pill needs_new_photo">nueva foto requerida</span></div>`;
+  html += `<div class="error-box">La foto no pasó el control de calidad. Motivos:`;
+  html += `<ul>${reasons.map((r) => `<li>${fmt(r.message)}</li>`).join("")}</ul></div>`;
+  html += `<div class="actions"><button class="btn retry" id="retry-quality-btn">Reintentar</button></div>`;
+  d.innerHTML = html;
+  const rb = $("#retry-quality-btn");
+  if (rb) rb.onclick = async () => { await jpost(api + "/jobs/" + j.job_id + "/retry"); refresh(); showDetail(j.job_id); };
 }
 function renderReady(j) {
   const d = $("#detail");
@@ -139,6 +158,12 @@ function renderReady(j) {
   const confirmed = j.confirmed;
 
   let html = `<div class="cardhead"><h2>${fmt(j.original_name)}</h2><span class="pill ${j.status}">${j.status}</span></div>`;
+  const qg = pm.quality_gate || {};
+  if (qg.verdict === "warn") {
+    const reasons = qg.reasons || [];
+    html += `<div class="warn-box">Aviso de calidad: posible baja confianza en los resultados.`;
+    html += `<ul>${reasons.map((r) => `<li>${fmt(r.message)}</li>`).join("")}</ul></div>`;
+  }
   html += `<div class="summary">`;
   html += `<span class="sbadge ok">Aceptados: ${res.field_report ? res.field_report.summary_counts.accepted_count : "-"}</span>`;
   html += `<span class="sbadge bad">Rechazados: ${res.field_report ? res.field_report.summary_counts.rejected_count : "-"}</span>`;
