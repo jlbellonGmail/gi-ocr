@@ -114,7 +114,10 @@ REASON_MESSAGES: Dict[str, Dict[str, str]] = {
         "reject": "Hay una sombra marcada que tapa parte del documento. Buscá una luz más pareja.",
     },
     "document_cropped": {
-        "reject": "El documento está cortado en el encuadre. Volvé a fotografiarlo completo, sin que se salga del cuadro.",
+        "reject": (
+            "El documento está cortado en el encuadre. "
+            "Volvé a fotografiarlo completo, sin que se salga del cuadro."
+        ),
     },
     "bad_perspective": {
         "warn": "El documento está fotografiado en ángulo; el resultado puede ser menos preciso.",
@@ -332,7 +335,9 @@ def _framing_signal(geom: Dict[str, Any]) -> Tuple[Optional[float], Optional[str
     return ratio, "ok"
 
 
-def _safe_signal(fn: Callable[..., Tuple[Optional[float], Optional[str]]], *args: Any) -> Tuple[Optional[float], Optional[str]]:
+def _safe_signal(
+    fn: Callable[..., Tuple[Optional[float], Optional[str]]], *args: Any
+) -> Tuple[Optional[float], Optional[str]]:
     """Nunca deja escapar una excepción: una imagen sintética/degenerada
     (todo negro, todo blanco, dimensiones extremas) degrada la señal
     correspondiente a "no evaluable" en vez de romper el pipeline con un
