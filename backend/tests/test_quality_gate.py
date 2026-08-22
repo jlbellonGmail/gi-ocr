@@ -59,7 +59,7 @@ def _doc_on_bg(
     doc: int = 225,
     with_text: bool = True,
 ) -> np.ndarray:
-    """"Documento" (rectángulo claro) sobre fondo oscuro, en una posición y
+    """ "Documento" (rectángulo claro) sobre fondo oscuro, en una posición y
     tamaño configurables dentro de un canvas — para las señales de corte,
     perspectiva y encuadre. `x0`/`y0` pueden ser negativos (documento que se
     sale del cuadro por ese lado)."""

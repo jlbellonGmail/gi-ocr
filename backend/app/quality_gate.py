@@ -115,8 +115,7 @@ REASON_MESSAGES: Dict[str, Dict[str, str]] = {
     },
     "document_cropped": {
         "reject": (
-            "El documento está cortado en el encuadre. "
-            "Volvé a fotografiarlo completo, sin que se salga del cuadro."
+            "El documento está cortado en el encuadre. Volvé a fotografiarlo completo, sin que se salga del cuadro."
         ),
     },
     "bad_perspective": {

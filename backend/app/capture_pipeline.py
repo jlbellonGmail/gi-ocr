@@ -362,4 +362,3 @@ def __import_templates():
 
 
 __all__ = ["process_image", "process_document"]
-
