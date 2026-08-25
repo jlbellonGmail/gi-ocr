@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -142,7 +142,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       OCR/extraccion con fixtures anonimos o sinteticos controlados y
       expected outputs por proveedor, documento y campo. Debe funcionar
       como gate futuro para no romper precision ya validada.
-- [-] 09-confianza-y-enrutamiento-hitl — Definir scores y umbrales por
+- [x] 09-confianza-y-enrutamiento-hitl — Definir scores y umbrales por
       campo: autoaceptar alta confianza, enviar baja confianza a revision
       humana y bloquear falsos positivos sensibles. Debe registrar
       confianza OCR, confianza de extraccion, validacion semantica y
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
