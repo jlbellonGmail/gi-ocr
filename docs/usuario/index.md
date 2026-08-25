@@ -18,4 +18,4 @@ ejemplos.
 - [Calidad de Captura Mobile](calidad-captura-mobile.md)
 - [Preprocesamiento Documental No Destructivo](preprocesamiento-documental-no-destructivo.md)
 - [Regresión Dataset OCR](regresion-dataset-ocr.md)
-- [Confianza y Enrutamiento HITL](confianza-y-enrutamiento-hitl.md)
+- [confianza-y-enrutamiento-hitl](confianza-y-enrutamiento-hitl.md)
