@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -138,7 +138,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       aplicadas: EXIF, deskew, perspectiva, escala, contraste y
       normalizacion, evitando que una mejora visual destruya ROI o datos
       utiles.
-- [-] 08-regresion-dataset-ocr — Crear suite permanente de regresion
+- [x] 08-regresion-dataset-ocr — Crear suite permanente de regresion
       OCR/extraccion con fixtures anonimos o sinteticos controlados y
       expected outputs por proveedor, documento y campo. Debe funcionar
       como gate futuro para no romper precision ya validada.
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
