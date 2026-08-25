@@ -9,7 +9,19 @@ Feature 09-confianza-y-enrutamiento-hitl: agrega confidence_summary al reporte.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
+
+
+class FieldConfidence(TypedDict, total=False):
+    ocr_score: float
+    extraction_score: float
+    final_score: float
+    validation_passed: bool
+    validation_reason: Optional[str]
+    decision: str
+    thresholds: Dict[str, float]
+    sensitive: bool
+    block_on_validation_fail: bool
 
 
 def generate_field_report(
@@ -21,7 +33,7 @@ def generate_field_report(
     document_type: str,
     source_document_reference: str,
     validation_rules: Optional[List[str]] = None,
-    field_confidence: Optional[Dict[str, Dict[str, Any]]] = None,
+    field_confidence: Optional[Dict[str, FieldConfidence]] = None,
 ) -> Dict[str, Any]:
     """Genera un reporte estructurado de clasificación de campos.
 
@@ -67,7 +79,7 @@ def generate_field_report(
 
     # Feature 09-confianza-y-enrutamiento-hitl: confidence_summary
     if field_confidence:
-        confidence_summary = {
+        confidence_summary: Dict[str, Any] = {
             "auto_accepted": 0,
             "needs_review": 0,
             "blocked": 0,
@@ -76,7 +88,7 @@ def generate_field_report(
         }
         for field, conf in field_confidence.items():
             decision = conf.get("decision", "unknown")
-            if decision in confidence_summary:
+            if decision in ("auto_accepted", "needs_review", "blocked", "missing"):
                 confidence_summary[decision] += 1
             confidence_summary["by_field"][field] = {
                 "decision": decision,

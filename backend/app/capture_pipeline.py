@@ -18,7 +18,7 @@ import numpy as np
 from PIL import Image
 
 from . import image_prep, ocr_engine, pdf_util, quality_gate
-from .field_reporting_processor import generate_field_report
+from .field_reporting_processor import FieldConfidence, generate_field_report
 from .services_config import get_service_confidence_config
 from .templates import get_template, unknown_template
 
@@ -73,7 +73,7 @@ def _make_confidence_decision(
     validation_passed: bool,
     validation_reason: Optional[str],
     confidence_config: Dict[str, Any],
-) -> Tuple[str, Dict[str, Any]]:
+) -> Tuple[str, FieldConfidence]:
     """Determina la decisión de enrutamiento para un campo.
 
     Returns:
@@ -102,17 +102,17 @@ def _make_confidence_decision(
         else:
             decision = "rejected"  # comportamiento legacy, va a rejected_fields
 
-    confidence_detail = {
-        "ocr_score": round(ocr_score, 3),
-        "extraction_score": round(extraction_score, 3),
-        "final_score": final_score,
-        "validation_passed": validation_passed,
-        "validation_reason": validation_reason,
-        "decision": decision,
-        "thresholds": {"auto": auto_accept, "review": needs_review},
-        "sensitive": sensitive,
-        "block_on_validation_fail": block_on_fail,
-    }
+    confidence_detail = FieldConfidence(
+        ocr_score=round(ocr_score, 3),
+        extraction_score=round(extraction_score, 3),
+        final_score=final_score,
+        validation_passed=validation_passed,
+        validation_reason=validation_reason,
+        decision=decision,
+        thresholds={"auto": auto_accept, "review": needs_review},
+        sensitive=sensitive,
+        block_on_validation_fail=block_on_fail,
+    )
     return decision, confidence_detail
 
 
@@ -197,7 +197,7 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
     validated_fields: Dict[str, str] = {}
     rejected_fields: Dict[str, Dict[str, str]] = {}
     field_scores: Dict[str, float] = {}
-    field_confidence: Dict[str, Dict[str, Any]] = {}
+    field_confidence: Dict[str, FieldConfidence] = {}
 
     if provider != "UNKNOWN":
         # Obtener configuración de confianza para este servicio
@@ -281,28 +281,28 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
         candidate_fields["provider"] = template.provider
         validated_fields["service"] = template.service
         # provider y service no tienen confidence config, agregar default
-        field_confidence["provider"] = {
-            "ocr_score": 0.0,
-            "extraction_score": 0.0,
-            "final_score": 1.0,
-            "validation_passed": True,
-            "validation_reason": None,
-            "decision": "auto_accepted",
-            "thresholds": {"auto": 0.85, "review": 0.50},
-            "sensitive": False,
-            "block_on_validation_fail": True,
-        }
-        field_confidence["service"] = {
-            "ocr_score": 0.0,
-            "extraction_score": 0.0,
-            "final_score": 1.0,
-            "validation_passed": True,
-            "validation_reason": None,
-            "decision": "auto_accepted",
-            "thresholds": {"auto": 0.85, "review": 0.50},
-            "sensitive": False,
-            "block_on_validation_fail": True,
-        }
+        field_confidence["provider"] = FieldConfidence(
+            ocr_score=0.0,
+            extraction_score=0.0,
+            final_score=1.0,
+            validation_passed=True,
+            validation_reason=None,
+            decision="auto_accepted",
+            thresholds={"auto": 0.85, "review": 0.50},
+            sensitive=False,
+            block_on_validation_fail=True,
+        )
+        field_confidence["service"] = FieldConfidence(
+            ocr_score=0.0,
+            extraction_score=0.0,
+            final_score=1.0,
+            validation_passed=True,
+            validation_reason=None,
+            decision="auto_accepted",
+            thresholds={"auto": 0.85, "review": 0.50},
+            sensitive=False,
+            block_on_validation_fail=True,
+        )
 
     # 5) campos faltantes
     required = list(template.required_fields)
@@ -314,17 +314,17 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
         for f in missing_fields:
             if f not in field_confidence:
                 fc = confidence_configs.get(f, {})
-                field_confidence[f] = {
-                    "ocr_score": 0.0,
-                    "extraction_score": 0.0,
-                    "final_score": 0.0,
-                    "validation_passed": False,
-                    "validation_reason": "missing_required",
-                    "decision": "missing",
-                    "thresholds": {"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
-                    "sensitive": fc.get("sensitive", False),
-                    "block_on_validation_fail": fc.get("block_on_validation_fail", True),
-                }
+                field_confidence[f] = FieldConfidence(
+                    ocr_score=0.0,
+                    extraction_score=0.0,
+                    final_score=0.0,
+                    validation_passed=False,
+                    validation_reason="missing_required",
+                    decision="missing",
+                    thresholds={"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
+                    sensitive=fc.get("sensitive", False),
+                    block_on_validation_fail=fc.get("block_on_validation_fail", True),
+                )
 
     # 6) reporte de campos
     field_report = generate_field_report(
@@ -549,17 +549,17 @@ def _process_pdf_native(pages, native_text, src):
             )
             field_confidence[ft.name] = conf_detail
         validated["provider"] = template.provider
-        field_confidence["provider"] = {
-            "ocr_score": 0.0,
-            "extraction_score": 0.0,
-            "final_score": 1.0,
-            "validation_passed": True,
-            "validation_reason": None,
-            "decision": "auto_accepted",
-            "thresholds": {"auto": 0.85, "review": 0.50},
-            "sensitive": False,
-            "block_on_validation_fail": True,
-        }
+        field_confidence["provider"] = FieldConfidence(
+            ocr_score=0.0,
+            extraction_score=0.0,
+            final_score=1.0,
+            validation_passed=True,
+            validation_reason=None,
+            decision="auto_accepted",
+            thresholds={"auto": 0.85, "review": 0.50},
+            sensitive=False,
+            block_on_validation_fail=True,
+        )
     missing = {
         f: None for f in (template.required_fields if template else []) if f not in validated and f not in rejected
     }
@@ -569,17 +569,17 @@ def _process_pdf_native(pages, native_text, src):
         for f in missing:
             if f not in field_confidence:
                 fc = confidence_configs.get(f, {})
-                field_confidence[f] = {
-                    "ocr_score": 0.0,
-                    "extraction_score": 0.0,
-                    "final_score": 0.0,
-                    "validation_passed": False,
-                    "validation_reason": "missing_required",
-                    "decision": "missing",
-                    "thresholds": {"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
-                    "sensitive": fc.get("sensitive", False),
-                    "block_on_validation_fail": fc.get("block_on_validation_fail", True),
-                }
+                field_confidence[f] = FieldConfidence(
+                    ocr_score=0.0,
+                    extraction_score=0.0,
+                    final_score=0.0,
+                    validation_passed=False,
+                    validation_reason="missing_required",
+                    decision="missing",
+                    thresholds={"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
+                    sensitive=fc.get("sensitive", False),
+                    block_on_validation_fail=fc.get("block_on_validation_fail", True),
+                )
     fr = generate_field_report(
         raw_ocr_text=native_text,
         candidate_fields=candidate,
