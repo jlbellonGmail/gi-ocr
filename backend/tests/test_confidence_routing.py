@@ -8,16 +8,15 @@ Tests unitarios para feature 09-confianza-y-enrutamiento-hitl:
 from __future__ import annotations
 
 import pytest
-
 from backend.app.capture_pipeline import (
     _calc_extraction_score,
     _make_confidence_decision,
 )
 from backend.app.services_config import (
+    DEFAULT_BLOCK_ON_VALIDATION_FAIL,
     DEFAULT_CONFIDENCE_AUTO_ACCEPT,
     DEFAULT_CONFIDENCE_NEEDS_REVIEW,
     DEFAULT_SENSITIVE,
-    DEFAULT_BLOCK_ON_VALIDATION_FAIL,
     get_field_confidence_config,
     validate_services_schema,
 )
@@ -271,7 +270,7 @@ Field.campo1.BlockOnValidationFail=si
         """Si solo se declara uno, debe usar default para el otro y validar que auto > review."""
         import configparser
         cfg = configparser.ConfigParser()
-        cfg.read_string(f"""
+        cfg.read_string("""
 [TEST]
 Title=Test
 Fields=campo1
@@ -286,7 +285,7 @@ Field.campo1.ConfidenceAutoAccept=0.90
         validate_services_schema(cfg)
 
         cfg2 = configparser.ConfigParser()
-        cfg2.read_string(f"""
+        cfg2.read_string("""
 [TEST]
 Title=Test
 Fields=campo1
