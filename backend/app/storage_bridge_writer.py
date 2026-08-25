@@ -146,9 +146,7 @@ def write_confidence_file(
     confidence_file = ready_path / confidence_filename
 
     # Serializar field_confidence a JSON
-    serializable_confidence = {
-        field: {k: v for k, v in conf.items()} for field, conf in field_confidence.items()
-    }
+    serializable_confidence = {field: {k: v for k, v in conf.items()} for field, conf in field_confidence.items()}
     payload = {
         "service": service,
         "timestamp": effective_timestamp.isoformat(),
