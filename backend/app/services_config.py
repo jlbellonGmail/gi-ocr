@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 CONFIG_DIR = Path(__file__).resolve().parents[1] / "config"
 SERVICES_INI = CONFIG_DIR / "services.ini"
+REGRESSION_INI = CONFIG_DIR / "regression.ini"
 
 # Tipos de campo permitidos por el esquema de Field.<nombre>.Type.
 ALLOWED_FIELD_TYPES: Tuple[str, ...] = ("text", "amount", "date")
@@ -377,3 +378,49 @@ def get_service_schema(service: str) -> Dict[str, Any]:
     if section is None:
         raise ServiceNotFoundError(f"Servicio '{service}' no está configurado en services.ini.")
     return _build_service_schema(cfg, section)
+
+
+def load_regression_config() -> Dict[str, Any]:
+    """Carga la configuración de regresión desde regression.ini.
+    
+    Devuelve un dict con secciones: regression, providers, thresholds.
+    """
+    if not REGRESSION_INI.exists():
+        return {
+            "enabled": True,
+            "fixtures_version": "1.0.0",
+            "min_global_accuracy": 0.95,
+            "min_field_accuracy": 0.90,
+            "providers": {},
+            "thresholds": {}
+        }
+    
+    cfg = configparser.ConfigParser()
+    cfg.read(REGRESSION_INI, encoding="utf-8")
+    
+    result = {}
+    for section in cfg.sections():
+        result[section] = dict(cfg[section])
+    
+    # Convertir valores
+    if "regression" in result:
+        reg = result["regression"]
+        reg["enabled"] = reg.get("enabled", "true").lower() == "true"
+        reg["min_global_accuracy"] = float(reg.get("min_global_accuracy", 0.95))
+        reg["min_field_accuracy"] = float(reg.get("min_field_accuracy", 0.90))
+        # Mover a nivel superior para compatibilidad con tests
+        result.update(reg)
+    
+    if "providers" in result:
+        providers = {}
+        for k, v in result["providers"].items():
+            providers[k] = v.lower() == "true"
+        result["providers"] = providers
+    
+    if "thresholds" in result:
+        thresholds = {}
+        for k, v in result["thresholds"].items():
+            thresholds[k] = float(v)
+        result["thresholds"] = thresholds
+    
+    return result

@@ -1,0 +1,32 @@
+{
+  "fixtures_version": "1.0.0",
+  "provider": "gas",
+  "document_type": "factura",
+  "document_id": "factura_01",
+  "fields": {
+    "importe": {
+      "value": 33867.3,
+      "confidence": 0.96
+    },
+    "cliente": {
+      "value": "98847494",
+      "confidence": 0.85
+    },
+    "nro_medidor": {
+      "value": "2287",
+      "confidence": 0.96
+    },
+    "a_pagar_hasta": {
+      "value": "28/07/2024",
+      "confidence": 0.95
+    },
+    "periodo": {
+      "value": "02/2026",
+      "confidence": 0.9
+    }
+  },
+  "validation": {
+    "semantic_checks_passed": true,
+    "warnings": []
+  }
+}
