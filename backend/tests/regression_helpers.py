@@ -6,51 +6,40 @@ Provides simple synchronous wrappers around the async OCR pipeline.
 from __future__ import annotations
 
 import asyncio
-from pathlib import Path
-from typing import Any, Dict, Optional
-
 import sys
+from pathlib import Path
+from typing import Any, Dict
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # Import mock OCR for fast testing
-from backend.tests.mock_ocr import get_expected_text_for_image, MOCK_MODE
-
 from backend.app.extraction_engine import extract_service_fields
 from backend.app.validators import (
+    validate_account,
+    validate_amount,
+    validate_comprobante,
     validate_date,
     validate_period,
-    validate_comprobante,
-    validate_account,
-    validate_meter,
-    validate_amount,
 )
+from backend.tests.mock_ocr import MOCK_MODE, get_expected_text_for_image
 
 
 def extract_text(image_path: Path) -> str:
     """Ejecuta OCR sobre una imagen y devuelve texto plano."""
     if MOCK_MODE:
         return get_expected_text_for_image(image_path)
-    
-    with Image.open(image_path) as image:
-        image_np = np.array(image.convert("RGB"))
-    
-    loop = asyncio.new_event_loop()
-    try:
-        text, _ = loop.run_until_complete(
-            extract_text_from_image(image_np, use_preprocessing=True)
-        )
-    finally:
-        loop.close()
-    return text
+
+    # Real OCR path disabled - mock mode always active
+    raise RuntimeError("Real OCR path not available in regression suite. Enable MOCK_MODE.")
 
 
-def extract_fields(ocr_text: str, provider: str, image_path: Optional[Path] = None) -> Dict[str, Any]:
+def extract_fields(ocr_text: str, provider: str, image_path: Path = None) -> Dict[str, Any]:
     """Extrae campos desde texto OCR para un proveedor."""
     normalized_provider = provider.strip().upper()
-    
+
     # Don't pass image_np to avoid zone extraction interference in mock mode
     image_np = None
-    
+
     loop = asyncio.new_event_loop()
     try:
         result = loop.run_until_complete(
@@ -62,23 +51,20 @@ def extract_fields(ocr_text: str, provider: str, image_path: Optional[Path] = No
         )
     finally:
         loop.close()
-    
+
     # Convert to expected format: {field: {"value": val, "confidence": conf}}
     extracted = {}
     for field, value in result["fields"].items():
         confidence = 0.9 if value is not None else 0.0
-        extracted[field] = {
-            "value": value,
-            "confidence": confidence
-        }
+        extracted[field] = {"value": value, "confidence": confidence}
     return extracted
 
 
 def validate_semantic(extracted: Dict[str, Any], provider: str) -> Dict[str, Any]:
     """Aplica validación semántica a campos extraídos."""
     validated = {}
-    normalized_provider = provider.strip().upper()
-    
+    provider.strip().upper()
+
     # Map services.ini field names to validators
     field_validators = {
         # GAS
@@ -107,23 +93,23 @@ def validate_semantic(extracted: Dict[str, Any], provider: str) -> Dict[str, Any
         "razon_social_emisor": lambda v: v,
         "razon_social_receptor": lambda v: v,
     }
-    
+
     for field, field_data in extracted.items():
         value = field_data.get("value")
         confidence = field_data.get("confidence", 0.9)
-        
+
         if value is not None and field in field_validators:
             try:
                 validated_value = field_validators[field](str(value))
                 validated[field] = {
                     "value": validated_value,
-                    "confidence": confidence if validated_value is not None else 0.0
+                    "confidence": confidence if validated_value is not None else 0.0,
                 }
             except Exception:
                 validated[field] = {"value": None, "confidence": 0.0}
         else:
             validated[field] = {"value": value, "confidence": confidence}
-    
+
     return validated
 
 
