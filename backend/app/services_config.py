@@ -398,7 +398,7 @@ def load_regression_config() -> Dict[str, Any]:
     cfg = configparser.ConfigParser()
     cfg.read(REGRESSION_INI, encoding="utf-8")
 
-    result = {}
+    result: Dict[str, Any] = {}
     for section in cfg.sections():
         result[section] = dict(cfg[section])
 
@@ -412,15 +412,17 @@ def load_regression_config() -> Dict[str, Any]:
         result.update(reg)
 
     if "providers" in result:
-        providers = {}
+        providers: Dict[str, bool] = {}
         for k, v in result["providers"].items():
             providers[k] = v.lower() == "true"
         result["providers"] = providers
 
     if "thresholds" in result:
-        thresholds = {}
+        thresholds: Dict[str, float] = {}
         for k, v in result["thresholds"].items():
             thresholds[k] = float(v)
         result["thresholds"] = thresholds
+
+    return result
 
     return result
