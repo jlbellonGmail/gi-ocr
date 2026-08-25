@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from datetime import datetime
 from pathlib import Path
@@ -120,3 +121,51 @@ def write_atomic_data_file(
         raise
 
     return final_file
+
+
+def write_confidence_file(
+    *,
+    service: str,
+    field_confidence: Mapping[str, Mapping[str, object]],
+    timestamp: datetime | None = None,
+    ready_dir: str | Path = DEFAULT_READY_DIR,
+) -> Path:
+    """Escribe archivo compañero .CONFIDENCE.json con trazabilidad de confianza por campo.
+
+    Feature 09-confianza-y-enrutamiento-hitl: persiste field_confidence junto al .DATA
+    para auditoría completa en el sistema legacy.
+    """
+    effective_timestamp = timestamp or datetime.now()
+    filename = build_data_filename(service, effective_timestamp)
+    confidence_filename = filename.replace(".DATA", ".CONFIDENCE.json")
+
+    ready_path = Path(ready_dir)
+    ready_path.mkdir(parents=True, exist_ok=True)
+    secure_dir(ready_path)
+
+    confidence_file = ready_path / confidence_filename
+
+    # Serializar field_confidence a JSON
+    serializable_confidence = {
+        field: {k: v for k, v in conf.items()} for field, conf in field_confidence.items()
+    }
+    payload = {
+        "service": service,
+        "timestamp": effective_timestamp.isoformat(),
+        "field_confidence": serializable_confidence,
+    }
+
+    with confidence_file.open("w", encoding="utf-8", newline="\n") as handle:
+        json.dump(payload, handle, indent=2, ensure_ascii=False)
+    secure_file(confidence_file)
+
+    return confidence_file
+
+
+__all__ = [
+    "normalize_service_name",
+    "build_data_filename",
+    "build_data_content",
+    "write_atomic_data_file",
+    "write_confidence_file",
+]

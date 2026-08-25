@@ -25,6 +25,15 @@ ALLOWED_FIELD_TYPES: Tuple[str, ...] = ("text", "amount", "date")
 # localizadas: no "si"/"no"/"True"/"False").
 ALLOWED_REQUIRED_VALUES: Tuple[str, ...] = ("true", "false")
 
+# Valores exactos permitidos para Field.<nombre>.Sensitive y BlockOnValidationFail.
+ALLOWED_BOOL_VALUES: Tuple[str, ...] = ("true", "false")
+
+# Defaults para umbrales de confianza (feature 09-confianza-y-enrutamiento-hitl).
+DEFAULT_CONFIDENCE_AUTO_ACCEPT: float = 0.85
+DEFAULT_CONFIDENCE_NEEDS_REVIEW: float = 0.50
+DEFAULT_SENSITIVE: bool = False
+DEFAULT_BLOCK_ON_VALIDATION_FAIL: bool = True
+
 
 class ServicesConfigError(ValueError):
     """Error de esquema o de lectura de services.ini con mensaje accionable.
@@ -166,6 +175,46 @@ def get_service_field_regex(service: str) -> Dict[str, str]:
     return result
 
 
+def get_service_confidence_config(service: str) -> Dict[str, Dict[str, Any]]:
+    """Devuelve configuración de confianza por campo para un servicio.
+
+    Incluye: ConfidenceAutoAccept, ConfidenceNeedsReview, Sensitive, BlockOnValidationFail.
+    Usa defaults si no están declarados en services.ini.
+    """
+    cfg = _load_parser()
+    if not cfg.has_section(service):
+        return {}
+    result: Dict[str, Dict[str, Any]] = {}
+    for name in get_service_fields(service):
+        auto_accept_raw = cfg.get(service, f"Field.{name}.ConfidenceAutoAccept", fallback="").strip()
+        needs_review_raw = cfg.get(service, f"Field.{name}.ConfidenceNeedsReview", fallback="").strip()
+        sensitive_raw = cfg.get(service, f"Field.{name}.Sensitive", fallback="").strip()
+        block_raw = cfg.get(service, f"Field.{name}.BlockOnValidationFail", fallback="").strip()
+
+        result[name] = {
+            "auto_accept": float(auto_accept_raw) if auto_accept_raw else DEFAULT_CONFIDENCE_AUTO_ACCEPT,
+            "needs_review": float(needs_review_raw) if needs_review_raw else DEFAULT_CONFIDENCE_NEEDS_REVIEW,
+            "sensitive": sensitive_raw == "true" if sensitive_raw else DEFAULT_SENSITIVE,
+            "block_on_validation_fail": block_raw == "true" if block_raw else DEFAULT_BLOCK_ON_VALIDATION_FAIL,
+        }
+    return result
+
+
+def get_field_confidence_config(cfg: configparser.ConfigParser, section: str, name: str) -> Dict[str, Any]:
+    """Lee configuración de confianza para un campo específico desde un parser ya cargado."""
+    auto_accept_raw = cfg.get(section, f"Field.{name}.ConfidenceAutoAccept", fallback="").strip()
+    needs_review_raw = cfg.get(section, f"Field.{name}.ConfidenceNeedsReview", fallback="").strip()
+    sensitive_raw = cfg.get(section, f"Field.{name}.Sensitive", fallback="").strip()
+    block_raw = cfg.get(section, f"Field.{name}.BlockOnValidationFail", fallback="").strip()
+
+    return {
+        "auto_accept": float(auto_accept_raw) if auto_accept_raw else DEFAULT_CONFIDENCE_AUTO_ACCEPT,
+        "needs_review": float(needs_review_raw) if needs_review_raw else DEFAULT_CONFIDENCE_NEEDS_REVIEW,
+        "sensitive": sensitive_raw == "true" if sensitive_raw else DEFAULT_SENSITIVE,
+        "block_on_validation_fail": block_raw == "true" if block_raw else DEFAULT_BLOCK_ON_VALIDATION_FAIL,
+    }
+
+
 def get_service_config(service: str) -> Optional[Dict]:
     """Obtiene la configuración completa de un servicio como dict.
 
@@ -173,6 +222,7 @@ def get_service_config(service: str) -> Optional[Dict]:
     real usado por extraction_engine.py) además de las claves históricas
     "zones"/"patterns" (mecanismo de sección en minúscula, sin uso real
     hoy — ver get_service_field_regex()).
+    Incluye "confidence" con umbrales por campo (feature 09-confianza-y-enrutamiento-hitl).
     """
     cfg = _load_parser()
     if not cfg.has_section(service):
@@ -182,6 +232,7 @@ def get_service_config(service: str) -> Optional[Dict]:
         "zones": get_service_zones(service),
         "patterns": get_service_patterns(service),
         "field_regex": get_service_field_regex(service),
+        "confidence": get_service_confidence_config(service),
         "raw": dict(cfg[service]),
     }
 
@@ -271,6 +322,45 @@ def _validate_field_block(cfg: configparser.ConfigParser, section: str, name: st
             "declarada pero vacía (es opcional: si no se usa, quitar la clave)."
         )
 
+    # Validación de umbrales de confianza (feature 09-confianza-y-enrutamiento-hitl)
+    auto_accept_raw = cfg.get(section, f"Field.{name}.ConfidenceAutoAccept", fallback="").strip()
+    needs_review_raw = cfg.get(section, f"Field.{name}.ConfidenceNeedsReview", fallback="").strip()
+    if auto_accept_raw or needs_review_raw:
+        # Si al menos uno está declarado, validar ambos
+        try:
+            auto_accept = float(auto_accept_raw) if auto_accept_raw else DEFAULT_CONFIDENCE_AUTO_ACCEPT
+            needs_review = float(needs_review_raw) if needs_review_raw else DEFAULT_CONFIDENCE_NEEDS_REVIEW
+        except ValueError:
+            raise ServicesConfigError(
+                f"Sección [{section}], campo '{name}': 'ConfidenceAutoAccept' y "
+                f"'ConfidenceNeedsReview' deben ser números float en [0.0, 1.0]."
+            )
+        if not (0.0 <= auto_accept <= 1.0 and 0.0 <= needs_review <= 1.0):
+            raise ServicesConfigError(
+                f"Sección [{section}], campo '{name}': umbrales de confianza fuera de rango [0.0, 1.0]."
+            )
+        if auto_accept <= needs_review:
+            raise ServicesConfigError(
+                f"Sección [{section}], campo '{name}': 'ConfidenceAutoAccept' ({auto_accept}) "
+                f"debe ser mayor que 'ConfidenceNeedsReview' ({needs_review})."
+            )
+
+    # Validación de Sensitive
+    sensitive_raw = cfg.get(section, f"Field.{name}.Sensitive", fallback="").strip()
+    if sensitive_raw and sensitive_raw not in ALLOWED_BOOL_VALUES:
+        raise ServicesConfigError(
+            f"Sección [{section}], campo '{name}': 'Field.{name}.Sensitive' debe ser "
+            f"exactamente 'true' o 'false' (valor actual: {sensitive_raw!r})."
+        )
+
+    # Validación de BlockOnValidationFail
+    block_raw = cfg.get(section, f"Field.{name}.BlockOnValidationFail", fallback="").strip()
+    if block_raw and block_raw not in ALLOWED_BOOL_VALUES:
+        raise ServicesConfigError(
+            f"Sección [{section}], campo '{name}': 'Field.{name}.BlockOnValidationFail' debe ser "
+            f"exactamente 'true' o 'false' (valor actual: {block_raw!r})."
+        )
+
 
 def _validate_section_schema(cfg: configparser.ConfigParser, section: str) -> None:
     """Valida el esquema completo de una sección de services.ini."""
@@ -344,6 +434,7 @@ def _build_service_schema(cfg: configparser.ConfigParser, section: str) -> Dict[
     field_names = [f.strip() for f in fields_raw.split(",") if f.strip()]
     fields = []
     for name in field_names:
+        confidence = get_field_confidence_config(cfg, section, name)
         fields.append(
             {
                 "name": name,
@@ -351,6 +442,7 @@ def _build_service_schema(cfg: configparser.ConfigParser, section: str) -> Dict[
                 "type": cfg.get(section, f"Field.{name}.Type").strip(),
                 "required": cfg.get(section, f"Field.{name}.Required").strip() == "true",
                 "example": cfg.get(section, f"Field.{name}.Example").strip(),
+                "confidence": confidence,
             }
         )
     return {"id": section, "title": title, "fields": fields}
