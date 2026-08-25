@@ -3,26 +3,30 @@ validación tipada -> accepted/rejected/missing -> reporte.
 
 Integra OCR (ocr_engine), extracción (templates/regex), validación semántica
 (validators) y reporte (field_reporting_processor). Mide tiempos por etapa.
+
+Feature 09-confianza-y-enrutamiento-hitl: scores y umbrales por campo para
+enrutamiento automático (auto_accepted, needs_review, blocked, missing).
 """
 
 from __future__ import annotations
 
 import re
 import time
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 from PIL import Image
 
 from . import image_prep, ocr_engine, pdf_util, quality_gate
-from .field_reporting_processor import generate_field_report
+from .field_reporting_processor import FieldConfidence, generate_field_report
+from .services_config import get_service_confidence_config
 from .templates import get_template, unknown_template
 
 
 def _extract_field(field_tpl, texts, page_text_full=""):
-    """Aplica regex del campo sobre los textos de su banda. Devuelve (candidate, source)."""
+    """Aplica regex del campo sobre los textos de su banda. Devuelve (candidate, source, extraction_path)."""
     if field_tpl.extract is None:
-        return None, None
+        return None, None, "none"
     # intentar primero con ancla si existe
     candidates = []
     for t in texts:
@@ -32,14 +36,84 @@ def _extract_field(field_tpl, texts, page_text_full=""):
             pass
         m = re.search(field_tpl.extract, t, re.IGNORECASE)
         if m:
-            candidates.append(m.group(1))
+            candidates.append((m.group(1), "zone_regex"))
     if not candidates and page_text_full:
         m = re.search(field_tpl.extract, page_text_full, re.IGNORECASE)
         if m:
-            candidates.append(m.group(1))
+            candidates.append((m.group(1), "fulltext_regex"))
     if not candidates:
-        return None, None
-    return candidates[0], "ocr_region"
+        return None, None, "none"
+    return candidates[0][0], candidates[0][1], "zone_regex" if candidates[0][1] == "zone_regex" else "fulltext_regex"
+
+
+def _calc_extraction_score(extraction_path: str, has_anchor: bool) -> float:
+    """Calcula score de extracción según el camino usado.
+
+    - zone_regex (regex en banda OCR): 1.0
+    - fulltext_regex (regex en texto completo): 0.9
+    - anchor_only (solo ancla matcheó, regex genérico): 0.7
+    - generic (fallback genérico): 0.3
+    - none: 0.0
+    """
+    if extraction_path == "zone_regex":
+        return 1.0
+    if extraction_path == "fulltext_regex":
+        return 0.9
+    if extraction_path == "anchor_only":
+        return 0.7
+    if extraction_path == "generic":
+        return 0.3
+    return 0.0
+
+
+def _make_confidence_decision(
+    field_name: str,
+    ocr_score: float,
+    extraction_score: float,
+    validation_passed: bool,
+    validation_reason: Optional[str],
+    confidence_config: Dict[str, Any],
+) -> Tuple[str, FieldConfidence]:
+    """Determina la decisión de enrutamiento para un campo.
+
+    Returns:
+        (decision, confidence_detail)
+        decision: "auto_accepted" | "needs_review" | "blocked" | "missing"
+        confidence_detail: dict con trazabilidad completa
+    """
+    auto_accept = confidence_config.get("auto_accept", 0.85)
+    needs_review = confidence_config.get("needs_review", 0.50)
+    sensitive = confidence_config.get("sensitive", False)
+    block_on_fail = confidence_config.get("block_on_validation_fail", True)
+
+    final_score = round((ocr_score * 0.6) + (extraction_score * 0.4), 3)
+
+    if validation_passed:
+        if final_score >= auto_accept:
+            decision = "auto_accepted"
+        elif final_score >= needs_review:
+            decision = "needs_review"
+        else:
+            decision = "needs_review"
+    else:
+        # Validación semántica falló
+        if sensitive or block_on_fail:
+            decision = "blocked"
+        else:
+            decision = "rejected"  # comportamiento legacy, va a rejected_fields
+
+    confidence_detail = FieldConfidence(
+        ocr_score=round(ocr_score, 3),
+        extraction_score=round(extraction_score, 3),
+        final_score=final_score,
+        validation_passed=validation_passed,
+        validation_reason=validation_reason,
+        decision=decision,
+        thresholds={"auto": auto_accept, "review": needs_review},
+        sensitive=sensitive,
+        block_on_validation_fail=block_on_fail,
+    )
+    return decision, confidence_detail
 
 
 def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "") -> Dict[str, Any]:
@@ -123,8 +197,11 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
     validated_fields: Dict[str, str] = {}
     rejected_fields: Dict[str, Dict[str, str]] = {}
     field_scores: Dict[str, float] = {}
+    field_confidence: Dict[str, FieldConfidence] = {}
 
     if provider != "UNKNOWN":
+        # Obtener configuración de confianza para este servicio
+        confidence_configs = get_service_confidence_config(template.service)
         for ft in template.fields:
             if ft.name in candidate_fields and candidate_fields[ft.name] is not None:
                 continue
@@ -136,11 +213,11 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
                     and ft.band[2] <= ((r["x1"] + r["x2"]) / 2) <= ft.band[3]
                 )
             ]
-            cand, _src = _extract_field(ft, band_texts, page_text_full)
+            cand, extraction_path, _src = _extract_field(ft, band_texts, page_text_full)
             candidate_fields[ft.name] = cand
-            if cand is None:
-                continue
-            score = max(
+
+            # Calcular ocr_score (max score OCR en banda)
+            ocr_score = max(
                 (
                     r["score"]
                     for r in box_results
@@ -151,24 +228,103 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
                 ),
                 default=0.0,
             )
-            field_scores[ft.name] = round(score, 3)
+            field_scores[ft.name] = round(ocr_score, 3)
+
+            if cand is None:
+                # Campo missing: registrar confidence con decision=missing
+                fc = confidence_configs.get(ft.name, {})
+                field_confidence[ft.name] = {
+                    "ocr_score": round(ocr_score, 3),
+                    "extraction_score": 0.0,
+                    "final_score": 0.0,
+                    "validation_passed": False,
+                    "validation_reason": "no_candidate",
+                    "decision": "missing",
+                    "thresholds": {"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
+                    "sensitive": fc.get("sensitive", False),
+                    "block_on_validation_fail": fc.get("block_on_validation_fail", True),
+                }
+                continue
+
+            # Calcular extraction_score según camino de extracción
+            has_anchor = ft.anchor is not None
+            extraction_score = _calc_extraction_score(extraction_path, has_anchor)
+
+            # Validación semántica
+            validation_passed = True
+            validation_reason: Optional[str] = None
             if ft.validator is not None:
                 value, reason = ft.validator(cand)
                 if value is not None:
                     validated_fields[ft.name] = str(value)
                 else:
-                    rejected_fields[ft.name] = {"value": cand, "reason": reason or "invalid"}
+                    validation_passed = False
+                    validation_reason = reason or "invalid"
+                    rejected_fields[ft.name] = {"value": cand, "reason": validation_reason}
             else:
                 validated_fields[ft.name] = cand
+
+            # Decisión de confianza
+            fc = confidence_configs.get(ft.name, {})
+            decision, conf_detail = _make_confidence_decision(
+                ft.name, ocr_score, extraction_score, validation_passed, validation_reason, fc
+            )
+            field_confidence[ft.name] = conf_detail
+
+            # Si decision es blocked, mover de rejected_fields a blocked (nueva categoría)
+            if decision == "blocked" and ft.name in rejected_fields:
+                # Mantenemos en rejected_fields para compatibilidad, pero la decisión es blocked
+                pass
 
     if provider != "UNKNOWN":
         validated_fields["provider"] = template.provider
         candidate_fields["provider"] = template.provider
         validated_fields["service"] = template.service
+        # provider y service no tienen confidence config, agregar default
+        field_confidence["provider"] = FieldConfidence(
+            ocr_score=0.0,
+            extraction_score=0.0,
+            final_score=1.0,
+            validation_passed=True,
+            validation_reason=None,
+            decision="auto_accepted",
+            thresholds={"auto": 0.85, "review": 0.50},
+            sensitive=False,
+            block_on_validation_fail=True,
+        )
+        field_confidence["service"] = FieldConfidence(
+            ocr_score=0.0,
+            extraction_score=0.0,
+            final_score=1.0,
+            validation_passed=True,
+            validation_reason=None,
+            decision="auto_accepted",
+            thresholds={"auto": 0.85, "review": 0.50},
+            sensitive=False,
+            block_on_validation_fail=True,
+        )
 
     # 5) campos faltantes
     required = list(template.required_fields)
     missing_fields = {f: None for f in required if f not in validated_fields and f not in rejected_fields}
+
+    # Agregar confidence para campos missing que no se procesaron arriba
+    if provider != "UNKNOWN":
+        confidence_configs = get_service_confidence_config(template.service)
+        for f in missing_fields:
+            if f not in field_confidence:
+                fc = confidence_configs.get(f, {})
+                field_confidence[f] = FieldConfidence(
+                    ocr_score=0.0,
+                    extraction_score=0.0,
+                    final_score=0.0,
+                    validation_passed=False,
+                    validation_reason="missing_required",
+                    decision="missing",
+                    thresholds={"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
+                    sensitive=fc.get("sensitive", False),
+                    block_on_validation_fail=fc.get("block_on_validation_fail", True),
+                )
 
     # 6) reporte de campos
     field_report = generate_field_report(
@@ -180,6 +336,7 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
         document_type=template.document_type,
         source_document_reference=source_ref,
         validation_rules=["date", "period", "account", "meter", "amount", "comprobante"],
+        field_confidence=field_confidence,
     )
 
     timing_total = round(_t.time() - t_start, 3)
@@ -200,6 +357,7 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
             "validated_fields": validated_fields,
             "rejected_fields": rejected_fields,
             "missing_fields": missing_fields,
+            "field_confidence": field_confidence,
         },
         "field_report": field_report,
         "field_scores": field_scores,
@@ -290,6 +448,7 @@ def _quality_rejected_result(src: str, quality: Dict[str, Any]) -> Dict[str, Any
             "validated_fields": {},
             "rejected_fields": {},
             "missing_fields": {},
+            "field_confidence": {},
         },
         "field_report": None,
         "field_scores": {},
@@ -349,23 +508,78 @@ def _process_pdf_native(pages, native_text, src):
     validated = {}
     rejected = {}
     candidate = {}
+    field_confidence: Dict[str, Dict[str, Any]] = {}
     if template is not None and provider != "UNKNOWN":
+        confidence_configs = get_service_confidence_config(template.service)
         for ft in template.fields:
             m = re.search(ft.extract or "", native_text, re.IGNORECASE) if ft.extract else None
             cand = m.group(1) if m else None
             candidate[ft.name] = cand
-            if cand and ft.validator:
+            fc = confidence_configs.get(ft.name, {})
+            if cand is None:
+                field_confidence[ft.name] = {
+                    "ocr_score": 0.0,
+                    "extraction_score": 0.0,
+                    "final_score": 0.0,
+                    "validation_passed": False,
+                    "validation_reason": "no_candidate",
+                    "decision": "missing",
+                    "thresholds": {"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
+                    "sensitive": fc.get("sensitive", False),
+                    "block_on_validation_fail": fc.get("block_on_validation_fail", True),
+                }
+                continue
+            # extraction_score para native PDF: 0.9 (regex sobre texto nativo)
+            extraction_score = 0.9
+            validation_passed = True
+            validation_reason = None
+            if ft.validator:
                 v, reason = ft.validator(cand)
                 if v is not None:
                     validated[ft.name] = str(v)
                 else:
-                    rejected[ft.name] = {"value": cand, "reason": reason or "invalid"}
-            elif cand:
+                    validation_passed = False
+                    validation_reason = reason or "invalid"
+                    rejected[ft.name] = {"value": cand, "reason": validation_reason}
+            else:
                 validated[ft.name] = cand
+            # ocr_score = 0 para native PDF (no hay OCR)
+            decision, conf_detail = _make_confidence_decision(
+                ft.name, 0.0, extraction_score, validation_passed, validation_reason, fc
+            )
+            field_confidence[ft.name] = conf_detail
         validated["provider"] = template.provider
+        field_confidence["provider"] = FieldConfidence(
+            ocr_score=0.0,
+            extraction_score=0.0,
+            final_score=1.0,
+            validation_passed=True,
+            validation_reason=None,
+            decision="auto_accepted",
+            thresholds={"auto": 0.85, "review": 0.50},
+            sensitive=False,
+            block_on_validation_fail=True,
+        )
     missing = {
         f: None for f in (template.required_fields if template else []) if f not in validated and f not in rejected
     }
+    # Agregar confidence para campos missing
+    if template is not None and provider != "UNKNOWN":
+        confidence_configs = get_service_confidence_config(template.service)
+        for f in missing:
+            if f not in field_confidence:
+                fc = confidence_configs.get(f, {})
+                field_confidence[f] = FieldConfidence(
+                    ocr_score=0.0,
+                    extraction_score=0.0,
+                    final_score=0.0,
+                    validation_passed=False,
+                    validation_reason="missing_required",
+                    decision="missing",
+                    thresholds={"auto": fc.get("auto_accept", 0.85), "review": fc.get("needs_review", 0.50)},
+                    sensitive=fc.get("sensitive", False),
+                    block_on_validation_fail=fc.get("block_on_validation_fail", True),
+                )
     fr = generate_field_report(
         raw_ocr_text=native_text,
         candidate_fields=candidate,
@@ -375,6 +589,7 @@ def _process_pdf_native(pages, native_text, src):
         document_type=template.document_type if template else "MANUAL_REVIEW",
         source_document_reference=src,
         validation_rules=["native_pdf_text"],
+        field_confidence=field_confidence,
     )
     return {
         "processing_metadata": {
@@ -394,6 +609,7 @@ def _process_pdf_native(pages, native_text, src):
             "validated_fields": validated,
             "rejected_fields": rejected,
             "missing_fields": missing,
+            "field_confidence": field_confidence,
         },
         "field_report": fr,
         "field_scores": {},

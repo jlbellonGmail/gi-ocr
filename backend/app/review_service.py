@@ -2,6 +2,9 @@
 
 Preserva valores originales del servidor. Valida estados confirmed/corrected/unresolved.
 Genera nombre de archivo seguro. Persiste JSON confirmado separado del original.
+
+Feature 09-confianza-y-enrutamiento-hitl: registra confidence_at_review y decision_at_review
+en confirmation_metadata para trazabilidad completa.
 """
 
 from __future__ import annotations
@@ -18,11 +21,14 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
         raise FileNotFoundError("Job original no encontrado")
     so = original.get("structured_output", {})
     validated_fields: Dict[str, Any] = dict(so.get("validated_fields", {}))
+    field_confidence: Dict[str, Any] = dict(so.get("field_confidence", {}))
     corrected: List[str] = []
     confirmed_count = 0
     corrected_count = 0
     unresolved_count = 0
     confirmed_fields: Dict[str, Any] = {}
+    confidence_at_review: Dict[str, Any] = {}
+    decision_at_review: Dict[str, str] = {}
 
     for c in corrections:
         field = c.get("field")
@@ -41,6 +47,9 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
         else:
             unresolved_count += 1
             confirmed_fields[field] = final_value
+        # Registrar confidence y decision al momento de revisión
+        confidence_at_review[field] = field_confidence.get(field, {})
+        decision_at_review[field] = state  # confirmed/corrected/unresolved
 
     doc_type = original.get("processing_metadata", {}).get("provider_detected", "doc") or "doc"
     final_filename = store.build_final_filename(doc_type, job_id)
@@ -60,6 +69,8 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
             "final_filename": final_filename,
             "confirmed_at": datetime.now(timezone.utc).isoformat(),
             "original_source": original.get("structured_output", {}).get("source_document_reference", ""),
+            "confidence_at_review": confidence_at_review,
+            "decision_at_review": decision_at_review,
         },
         "original_result_ref": job_id,
     }
