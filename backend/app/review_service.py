@@ -25,7 +25,6 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
     so = original.get("structured_output", {})
     validated_fields: Dict[str, Any] = dict(so.get("validated_fields", {}))
     field_confidence: Dict[str, Any] = dict(so.get("field_confidence", {}))
-    rejected_fields: Dict[str, Any] = dict(so.get("rejected_fields", {}))
     corrected: List[str] = []
     confirmed_count = 0
     corrected_count = 0
