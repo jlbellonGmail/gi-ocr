@@ -76,6 +76,7 @@ class FieldCorrection(BaseModel):
     field: str
     state: str  # confirmed | corrected | unresolved
     final_value: Optional[str] = None
+    reason: Optional[str] = None
 
 
 class ConfirmPayload(BaseModel):
@@ -230,6 +231,8 @@ async def confirm_job(job_id: str, payload: ConfirmPayload):
         result = confirm_review(store, job_id, [c.model_dump() for c in payload.confirmed_fields])
     except FileNotFoundError as e:
         raise HTTPException(404, str(e))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
     return result
 
 
@@ -259,6 +262,45 @@ async def download_original(job_id: str):
     if not store.original_exists(job_id):
         raise HTTPException(404, "Resultado original no encontrado")
     return FileResponse(str(store.job_path(job_id)), media_type="application/json", filename=f"{job_id}_original.json")
+
+
+@app.get("/api/v1/jobs/{job_id}/image")
+async def get_job_image(job_id: str):
+    """Sirve la imagen original subida para el job (para visor en consola de revisión)."""
+    if not JOB_ID_RE.match(job_id):
+        raise HTTPException(400, "job_id inválido")
+    if not store.original_exists(job_id):
+        raise HTTPException(404, "Job no encontrado")
+    original = store.load_original(job_id)
+    if not original:
+        raise HTTPException(404, "Job no encontrado")
+    # La imagen original se guarda en output/uploads/ con nombre aleatorio
+    # El path original no se persiste directamente; buscamos en uploads por job_id
+    # En el job original, source_document_reference tiene el path del upload
+    source_ref = original.get("structured_output", {}).get("source_document_reference", "")
+    if not source_ref:
+        raise HTTPException(404, "Imagen no disponible para este job")
+    # source_ref es el path absoluto al archivo en output/uploads/
+    img_path = Path(source_ref)
+    if not img_path.exists():
+        # Fallback: buscar en uploads por patrón job_id
+        uploads = DATA_DIR / "uploads"
+        matches = list(uploads.glob(f"*{job_id[:8]}*"))
+        if matches:
+            img_path = matches[0]
+        else:
+            raise HTTPException(404, "Archivo de imagen no encontrado en disco")
+    # Detectar media type por extensión
+    ext = img_path.suffix.lower()
+    media_type = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",
+        ".png": "image/png",
+        ".tif": "image/tiff",
+        ".tiff": "image/tiff",
+        ".pdf": "application/pdf",
+    }.get(ext, "application/octet-stream")
+    return FileResponse(str(img_path), media_type=media_type, filename=img_path.name)
 
 
 @app.get("/api/v1/export")
