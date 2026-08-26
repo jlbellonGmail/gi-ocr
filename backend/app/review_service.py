@@ -5,6 +5,9 @@ Genera nombre de archivo seguro. Persiste JSON confirmado separado del original.
 
 Feature 09-confianza-y-enrutamiento-hitl: registra confidence_at_review y decision_at_review
 en confirmation_metadata para trazabilidad completa.
+
+Feature 10-consola-revision-humana-profesional: registra correction_reasons (motivo de
+corrección/rechazo) obligatorio cuando state != confirmed.
 """
 
 from __future__ import annotations
@@ -29,13 +32,21 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
     confirmed_fields: Dict[str, Any] = {}
     confidence_at_review: Dict[str, Any] = {}
     decision_at_review: Dict[str, str] = {}
+    correction_reasons: Dict[str, str] = {}
 
     for c in corrections:
         field = c.get("field")
         state = c.get("state", "unresolved")
         final_value = c.get("final_value")
+        reason = c.get("reason", "").strip()
         if not field:
             continue
+        # Validar reason obligatorio para corrected/unresolved
+        if state in ("corrected", "unresolved") and not reason:
+            raise ValueError(f"Campo '{field}': motivo obligatorio cuando estado es '{state}'")
+        # Para confirmed, reason es opcional pero se guarda si se provee
+        if reason:
+            correction_reasons[field] = reason
         if state == "confirmed":
             confirmed_count += 1
             confirmed_fields[field] = validated_fields.get(field, final_value)
@@ -71,6 +82,7 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
             "original_source": original.get("structured_output", {}).get("source_document_reference", ""),
             "confidence_at_review": confidence_at_review,
             "decision_at_review": decision_at_review,
+            "correction_reasons": correction_reasons,
         },
         "original_result_ref": job_id,
     }
@@ -85,6 +97,7 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
         "corrections": corrected,
         "summary": confirmed_doc["summary"],
         "confirmed_path": str(path),
+        "correction_reasons": correction_reasons,
     }
 
 

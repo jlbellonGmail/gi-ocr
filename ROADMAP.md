@@ -1,4 +1,4 @@
-# Roadmap: gi-ocr (Smart Invoice Capture)
+﻿# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -147,7 +147,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       humana y bloquear falsos positivos sensibles. Debe registrar
       confianza OCR, confianza de extraccion, validacion semantica y
       decision final.
-- [ ] 10-consola-revision-humana-profesional — Completar la UI mobile de
+- [-] 10-consola-revision-humana-profesional — Completar la UI mobile de
       revision: imagen, texto OCR, candidatos, campos validados,
       rechazados y no encontrados, edicion manual, motivo de
       correccion/rechazo y confirmacion final antes de exportar.
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 

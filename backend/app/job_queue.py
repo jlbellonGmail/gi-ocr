@@ -135,7 +135,7 @@ class JobQueue:
             if not Path(file_path).exists():
                 raise FileNotFoundError(f"Archivo no encontrado: {file_path}")
             loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(None, process_document, file_path, job["original_name"])
+            result = await loop.run_in_executor(None, process_document, file_path, file_path)
             quality = (result.get("processing_metadata") or {}).get("quality_gate") or {}
             if quality.get("verdict") == "reject":
                 # Veredicto `reject` del control de calidad: no hubo OCR, no

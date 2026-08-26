@@ -19,3 +19,4 @@ ejemplos.
 - [Preprocesamiento Documental No Destructivo](preprocesamiento-documental-no-destructivo.md)
 - [Regresión Dataset OCR](regresion-dataset-ocr.md)
 - [confianza-y-enrutamiento-hitl](confianza-y-enrutamiento-hitl.md)
+- [consola-revision-humana-profesional](consola-revision-humana-profesional.md)
