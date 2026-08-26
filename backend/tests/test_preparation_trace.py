@@ -39,7 +39,7 @@ from backend.app.main import app
 from fastapi.testclient import TestClient
 from PIL import Image, ImageDraw
 
-client = TestClient(app)
+client = TestClient(app, headers={"X-Operator-Id": "test_operator", "X-Operator-Role": "admin"})
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 GAS_SAMPLE = FIXTURES_DIR / "gas_sample.jpg"

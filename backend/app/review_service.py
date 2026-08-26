@@ -8,6 +8,9 @@ en confirmation_metadata para trazabilidad completa.
 
 Feature 10-consola-revision-humana-profesional: registra correction_reasons (motivo de
 corrección/rechazo) obligatorio cuando state != confirmed.
+
+Feature 11-auditoria-permisos-operador: registra audit_trail con operador, valor original,
+valor final, fecha, motivo y acción por campo.
 """
 
 from __future__ import annotations
@@ -18,12 +21,19 @@ from typing import Any, Dict, List
 from .job_store import JobStore
 
 
-def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any]]) -> Dict[str, Any]:
+def confirm_review(
+    store: JobStore,
+    job_id: str,
+    corrections: List[Dict[str, Any]],
+    operator_id: str,
+    operator_role: str,
+) -> Dict[str, Any]:
     original = store.load_original(job_id)
     if original is None:
         raise FileNotFoundError("Job original no encontrado")
     so = original.get("structured_output", {})
     validated_fields: Dict[str, Any] = dict(so.get("validated_fields", {}))
+    candidate_fields: Dict[str, Any] = dict(so.get("candidate_fields", {}))
     field_confidence: Dict[str, Any] = dict(so.get("field_confidence", {}))
     corrected: List[str] = []
     confirmed_count = 0
@@ -33,6 +43,7 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
     confidence_at_review: Dict[str, Any] = {}
     decision_at_review: Dict[str, str] = {}
     correction_reasons: Dict[str, str] = {}
+    audit_trail: List[Dict[str, Any]] = []
 
     for c in corrections:
         field = c.get("field")
@@ -41,12 +52,17 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
         reason = c.get("reason", "").strip()
         if not field:
             continue
+        # Excluir campos internos no editables
+        if field in ("provider", "service"):
+            continue
         # Validar reason obligatorio para corrected/unresolved
         if state in ("corrected", "unresolved") and not reason:
             raise ValueError(f"Campo '{field}': motivo obligatorio cuando estado es '{state}'")
         # Para confirmed, reason es opcional pero se guarda si se provee
         if reason:
             correction_reasons[field] = reason
+        # Valor original: validado > candidato > null
+        original_value = validated_fields.get(field, candidate_fields.get(field))
         if state == "confirmed":
             confirmed_count += 1
             confirmed_fields[field] = validated_fields.get(field, final_value)
@@ -61,6 +77,17 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
         # Registrar confidence y decision al momento de revisión
         confidence_at_review[field] = field_confidence.get(field, {})
         decision_at_review[field] = state  # confirmed/corrected/unresolved
+        # Audit trail entry
+        audit_trail.append({
+            "field": field,
+            "operator_id": operator_id,
+            "operator_role": operator_role,
+            "original_value": original_value,
+            "final_value": final_value,
+            "action": state,
+            "reason": reason or None,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        })
 
     doc_type = original.get("processing_metadata", {}).get("provider_detected", "doc") or "doc"
     final_filename = store.build_final_filename(doc_type, job_id)
@@ -83,6 +110,7 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
             "confidence_at_review": confidence_at_review,
             "decision_at_review": decision_at_review,
             "correction_reasons": correction_reasons,
+            "audit_trail": audit_trail,
         },
         "original_result_ref": job_id,
     }
@@ -98,6 +126,7 @@ def confirm_review(store: JobStore, job_id: str, corrections: List[Dict[str, Any
         "summary": confirmed_doc["summary"],
         "confirmed_path": str(path),
         "correction_reasons": correction_reasons,
+        "audit_trail": audit_trail,
     }
 
 

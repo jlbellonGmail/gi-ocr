@@ -116,7 +116,13 @@ def _make_confidence_decision(
     return decision, confidence_detail
 
 
-def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "") -> Dict[str, Any]:
+def process_image(
+    image_np: np.ndarray,
+    source_ref: str,
+    page_text_full: str = "",
+    operator_id: Optional[str] = None,
+    operator_role: Optional[str] = None,
+) -> Dict[str, Any]:
     """Procesa una imagen preparada. Devuelve el resultado estructurado T3.2+T3.3.
 
     page_text_full: texto nativo del PDF (si aplica) para fallback de regex.
@@ -348,6 +354,8 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
             "provider_confidence": conf,
             "timings": timings,
             "engine": "RapidOCR-ONNX-PP-OCRv3",
+            "operator_id": operator_id,
+            "operator_role": operator_role,
         },
         "raw_ocr_text": raw_ocr_text,
         "structured_output": {
@@ -364,7 +372,12 @@ def process_image(image_np: np.ndarray, source_ref: str, page_text_full: str = "
     }
 
 
-def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, Any]:
+def process_document(
+    path: str,
+    source_ref: Optional[str] = None,
+    operator_id: Optional[str] = None,
+    operator_role: Optional[str] = None,
+) -> Dict[str, Any]:
     """Procesa imagen o PDF. Devuelve resultado estructurado (página 0 por convención).
 
     Sobre el camino de imagen (no PDF, ver `docs/tecnica/
@@ -391,7 +404,7 @@ def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, A
     """
     src = source_ref or path
     if pdf_util.is_pdf(path):
-        return _process_pdf(path, src)
+        return _process_pdf(path, src, operator_id, operator_role)
     img: Image.Image = Image.open(path)
     img, exif_applied = image_prep.apply_exif_orientation(img)
     img = img.convert("RGB")
@@ -405,7 +418,7 @@ def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, A
         # traza (ni siquiera la de EXIF, ver criterio 11 del spec) -- la
         # clave `preparation_trace` queda ausente en este resultado, no una
         # lista con pasos "inventados".
-        return _quality_rejected_result(src, quality)
+        return _quality_rejected_result(src, quality, operator_id, operator_role)
 
     # `preparation_trace` acumula, en orden, la corrección EXIF (paso previo a
     # `image_prep.prepare`, sólo en este camino de imagen) y los pasos que
@@ -423,13 +436,18 @@ def process_document(path: str, source_ref: Optional[str] = None) -> Dict[str, A
         }
     ]
     prepared = image_prep.prepare(arr, exif_orientation_applied=exif_applied, trace=trace)
-    result = process_image(prepared, src)
+    result = process_image(prepared, src, operator_id=operator_id, operator_role=operator_role)
     result["processing_metadata"]["quality_gate"] = quality
     result["processing_metadata"]["preparation_trace"] = trace
     return result
 
 
-def _quality_rejected_result(src: str, quality: Dict[str, Any]) -> Dict[str, Any]:
+def _quality_rejected_result(
+    src: str,
+    quality: Dict[str, Any],
+    operator_id: Optional[str] = None,
+    operator_role: Optional[str] = None,
+) -> Dict[str, Any]:
     """Resultado mínimo para un veredicto `reject` de `quality_gate`: no se
     invocó OCR (`ocr_engine`/`process_image`), por lo que no hay campos
     extraídos. Mismo "shape" que el resultado normal (todas las claves
@@ -439,6 +457,8 @@ def _quality_rejected_result(src: str, quality: Dict[str, Any]) -> Dict[str, Any
         "processing_metadata": {
             "quality_gate": quality,
             "engine": None,
+            "operator_id": operator_id,
+            "operator_role": operator_role,
         },
         "raw_ocr_text": "",
         "structured_output": {
@@ -455,7 +475,12 @@ def _quality_rejected_result(src: str, quality: Dict[str, Any]) -> Dict[str, Any
     }
 
 
-def _process_pdf(path: str, src: str) -> Dict[str, Any]:
+def _process_pdf(
+    path: str,
+    src: str,
+    operator_id: Optional[str] = None,
+    operator_role: Optional[str] = None,
+) -> Dict[str, Any]:
     pages = pdf_util.extract_text_and_render(path)
     # texto nativo consolidado (fallback regex)
     native_text = "\n".join(p["text"] for p in pages if not p["needs_ocr"])
@@ -473,7 +498,7 @@ def _process_pdf(path: str, src: str) -> Dict[str, Any]:
         # (`_process_pdf_native`) -- no se genera ninguna entrada de
         # `preparation_trace` (misma convención que el veredicto `reject` de
         # `quality_gate`, ver criterio 12/casos borde del spec).
-        return _process_pdf_native(pages, native_text, src)
+        return _process_pdf_native(pages, native_text, src, operator_id, operator_role)
     # `image_prep.prepare()` es la MISMA función que usa el camino de imagen:
     # corre (y se traza) `correct_orientation` (heurística de contenido, con
     # `skip=False` porque este camino nunca pasa `exif_orientation_applied`),
@@ -483,7 +508,7 @@ def _process_pdf(path: str, src: str) -> Dict[str, Any]:
     # los dos se invoca nunca en el camino PDF (ver criterio 12 del spec).
     trace: list = []
     prepared = image_prep.prepare(page_to_process["image"], trace=trace)
-    result = process_image(prepared, src, page_text_full=native_text)
+    result = process_image(prepared, src, page_text_full=native_text, operator_id=operator_id, operator_role=operator_role)
     result["processing_metadata"]["is_pdf"] = True
     result["processing_metadata"]["pdf_pages"] = len(pages)
     result["processing_metadata"]["pdf_pages_ocr"] = sum(1 for p in pages if p["needs_ocr"])
@@ -491,7 +516,13 @@ def _process_pdf(path: str, src: str) -> Dict[str, Any]:
     return result
 
 
-def _process_pdf_native(pages, native_text, src):
+def _process_pdf_native(
+    pages,
+    native_text,
+    src,
+    operator_id: Optional[str] = None,
+    operator_role: Optional[str] = None,
+):
     t_start = time.time()
     # clasificación por keywords sobre texto nativo
     best = ("UNKNOWN", 0.0, None)
@@ -600,6 +631,8 @@ def _process_pdf_native(pages, native_text, src):
             "pdf_pages": len(pages),
             "pdf_pages_ocr": 0,
             "timings": {"total_s": round(time.time() - t_start, 3)},
+            "operator_id": operator_id,
+            "operator_role": operator_role,
         },
         "raw_ocr_text": native_text,
         "structured_output": {

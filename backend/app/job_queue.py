@@ -61,7 +61,14 @@ class JobQueue:
             self._loop.call_soon_threadsafe(self._loop.stop)
 
     # --- API pública (thread-safe) ---
-    def enqueue(self, file_path: str, original_name: str, source: str = "web") -> str:
+    def enqueue(
+        self,
+        file_path: str,
+        original_name: str,
+        source: str = "web",
+        operator_id: Optional[str] = None,
+        operator_role: Optional[str] = None,
+    ) -> str:
         job_id = new_job_id()
         job = {
             "job_id": job_id,
@@ -74,6 +81,8 @@ class JobQueue:
             "result": None,
             "error": None,
             "attempts": 0,
+            "operator_id": operator_id,
+            "operator_role": operator_role,
         }
         self.store.put(job)
         if self._loop and self._queue:
@@ -135,7 +144,9 @@ class JobQueue:
             if not Path(file_path).exists():
                 raise FileNotFoundError(f"Archivo no encontrado: {file_path}")
             loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(None, process_document, file_path, file_path)
+            result = await loop.run_in_executor(
+                None, process_document, file_path, file_path, job.get("operator_id"), job.get("operator_role")
+            )
             quality = (result.get("processing_metadata") or {}).get("quality_gate") or {}
             if quality.get("verdict") == "reject":
                 # Veredicto `reject` del control de calidad: no hubo OCR, no

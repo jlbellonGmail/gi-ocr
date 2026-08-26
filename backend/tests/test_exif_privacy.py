@@ -19,7 +19,7 @@ from backend.app.main import DATA_DIR, app
 from fastapi.testclient import TestClient
 from PIL import Image
 
-c = TestClient(app)
+c = TestClient(app, headers={"X-Operator-Id": "test_operator", "X-Operator-Role": "admin"})
 
 # Tags EXIF usados en las fixtures: Make(271), Model(272), Orientation(274), GPSInfo(34853).
 _MAKE = 271
