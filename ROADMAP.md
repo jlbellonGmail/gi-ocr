@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -151,7 +151,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       revision: imagen, texto OCR, candidatos, campos validados,
       rechazados y no encontrados, edicion manual, motivo de
       correccion/rechazo y confirmacion final antes de exportar.
-- [-] 11-auditoria-permisos-operador — Registrar quien corrigio que, valor
+- [x] 11-auditoria-permisos-operador — Registrar quien corrigio que, valor
       original, valor final, fecha, motivo y accion. Preparar permisos
       minimos por rol operador/revisor/admin si el producto deja de ser
       monousuario local.
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
