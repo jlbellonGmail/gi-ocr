@@ -15,13 +15,14 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from . import ocr_engine
+from .authz import Role, get_operator_identity, require_job_owner_or_reviewer, require_role
 from .document_services import normalize_service_id
 from .exif_privacy import anonymize_upload_bytes
 from .fs_permissions import secure_dir, secure_file
@@ -56,7 +57,7 @@ queue.start()
 
 
 def _on_new_inbound(p: Path) -> None:
-    queue.enqueue(str(p), p.name, source="inbound")
+    queue.enqueue(str(p), p.name, source="inbound", operator_id="system", operator_role="admin")
 
 
 watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
@@ -176,15 +177,19 @@ async def get_service(service_id: str):
 
 
 @app.post("/api/v1/jobs")
-async def create_jobs(files: List[UploadFile] = File(...)):
+async def create_jobs(
+    files: List[UploadFile] = File(...),
+    operator_identity: tuple[str, Role] = Depends(get_operator_identity),
+):
     """Carga uno o varios documentos. Crea jobs en cola (no bloqueante)."""
     if not files:
         raise HTTPException(400, "No se enviaron archivos")
+    operator_id, operator_role = operator_identity
     created = []
     for f in files:
         try:
             dest = _save_upload(f)
-            job_id = queue.enqueue(str(dest), f.filename or dest.name, source="web")
+            job_id = queue.enqueue(str(dest), f.filename or dest.name, source="web", operator_id=operator_id, operator_role=operator_role.value)
             created.append({"job_id": job_id, "filename": f.filename})
         except HTTPException:
             raise
@@ -212,7 +217,10 @@ async def get_job(job_id: str):
 
 
 @app.post("/api/v1/jobs/{job_id}/retry")
-async def retry_job(job_id: str):
+async def retry_job(
+    job_id: str,
+    authz: tuple[str, Role] = Depends(require_job_owner_or_reviewer(store)),
+):
     if not JOB_ID_RE.match(job_id):
         raise HTTPException(400, "job_id inválido")
     ok = queue.retry(job_id)
@@ -222,13 +230,24 @@ async def retry_job(job_id: str):
 
 
 @app.post("/api/v1/jobs/{job_id}/confirm")
-async def confirm_job(job_id: str, payload: ConfirmPayload):
+async def confirm_job(
+    job_id: str,
+    payload: ConfirmPayload,
+    authz: tuple[str, Role] = Depends(require_job_owner_or_reviewer(store)),
+):
     if not JOB_ID_RE.match(job_id):
         raise HTTPException(400, "job_id inválido")
     if not store.original_exists(job_id):
         raise HTTPException(404, "Job no encontrado")
+    operator_id, operator_role = authz
     try:
-        result = confirm_review(store, job_id, [c.model_dump() for c in payload.confirmed_fields])
+        result = confirm_review(
+            store,
+            job_id,
+            [c.model_dump() for c in payload.confirmed_fields],
+            operator_id=operator_id,
+            operator_role=operator_role.value,
+        )
     except FileNotFoundError as e:
         raise HTTPException(404, str(e))
     except ValueError as e:
@@ -304,7 +323,9 @@ async def get_job_image(job_id: str):
 
 
 @app.get("/api/v1/export")
-async def export_batch():
+async def export_batch(
+    _authz: tuple[str, Role] = Depends(require_role([Role.ADMIN])),
+):
     """Export del lote: JSON consolidado de resultados confirmados."""
     items = []
     for j in store.all():
@@ -325,7 +346,10 @@ async def inbound_status():
 
 
 @app.post("/api/v1/inbound/config")
-async def inbound_config(payload: dict):
+async def inbound_config(
+    payload: dict,
+    _authz: tuple[str, Role] = Depends(require_role([Role.ADMIN])),
+):
     # Por seguridad, la carpeta inbound es fija (no se permite path traversal).
     return {"status": "ok", "inbound_dir": str(INBOUND_DIR), "note": "carpeta fija por seguridad"}
 

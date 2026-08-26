@@ -653,7 +653,7 @@ def test_api_job_rejected_by_quality_gate_returns_needs_new_photo_status():
     from backend.app.main import app
     from fastapi.testclient import TestClient
 
-    client = TestClient(app)
+    client = TestClient(app, headers={"X-Operator-Id": "test_operator", "X-Operator-Role": "admin"})
     r = client.post("/api/v1/jobs", files={"files": ("borrosa.png", _small_png_bytes(), "image/png")})
     assert r.status_code == 200
     job_id = r.json()["created"][0]["job_id"]
@@ -671,7 +671,7 @@ def test_api_confirm_on_rejected_job_returns_404():
     from backend.app.main import app
     from fastapi.testclient import TestClient
 
-    client = TestClient(app)
+    client = TestClient(app, headers={"X-Operator-Id": "test_operator", "X-Operator-Role": "admin"})
     r = client.post("/api/v1/jobs", files={"files": ("borrosa2.png", _small_png_bytes(), "image/png")})
     job_id = r.json()["created"][0]["job_id"]
     job = _wait_job_http(client, job_id)
@@ -687,7 +687,7 @@ def test_api_retry_on_rejected_job_returns_200_and_requeues():
     from backend.app.main import app
     from fastapi.testclient import TestClient
 
-    client = TestClient(app)
+    client = TestClient(app, headers={"X-Operator-Id": "test_operator", "X-Operator-Role": "admin"})
     r = client.post("/api/v1/jobs", files={"files": ("borrosa3.png", _small_png_bytes(), "image/png")})
     job_id = r.json()["created"][0]["job_id"]
     job = _wait_job_http(client, job_id)

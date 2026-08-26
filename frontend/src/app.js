@@ -5,6 +5,82 @@ let selectedJob = null;
 let sse = null;
 let fieldLabelsCache = {};
 
+// Operator config (Feature 11)
+let operatorConfig = null;
+const OPERATOR_STORAGE_KEY = "gi_ocr_operator";
+
+function getAuthHeaders() {
+  if (!operatorConfig) return {};
+  return {
+    "X-Operator-Id": operatorConfig.id,
+    "X-Operator-Role": operatorConfig.role,
+  };
+}
+
+function loadOperatorConfig() {
+  const stored = localStorage.getItem(OPERATOR_STORAGE_KEY);
+  if (stored) {
+    try {
+      operatorConfig = JSON.parse(stored);
+      return true;
+    } catch (_) {}
+  }
+  return false;
+}
+
+function saveOperatorConfig(config) {
+  operatorConfig = config;
+  localStorage.setItem(OPERATOR_STORAGE_KEY, JSON.stringify(config));
+  updateOperatorBadge();
+}
+
+function updateOperatorBadge() {
+  const badge = $("#operator-badge");
+  if (badge && operatorConfig) {
+    badge.textContent = `${operatorConfig.id} (${operatorConfig.role})`;
+    badge.className = "badge " + operatorConfig.role;
+  }
+}
+
+function showOperatorModal() {
+  const modal = $("#operator-modal");
+  if (modal) modal.style.display = "flex";
+}
+
+function hideOperatorModal() {
+  const modal = $("#operator-modal");
+  if (modal) modal.style.display = "none";
+}
+
+function setupOperatorModal() {
+  const form = $("#operator-form");
+  const idInput = $("#operator-id");
+  const roleSelect = $("#operator-role");
+  const cancelBtn = $("#operator-cancel");
+  
+  if (operatorConfig) {
+    idInput.value = operatorConfig.id;
+    roleSelect.value = operatorConfig.role;
+  }
+  
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const id = idInput.value.trim();
+    const role = roleSelect.value;
+    if (!id || !role) return;
+    saveOperatorConfig({ id, role });
+    hideOperatorModal();
+  };
+  
+  cancelBtn.onclick = () => {
+    if (!operatorConfig) {
+      alert("Debe configurar operador para continuar");
+      return;
+    }
+    hideOperatorModal();
+  };
+}
+
 // ---- utilidades ----
 const fmt = (s) => (s == null ? "" : String(s));
 function el(tag, cls, html) {
@@ -14,12 +90,16 @@ function el(tag, cls, html) {
   return e;
 }
 async function jget(url) {
-  const r = await fetch(url);
+  const r = await fetch(url, { headers: getAuthHeaders() });
   if (!r.ok) throw new Error((await r.text()) || r.status);
   return r.json();
 }
 async function jpost(url, body) {
-  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body || {}) });
+  const r = await fetch(url, { 
+    method: "POST", 
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() }, 
+    body: JSON.stringify(body || {}) 
+  });
   if (!r.ok) throw new Error((await r.text()) || r.status);
   return r.json();
 }
@@ -55,7 +135,7 @@ async function upload(fileList) {
   for (const f of fileList) fd.append("files", f, f.name);
   msg.textContent = `Enviando ${fileList.length} archivo(s)...`;
   try {
-    const r = await fetch(api + "/jobs", { method: "POST", body: fd });
+    const r = await fetch(api + "/jobs", { method: "POST", body: fd, headers: getAuthHeaders() });
     const data = await r.json();
     if (!r.ok) throw new Error(JSON.stringify(data));
     msg.className = "msg ok";
@@ -104,7 +184,21 @@ function renderQueue(jobs) {
     const right = el("div");
     const pill = el("span", "pill " + j.status, j.status);
     right.appendChild(pill);
-    if (j.status === "failed" || j.status === "needs_new_photo") {
+    
+    // Mostrar owner del job
+    const jobOwner = (j.result && j.result.processing_metadata && j.result.processing_metadata.operator_id) 
+      ? j.result.processing_metadata.operator_id 
+      : null;
+    if (jobOwner) {
+      right.appendChild(el("span", "job-owner", `Owner: ${jobOwner}`));
+    }
+    
+    // Botón reintentar: solo si es failed/needs_new_photo Y (es admin/reviewer O es owner)
+    const canRetry = (j.status === "failed" || j.status === "needs_new_photo") && 
+      (operatorConfig && (operatorConfig.role === "admin" || operatorConfig.role === "reviewer" || 
+       (operatorConfig.role === "operator" && jobOwner === operatorConfig.id)));
+    
+    if (canRetry) {
       const rb = el("button", "btn retry", "Reintentar");
       rb.onclick = async (e) => { e.stopPropagation(); await jpost(api + "/jobs/" + j.job_id + "/retry"); refresh(); };
       right.appendChild(rb);
@@ -461,6 +555,13 @@ function connectSSE() {
 }
 
 $("#export-link").onclick = (e) => { e.preventDefault(); window.open(api + "/export", "_blank"); };
+
+// Inicialización: cargar config de operador y mostrar modal si falta
+if (!loadOperatorConfig()) {
+  showOperatorModal();
+}
+setupOperatorModal();
+updateOperatorBadge();
 
 refresh();
 connectSSE();

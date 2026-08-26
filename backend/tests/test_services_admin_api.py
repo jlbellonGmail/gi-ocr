@@ -11,7 +11,7 @@ from backend.app import services_config
 from backend.app.main import app
 from fastapi.testclient import TestClient
 
-c = TestClient(app)
+c = TestClient(app, headers={"X-Operator-Id": "test_operator", "X-Operator-Role": "admin"})
 
 
 def _write_ini(tmp_path, content: str, monkeypatch):

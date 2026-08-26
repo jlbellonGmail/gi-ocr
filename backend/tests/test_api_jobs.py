@@ -6,7 +6,7 @@ import pytest
 from backend.app.main import app
 from fastapi.testclient import TestClient
 
-c = TestClient(app)
+c = TestClient(app, headers={"X-Operator-Id": "test_operator", "X-Operator-Role": "admin"})
 
 REAL = __import__("pathlib").Path(__file__).resolve().parent / "fixtures" / "_local_samples" / "real"
 

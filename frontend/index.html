@@ -20,8 +20,36 @@
       <span id="stat-ready" class="badge ok">0 listos</span>
       <span id="stat-failed" class="badge bad">0 fallidos</span>
       <span id="stat-quality" class="badge warn">0 requieren nueva foto</span>
+      <span id="operator-badge" class="badge"></span>
     </div>
   </header>
+
+  <!-- Modal configuración operador (Feature 11) -->
+  <div id="operator-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3>Configuración de Operador</h3>
+      <p>Ingresá tu identificación y rol para continuar. Requerido para auditoría y permisos.</p>
+      <form id="operator-form">
+        <div class="form-group">
+          <label for="operator-id">ID Operador</label>
+          <input type="text" id="operator-id" placeholder="ej: operador1" required />
+        </div>
+        <div class="form-group">
+          <label for="operator-role">Rol</label>
+          <select id="operator-role" required>
+            <option value="">Seleccionar...</option>
+            <option value="operator">Operador</option>
+            <option value="reviewer">Revisor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn ok">Guardar</button>
+          <button type="button" class="btn ghost" id="operator-cancel">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <main class="layout">
     <section class="card upload">
