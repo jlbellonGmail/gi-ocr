@@ -22,4 +22,4 @@ decisiones de diseño.
 - [Regresión Dataset OCR](regresion-dataset-ocr.md)
 - [confianza-y-enrutamiento-hitl](confianza-y-enrutamiento-hitl.md)
 - [Consola de Revision Humana Profesional](consola-revision-humana-profesional.md)
-- [Auditoria Permisos Operador](auditoria-permisos-operador.md)
+- [auditoria-permisos-operador](auditoria-permisos-operador.md)
