@@ -21,4 +21,4 @@ ejemplos.
 - [confianza-y-enrutamiento-hitl](confianza-y-enrutamiento-hitl.md)
 - [Consola de Revision Humana Profesional](consola-revision-humana-profesional.md)
 - [auditoria-permisos-operador](auditoria-permisos-operador.md)
-- [Contrato Integración Legacy v2](contrato-integracion-legacy-v2.md)
+- [contrato-integracion-legacy-v2](contrato-integracion-legacy-v2.md)
