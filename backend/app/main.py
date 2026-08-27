@@ -36,6 +36,7 @@ from .services_config import (
     get_service_schema,
     list_services_schema,
 )
+from .storage_bridge_writer import reconcile_storage_bridge
 from .upload_validation import (
     UploadValidationError,
     max_upload_bytes,
@@ -189,7 +190,13 @@ async def create_jobs(
     for f in files:
         try:
             dest = _save_upload(f)
-            job_id = queue.enqueue(str(dest), f.filename or dest.name, source="web", operator_id=operator_id, operator_role=operator_role.value)
+            job_id = queue.enqueue(
+                str(dest),
+                f.filename or dest.name,
+                source="web",
+                operator_id=operator_id,
+                operator_role=operator_role.value,
+            )
             created.append({"job_id": job_id, "filename": f.filename})
         except HTTPException:
             raise
@@ -331,13 +338,32 @@ async def export_batch(
     for j in store.all():
         if store.confirmed_exists(j["job_id"]):
             c = store.load_confirmed(j["job_id"])
-            items.append({"job_id": j["job_id"], **c.get("confirmed_fields", {})})
+            if c is not None:
+                items.append({"job_id": j["job_id"], **c.get("confirmed_fields", {})})
     payload = json.dumps({"batch": items, "count": len(items)}, ensure_ascii=False, indent=2)
     return StreamingResponse(
         iter([payload]),
         media_type="application/json",
         headers={"Content-Disposition": "attachment; filename=batch_export.json"},
     )
+
+
+@app.post("/api/v1/admin/reconcile")
+async def reconcile_storage_bridge_endpoint(
+    _authz: tuple[str, Role] = Depends(require_role([Role.ADMIN])),
+):
+    """Reconcilia storage_bridge/ready/ con output/confirmed/ (solo ADMIN).
+
+    Compara archivos .DATA v2 en ready/ con JSON confirmados v2 en confirmed/.
+    Reporta: missing_in_ready, orphan_in_ready, content_mismatch.
+    Genera reporte JSON en output/reconciliation/.
+    """
+    report = reconcile_storage_bridge(
+        confirmed_dir=store.confirmed_dir,
+        ready_dir=BASE_DIR / "storage_bridge" / "ready",
+        output_dir=DATA_DIR / "reconciliation",
+    )
+    return report
 
 
 @app.get("/api/v1/inbound/status")

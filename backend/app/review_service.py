@@ -2,6 +2,7 @@
 
 Preserva valores originales del servidor. Valida estados confirmed/corrected/unresolved.
 Genera nombre de archivo seguro. Persiste JSON confirmado separado del original.
+Escribe .DATA v2 + .CONFIDENCE.json a storage_bridge/ready/ para integración legacy.
 
 Feature 09-confianza-y-enrutamiento-hitl: registra confidence_at_review y decision_at_review
 en confirmation_metadata para trazabilidad completa.
@@ -11,6 +12,8 @@ corrección/rechazo) obligatorio cuando state != confirmed.
 
 Feature 11-auditoria-permisos-operador: registra audit_trail con operador, valor original,
 valor final, fecha, motivo y acción por campo.
+
+Feature 12-contrato-integracion-legacy-v2: versionado v2, idempotencia, reintentos, reconciliación.
 """
 
 from __future__ import annotations
@@ -19,6 +22,12 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 from .job_store import JobStore
+from .storage_bridge_writer import (
+    CONTRACT_VERSION,
+    compute_data_hash,
+    write_atomic_data_file_with_retry,
+    write_confidence_file,
+)
 
 
 def confirm_review(
@@ -78,19 +87,39 @@ def confirm_review(
         confidence_at_review[field] = field_confidence.get(field, {})
         decision_at_review[field] = state  # confirmed/corrected/unresolved
         # Audit trail entry
-        audit_trail.append({
-            "field": field,
-            "operator_id": operator_id,
-            "operator_role": operator_role,
-            "original_value": original_value,
-            "final_value": final_value,
-            "action": state,
-            "reason": reason or None,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        audit_trail.append(
+            {
+                "field": field,
+                "operator_id": operator_id,
+                "operator_role": operator_role,
+                "original_value": original_value,
+                "final_value": final_value,
+                "action": state,
+                "reason": reason or None,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        )
 
     doc_type = original.get("processing_metadata", {}).get("provider_detected", "doc") or "doc"
     final_filename = store.build_final_filename(doc_type, job_id)
+
+    # Preparar campos para .DATA (validated_fields sin provider/service internos)
+    data_fields = [f for f in validated_fields.keys() if f not in ("provider", "service")]
+    data_values = {f: validated_fields[f] for f in data_fields}
+    service = so.get("service", "UNKNOWN")
+
+    # Escribir .DATA v2 atómicamente con idempotencia y reintentos
+    data_file = write_atomic_data_file_with_retry(
+        service=service,
+        fields=data_fields,
+        values=data_values,
+    )
+
+    # Escribir .CONFIDENCE.json compañero
+    confidence_file = write_confidence_file(
+        service=service,
+        field_confidence={f: field_confidence.get(f, {}) for f in data_fields if f in field_confidence},
+    )
 
     confirmed_doc = {
         "job_id": job_id,
@@ -111,6 +140,10 @@ def confirm_review(
             "decision_at_review": decision_at_review,
             "correction_reasons": correction_reasons,
             "audit_trail": audit_trail,
+            "contract_version": CONTRACT_VERSION,
+            "data_file": str(data_file),
+            "confidence_file": str(confidence_file),
+            "data_hash": compute_data_hash(service, data_fields, data_values),
         },
         "original_result_ref": job_id,
     }
@@ -127,6 +160,9 @@ def confirm_review(
         "confirmed_path": str(path),
         "correction_reasons": correction_reasons,
         "audit_trail": audit_trail,
+        "data_file": str(data_file),
+        "confidence_file": str(confidence_file),
+        "data_hash": confirmed_doc["confirmation_metadata"]["data_hash"],
     }
 
 
