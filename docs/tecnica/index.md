@@ -24,3 +24,4 @@ decisiones de diseño.
 - [Consola de Revision Humana Profesional](consola-revision-humana-profesional.md)
 - [auditoria-permisos-operador](auditoria-permisos-operador.md)
 - [contrato-integracion-legacy-v2](contrato-integracion-legacy-v2.md)
+- [observabilidad-operacion](observabilidad-operacion.md)

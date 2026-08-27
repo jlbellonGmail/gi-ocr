@@ -6,6 +6,7 @@ Integra OCR (ocr_engine), extracción (templates/regex), validación semántica
 
 Feature 09-confianza-y-enrutamiento-hitl: scores y umbrales por campo para
 enrutamiento automático (auto_accepted, needs_review, blocked, missing).
+Feature 13-observabilidad-operacion: logs estructurados y métricas de campos.
 """
 
 from __future__ import annotations
@@ -19,6 +20,7 @@ from PIL import Image
 
 from . import image_prep, ocr_engine, pdf_util, quality_gate
 from .field_reporting_processor import FieldConfidence, generate_field_report
+from .metrics import inc_fields_total, observe_job_duration
 from .services_config import get_service_confidence_config
 from .templates import get_template, unknown_template
 
@@ -347,6 +349,25 @@ def process_image(
 
     timing_total = round(_t.time() - t_start, 3)
     timings["total_s"] = timing_total
+
+    # Métricas de campos (feature 13-observabilidad-operacion)
+    service = template.service if provider != "UNKNOWN" else "UNKNOWN"
+    provider_in_vf = "provider" in validated_fields
+    service_in_vf = "service" in validated_fields
+    internal_fields = 2 if (provider_in_vf and service_in_vf) else 0
+    accepted_count = len(validated_fields) - internal_fields
+    rejected_count = len(rejected_fields)
+    missing_count = len(missing_fields)
+    if accepted_count > 0:
+        inc_fields_total("accepted", service)
+    if rejected_count > 0:
+        inc_fields_total("rejected", service)
+    if missing_count > 0:
+        inc_fields_total("missing", service)
+    observe_job_duration("total", timing_total)
+    for stage, dur in timings.items():
+        if stage.endswith("_s") and isinstance(dur, (int, float)):
+            observe_job_duration(stage.replace("_s", ""), dur)
 
     return {
         "processing_metadata": {
