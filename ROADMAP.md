@@ -1,4 +1,4 @@
-﻿# Roadmap: gi-ocr (Smart Invoice Capture)
+# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -155,7 +155,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       original, valor final, fecha, motivo y accion. Preparar permisos
       minimos por rol operador/revisor/admin si el producto deja de ser
       monousuario local.
-- [-] 12-contrato-integracion-legacy-v2 — Versionar formalmente `.DATA` +
+- [x] 12-contrato-integracion-legacy-v2 — Versionar formalmente `.DATA` +
       JSON confirmado: encoding, separador, orden de campos, nombres de
       archivo, idempotencia, duplicados, reintentos, estados `ready/failed`
       y reconciliacion con el sistema externo.
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
