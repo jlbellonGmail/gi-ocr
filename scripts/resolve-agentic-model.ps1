@@ -453,9 +453,9 @@ try {
         result = "resolved"
         cost = $null
         opencode = [ordered] @{
-            model = $chosen.Allowed.Ref
+            model = $chosen.Allowed.Model
             variant = $chosen.Candidate.Variant
-            args = @("--model", $chosen.Allowed.Ref)
+            args = @("--model", $chosen.Allowed.Model)
         }
     }
 
