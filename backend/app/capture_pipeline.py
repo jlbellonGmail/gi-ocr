@@ -508,7 +508,13 @@ def _process_pdf(
     # los dos se invoca nunca en el camino PDF (ver criterio 12 del spec).
     trace: list = []
     prepared = image_prep.prepare(page_to_process["image"], trace=trace)
-    result = process_image(prepared, src, page_text_full=native_text, operator_id=operator_id, operator_role=operator_role)
+    result = process_image(
+        prepared,
+        src,
+        page_text_full=native_text,
+        operator_id=operator_id,
+        operator_role=operator_role,
+    )
     result["processing_metadata"]["is_pdf"] = True
     result["processing_metadata"]["pdf_pages"] = len(pages)
     result["processing_metadata"]["pdf_pages_ocr"] = sum(1 for p in pages if p["needs_ocr"])
@@ -539,7 +545,7 @@ def _process_pdf_native(
     validated = {}
     rejected = {}
     candidate = {}
-    field_confidence: Dict[str, Dict[str, Any]] = {}
+    field_confidence: Dict[str, FieldConfidence] = {}
     if template is not None and provider != "UNKNOWN":
         confidence_configs = get_service_confidence_config(template.service)
         for ft in template.fields:

@@ -1,20 +1,18 @@
 """Tests for atomic storage bridge .DATA writer."""
 
-import hashlib
 import os
-import time
 from datetime import datetime
 from pathlib import Path
 
 import pytest
 from backend.app.storage_bridge_writer import (
+    CONTRACT_VERSION,
     build_data_content,
     build_data_filename,
     compute_data_hash,
+    reconcile_storage_bridge,
     write_atomic_data_file,
     write_atomic_data_file_with_retry,
-    reconcile_storage_bridge,
-    CONTRACT_VERSION,
 )
 
 
@@ -271,6 +269,7 @@ def test_write_atomic_data_file_with_retry_backoff(tmp_path, monkeypatch):
     error_files = list(failed_dir.glob("*_error.json"))
     assert len(error_files) == 1
     import json
+
     error_data = json.loads(error_files[0].read_text(encoding="utf-8"))
     assert error_data["service"] == "GAS"
     assert error_data["attempts"] == 4
@@ -280,6 +279,7 @@ def test_write_atomic_data_file_with_retry_backoff(tmp_path, monkeypatch):
 
 def test_write_error_record_on_exhausted_retries(tmp_path):
     from backend.app.storage_bridge_writer import _write_error_record
+
     failed_dir = tmp_path / "storage_bridge" / "failed"
     timestamp = datetime(2026, 6, 23, 15, 30, 45)
 
@@ -296,6 +296,7 @@ def test_write_error_record_on_exhausted_retries(tmp_path):
     assert error_path.exists()
     assert error_path.name == "GAS_20260623_153045_error.json"
     import json
+
     data = json.loads(error_path.read_text(encoding="utf-8"))
     assert data["service"] == "GAS"
     assert data["attempts"] == 3
@@ -306,7 +307,6 @@ def test_write_error_record_on_exhausted_retries(tmp_path):
 
 
 def test_reconcile_storage_bridge_missing_orphan_mismatch(tmp_path):
-    from backend.app.storage_bridge_writer import write_confidence_file
     confirmed_dir = tmp_path / "output" / "confirmed"
     ready_dir = tmp_path / "storage_bridge" / "ready"
     output_dir = tmp_path / "output" / "reconciliation"
@@ -317,6 +317,7 @@ def test_reconcile_storage_bridge_missing_orphan_mismatch(tmp_path):
 
     # 1) Confirmado v2 con .DATA correspondiente (match)
     import json
+
     conf1 = {
         "job_id": "job1",
         "confirmation_metadata": {

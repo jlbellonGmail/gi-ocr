@@ -190,7 +190,13 @@ async def create_jobs(
     for f in files:
         try:
             dest = _save_upload(f)
-            job_id = queue.enqueue(str(dest), f.filename or dest.name, source="web", operator_id=operator_id, operator_role=operator_role.value)
+            job_id = queue.enqueue(
+                str(dest),
+                f.filename or dest.name,
+                source="web",
+                operator_id=operator_id,
+                operator_role=operator_role.value,
+            )
             created.append({"job_id": job_id, "filename": f.filename})
         except HTTPException:
             raise
@@ -332,7 +338,8 @@ async def export_batch(
     for j in store.all():
         if store.confirmed_exists(j["job_id"]):
             c = store.load_confirmed(j["job_id"])
-            items.append({"job_id": j["job_id"], **c.get("confirmed_fields", {})})
+            if c is not None:
+                items.append({"job_id": j["job_id"], **c.get("confirmed_fields", {})})
     payload = json.dumps({"batch": items, "count": len(items)}, ensure_ascii=False, indent=2)
     return StreamingResponse(
         iter([payload]),

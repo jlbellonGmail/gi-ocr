@@ -168,7 +168,7 @@ def compute_data_hash(service: str, fields: Sequence[str], values: Mapping[str, 
 
     Normaliza: servicio uppercase, campos ordenados según fields, valores normalizados.
     """
-    normalized_service = normalize_service_name(service)
+    _ = normalize_service_name(service)
     field_names = [field.strip() for field in fields]
     header_line = SEPARATOR.join(field_names)
     values_line = SEPARATOR.join(_normalize_value(field, values.get(field)) for field in field_names)
@@ -241,13 +241,16 @@ def write_atomic_data_file_with_retry(
     ready_dir: str | Path = DEFAULT_READY_DIR,
     failed_dir: str | Path = DEFAULT_FAILED_DIR,
 ) -> Path:
-    """Escribe .DATA atómicamente con idempotencia por contenido y reintentos con backoff exponencial.
+    """Escribe .DATA atómicamente con idempotencia por contenido y reintentos con backoff
+    exponencial.
 
     Flujo:
     1. Calcula hash del contenido.
     2. Busca en ready/ archivo existente con mismo hash → si existe, lo retorna (idempotencia).
-    3. Intenta escritura atómica (tmp → ready). Si final_file existe (colisión nombre), genera nuevo timestamp con sufijo secuencial.
-    4. Ante fallo transitorio (IOError, PermissionError, atomic move failure), reintenta con backoff exponencial.
+    3. Intenta escritura atómica (tmp → ready). Si final_file existe (colisión nombre),
+       genera nuevo timestamp con sufijo secuencial.
+    4. Ante fallo transitorio (IOError, PermissionError, atomic move failure), reintenta
+       con backoff exponencial.
     5. Si agota reintentos, registra error en failed/ y lanza la última excepción.
     """
     effective_timestamp = timestamp or datetime.now()
@@ -285,7 +288,6 @@ def write_atomic_data_file_with_retry(
 
             # Colisión de nombre: si ya existe en ready/, ajustar timestamp con sufijo
             if final_file.exists():
-                base_ts = effective_timestamp
                 for seq in range(1, 1000):
                     seq_suffix = f"_{seq:03d}"
                     new_filename = filename.replace(".DATA", f"{seq_suffix}.DATA")
@@ -323,6 +325,9 @@ def write_atomic_data_file_with_retry(
 
     # Agotados reintentos: registrar error en failed/
     final_timestamp = timestamp or datetime.now()
+    # last_error guaranteed set: loop runs at least once (attempt starts at 0,
+    # condition attempt <= max_retries)
+    assert last_error is not None
     _write_error_record(
         service=service,
         timestamp=final_timestamp,
@@ -414,9 +419,9 @@ def reconcile_storage_bridge(
     for job_id, conf_data in confirmed_by_job.items():
         so = conf_data.get("structured_output", {})
         service = so.get("service", "").upper()
-        provider = so.get("provider", "").upper()
-        source_ref = so.get("source_document_reference", "")
-        # Intentar extraer timestamp del source_ref o confirmation_metadata
+        _ = so.get("provider", "").upper()
+        _ = so.get("source_document_reference", "")
+        # Intentar extraer timestamp del confirmation_metadata
         confirmed_at = conf_data.get("confirmation_metadata", {}).get("confirmed_at", "")
         ts_key = None
         if confirmed_at:
@@ -438,32 +443,38 @@ def reconcile_storage_bridge(
                     found = True
                     break
                 else:
-                    content_mismatch.append({
-                        "job_id": job_id,
-                        "service": service,
-                        "ready_key": ready_key,
-                        "expected_hash": target_hash,
-                        "actual_hash": ready_info["hash"],
-                    })
+                    content_mismatch.append(
+                        {
+                            "job_id": job_id,
+                            "service": service,
+                            "ready_key": ready_key,
+                            "expected_hash": target_hash,
+                            "actual_hash": ready_info["hash"],
+                        }
+                    )
                     found = True
                     break
         if not found:
-            missing_in_ready.append({
-                "job_id": job_id,
-                "service": service,
-                "expected_timestamp": ts_key,
-            })
+            missing_in_ready.append(
+                {
+                    "job_id": job_id,
+                    "service": service,
+                    "expected_timestamp": ts_key,
+                }
+            )
 
     # 4) Orphans en ready: .DATA v2 sin confirmed correspondiente
     orphan_in_ready = []
     for ready_key, ready_info in ready_by_key.items():
         if ready_key not in matched_ready_keys:
-            orphan_in_ready.append({
-                "ready_key": ready_key,
-                "service": ready_info["service"],
-                "timestamp": ready_info["timestamp"],
-                "path": str(ready_info["path"]),
-            })
+            orphan_in_ready.append(
+                {
+                    "ready_key": ready_key,
+                    "service": ready_info["service"],
+                    "timestamp": ready_info["timestamp"],
+                    "path": str(ready_info["path"]),
+                }
+            )
 
     # 5) Generar reporte
     report = {

@@ -23,11 +23,10 @@ from typing import Any, Dict, List
 
 from .job_store import JobStore
 from .storage_bridge_writer import (
-    build_data_filename,
+    CONTRACT_VERSION,
     compute_data_hash,
     write_atomic_data_file_with_retry,
     write_confidence_file,
-    CONTRACT_VERSION,
 )
 
 
@@ -88,16 +87,18 @@ def confirm_review(
         confidence_at_review[field] = field_confidence.get(field, {})
         decision_at_review[field] = state  # confirmed/corrected/unresolved
         # Audit trail entry
-        audit_trail.append({
-            "field": field,
-            "operator_id": operator_id,
-            "operator_role": operator_role,
-            "original_value": original_value,
-            "final_value": final_value,
-            "action": state,
-            "reason": reason or None,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        audit_trail.append(
+            {
+                "field": field,
+                "operator_id": operator_id,
+                "operator_role": operator_role,
+                "original_value": original_value,
+                "final_value": final_value,
+                "action": state,
+                "reason": reason or None,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            }
+        )
 
     doc_type = original.get("processing_metadata", {}).get("provider_detected", "doc") or "doc"
     final_filename = store.build_final_filename(doc_type, job_id)

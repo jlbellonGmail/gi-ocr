@@ -9,9 +9,9 @@ from __future__ import annotations
 from enum import Enum
 from typing import Optional
 
-from fastapi import Depends, Header, HTTPException, Request
+from fastapi import Depends, Header, HTTPException
 
-from .job_store import JobStore, JOB_ID_RE
+from .job_store import JOB_ID_RE, JobStore
 
 
 class Role(str, Enum):
@@ -50,22 +50,26 @@ def _get_operator_role(
 
 def require_role(allowed_roles: list[Role]):
     """Dependency que valida que el rol del operador esté en allowed_roles."""
+
     def _check(
         operator_id: str = Depends(_get_operator_id),
         operator_role: Role = Depends(_get_operator_role),
     ) -> tuple[str, Role]:
         if operator_role not in allowed_roles:
-            raise HTTPException(403, f"Rol '{operator_role.value}' no autorizado. Requerido: {[r.value for r in allowed_roles]}")
+            required = ", ".join(r.value for r in allowed_roles)
+            raise HTTPException(403, f"Rol '{operator_role.value}' no autorizado. Requerido: {required}")
         return operator_id, operator_role
+
     return _check
 
 
 def require_job_owner_or_reviewer(store: JobStore):
     """Dependency que valida ownership del job o rol reviewer/admin.
-    
+
     - operator: solo puede actuar en jobs propios (operator_id coincide)
     - reviewer/admin: puede actuar en cualquier job
     """
+
     def _check(
         job_id: str,
         operator_id: str = Depends(_get_operator_id),
@@ -73,7 +77,7 @@ def require_job_owner_or_reviewer(store: JobStore):
     ) -> tuple[str, Role]:
         if not JOB_ID_RE.match(job_id):
             raise HTTPException(400, "job_id inválido")
-        
+
         # Primero intentar cargar job en memoria (incluye jobs rejected by quality gate)
         job = store.get(job_id)
         if job is None:
@@ -82,24 +86,25 @@ def require_job_owner_or_reviewer(store: JobStore):
             if original is None:
                 raise HTTPException(404, "Job no encontrado")
             job = original
-        
+
         job_operator_id = job.get("processing_metadata", {}).get("operator_id")
-        job_operator_role = job.get("processing_metadata", {}).get("operator_role")
-        
+        # job_operator_role unused; only job_operator_id needed for comparison
+        _ = job.get("processing_metadata", {}).get("operator_role")
+
         # Jobs legacy/sin owner: system/admin
         if not job_operator_id:
             job_operator_id = "system"
-            job_operator_role = "admin"
-        
+
         # Admin y reviewer pueden todo
         if operator_role in (Role.ADMIN, Role.REVIEWER):
             return operator_id, operator_role
-        
+
         # Operator solo sus propios jobs
         if operator_id != job_operator_id:
             raise HTTPException(403, "No tiene permiso para este job (solo jobs propios)")
-        
+
         return operator_id, operator_role
+
     return _check
 
 
