@@ -2,6 +2,7 @@
 
 Preserva valores originales del servidor. Valida estados confirmed/corrected/unresolved.
 Genera nombre de archivo seguro. Persiste JSON confirmado separado del original.
+Escribe .DATA v2 + .CONFIDENCE.json a storage_bridge/ready/ para integración legacy.
 
 Feature 09-confianza-y-enrutamiento-hitl: registra confidence_at_review y decision_at_review
 en confirmation_metadata para trazabilidad completa.
@@ -11,6 +12,8 @@ corrección/rechazo) obligatorio cuando state != confirmed.
 
 Feature 11-auditoria-permisos-operador: registra audit_trail con operador, valor original,
 valor final, fecha, motivo y acción por campo.
+
+Feature 12-contrato-integracion-legacy-v2: versionado v2, idempotencia, reintentos, reconciliación.
 """
 
 from __future__ import annotations
@@ -19,6 +22,13 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 from .job_store import JobStore
+from .storage_bridge_writer import (
+    build_data_filename,
+    compute_data_hash,
+    write_atomic_data_file_with_retry,
+    write_confidence_file,
+    CONTRACT_VERSION,
+)
 
 
 def confirm_review(
@@ -92,6 +102,24 @@ def confirm_review(
     doc_type = original.get("processing_metadata", {}).get("provider_detected", "doc") or "doc"
     final_filename = store.build_final_filename(doc_type, job_id)
 
+    # Preparar campos para .DATA (validated_fields sin provider/service internos)
+    data_fields = [f for f in validated_fields.keys() if f not in ("provider", "service")]
+    data_values = {f: validated_fields[f] for f in data_fields}
+    service = so.get("service", "UNKNOWN")
+
+    # Escribir .DATA v2 atómicamente con idempotencia y reintentos
+    data_file = write_atomic_data_file_with_retry(
+        service=service,
+        fields=data_fields,
+        values=data_values,
+    )
+
+    # Escribir .CONFIDENCE.json compañero
+    confidence_file = write_confidence_file(
+        service=service,
+        field_confidence={f: field_confidence.get(f, {}) for f in data_fields if f in field_confidence},
+    )
+
     confirmed_doc = {
         "job_id": job_id,
         "document_type": original.get("structured_output", {}).get("document_type", "MANUAL_REVIEW"),
@@ -111,6 +139,10 @@ def confirm_review(
             "decision_at_review": decision_at_review,
             "correction_reasons": correction_reasons,
             "audit_trail": audit_trail,
+            "contract_version": CONTRACT_VERSION,
+            "data_file": str(data_file),
+            "confidence_file": str(confidence_file),
+            "data_hash": compute_data_hash(service, data_fields, data_values),
         },
         "original_result_ref": job_id,
     }
@@ -127,6 +159,9 @@ def confirm_review(
         "confirmed_path": str(path),
         "correction_reasons": correction_reasons,
         "audit_trail": audit_trail,
+        "data_file": str(data_file),
+        "confidence_file": str(confidence_file),
+        "data_hash": confirmed_doc["confirmation_metadata"]["data_hash"],
     }
 
 
