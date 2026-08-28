@@ -76,9 +76,7 @@ def _on_new_inbound(p: Path) -> None:
 # Global watcher (inicializado a nivel de módulo para que funcione con o
 # sin disparo de lifespan — el TestClient de Starlette no fiablemente
 # dispara los eventos de vida).
-watcher: Optional[InboundWatcher] = None
-if INBOUND_DIR.exists():
-    watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
+watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
 
 queue.start()
 
