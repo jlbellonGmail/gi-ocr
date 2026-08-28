@@ -1,70 +1,27 @@
-"""API FastAPI — Captura OCR Local Ágil.
-
-Backend único (sin Node.js). Sirve API REST + SSE + frontend estático.
-Endpoints de jobs (multi-entrada), confirmación, descarga, export, watcher inbound.
-"""
-
-from __future__ import annotations
-
-import os
-
-os.environ.setdefault("GI_OCR_ORT_THREADS", "3")
-
-import asyncio
-import json
+import uuid
+import configparser
+import time
+from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
-
-from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+import numpy as np
+from PIL import Image
 
-from . import ocr_engine
-from .authz import Role, get_operator_identity, require_job_owner_or_reviewer, require_role
-from .document_services import normalize_service_id
-from .exif_privacy import anonymize_upload_bytes
-from .fs_permissions import secure_dir, secure_file
-from .inbound_watcher import InboundWatcher
-from .job_queue import JobQueue
-from .job_store import JOB_ID_RE, JobStore, sanitize_name
-from .review_service import confirm_review
-from .services_config import (
-    ServiceNotFoundError,
-    ServicesConfigError,
-    get_service_schema,
-    list_services_schema,
-)
-from .storage_bridge_writer import reconcile_storage_bridge
-from .upload_validation import (
-    UploadValidationError,
-    max_upload_bytes,
-    random_upload_name,
-    validate_upload_content,
+from .ocr import (
+    extract_text_from_image,
+    extract_text_from_zone,
+    extract_fields_from_zones,
+    format_extraction_result,
+    parse_zones_from_config
 )
 
-BASE_DIR = Path(__file__).resolve().parents[2]
-DATA_DIR = BASE_DIR / "output"
-INBOUND_DIR = BASE_DIR / "inbound"
-FRONTEND_DIR = BASE_DIR / "frontend"
+app = FastAPI(
+    title="Smart Invoice Capture API",
+    version="1.1.0",
+    description="Backend OCR real con extracción de datos configurables por servicio"
+)
 
-ALLOWED_EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".pdf"}
-MAX_BYTES = 30 * 1024 * 1024  # 30 MB, valor por defecto (ver upload_validation.max_upload_bytes)
-
-store = JobStore(DATA_DIR)
-queue = JobQueue(store, workers=2)
-queue.start()
-
-
-def _on_new_inbound(p: Path) -> None:
-    queue.enqueue(str(p), p.name, source="inbound", operator_id="system", operator_role="admin")
-
-
-watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
-watcher.start()
-
-app = FastAPI(title="Captura OCR Local Ágil", version="2.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -73,332 +30,178 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+BASE_DIR = Path(__file__).resolve().parents[2]
+READY_DIR = BASE_DIR / "storage_bridge" / "ready"
+CONFIG_DIR = BASE_DIR / "backend" / "config"
+SERVICES_INI = CONFIG_DIR / "services.ini"
 
-class FieldCorrection(BaseModel):
-    field: str
-    state: str  # confirmed | corrected | unresolved
-    final_value: Optional[str] = None
-    reason: Optional[str] = None
-
-
-class ConfirmPayload(BaseModel):
-    confirmed_fields: List[FieldCorrection]
+for p in (READY_DIR, CONFIG_DIR):
+    p.mkdir(parents=True, exist_ok=True)
 
 
-def _validate_upload(filename: str, size: int) -> str:
-    """Valida extensión (sin cambios) y tamaño máximo configurable
-    (`GI_OCR_MAX_UPLOAD_BYTES`, ver `upload_validation.max_upload_bytes`).
-    Devuelve el nombre sanitizado (sin path traversal). No valida firma de
-    archivo ni Content-Type: eso lo hace `upload_validation.
-    validate_upload_content` sobre el contenido real, en `_save_upload`."""
-    ext = Path(filename).suffix.lower()
-    if ext not in ALLOWED_EXTS:
-        raise HTTPException(400, f"Extensión no soportada: {ext}")
-    limit = max_upload_bytes()
-    if size > limit:
-        raise HTTPException(413, f"Archivo demasiado grande (máx {limit} bytes)")
-    return sanitize_name(filename)
-
-
-def _save_upload(upload: UploadFile) -> Path:
-    """Valida (extensión, tamaño, firma real, Content-Type declarado) y
-    persiste el upload en `output/uploads/` con nombre aleatorio no
-    predecible, tras anonimizar metadata EXIF identificatoria (JPEG/TIFF).
-
-    Si cualquier validación falla, no queda ningún archivo nuevo en
-    `output/uploads/` (la validación completa ocurre antes de escribir a
-    disco)."""
-    content = upload.file.read()
-    filename = upload.filename or "doc"
-    name = _validate_upload(filename, len(content))
-    try:
-        family = validate_upload_content(filename, content, upload.content_type)
-    except UploadValidationError as e:
-        raise HTTPException(status_code=e.status_code, detail={"reason": e.reason, "message": e.message})
-
-    content = anonymize_upload_bytes(content, family)
-
-    uploads = DATA_DIR / "uploads"
-    uploads.mkdir(parents=True, exist_ok=True)
-    secure_dir(uploads)
-    dest = uploads / random_upload_name(Path(name).suffix)
-    dest.write_bytes(content)
-    secure_file(dest)
-    return dest
-
-
-@app.on_event("startup")
-async def _startup() -> None:
-    # Cargar modelos OCR una sola vez (arranque en frío medible aparte en benchmark)
-    ocr_engine.warmup()
+def _load_config() -> configparser.ConfigParser:
+    """Load services configuration from services.ini"""
+    if not SERVICES_INI.exists():
+        SERVICES_INI.parent.mkdir(parents=True, exist_ok=True)
+        SERVICES_INI.touch()
+    cfg = configparser.ConfigParser()
+    cfg.read(SERVICES_INI, encoding="utf-8")
+    return cfg
 
 
 @app.get("/api/v1")
-async def root():
-    return {"status": "ok", "app": "Captura OCR Local Ágil", "version": "2.0.0"}
-
-
-@app.get("/api/v1/health")
-async def health():
-    return {
-        "status": "ok",
-        "engine_loaded": ocr_engine.get_engine() is not None,
-        "queue_workers": queue.workers,
-        "inbound": watcher.status(),
-    }
+async def api_root():
+    return {"status": "ok", "message": "Smart Invoice Capture API conectado correctamente"}
 
 
 @app.get("/api/v1/services")
 async def list_services():
-    """Lista de solo lectura de los servicios/documentos configurados en
-    backend/config/services.ini, con su esquema validado (id, title,
-    fields). No incluye datos de comprobantes ni requiere autenticación
-    (config de solo lectura, ver docs/tecnica/administracion-servicios-documentos.md).
+    """List all configured services"""
+    cfg = _load_config()
+    result = {}
+    for section in cfg.sections():
+        result[section] = dict(cfg[section])
+    return {"services": result}
+
+
+@app.post("/api/v1/services")
+async def add_service(payload: dict):
+    """Add a new service configuration"""
+    name = payload.get("name")
+    fields = payload.get("fields", "")
+
+    if not name:
+        raise HTTPException(status_code=400, detail="Falta el nombre del servicio")
+
+    cfg = _load_config()
+    if cfg.has_section(name):
+        raise HTTPException(status_code=409, detail=f"El servicio '{name}' ya existe")
+
+    cfg.add_section(name)
+    cfg.set(name, "fields", fields)
+
+    with open(SERVICES_INI, "w", encoding="utf-8") as f:
+        cfg.write(f)
+    return {"status": "created", "service": name, "fields": fields}
+
+
+@app.delete("/api/v1/services/{service_name}")
+async def delete_service(service_name: str):
+    """Delete a service configuration"""
+    cfg = _load_config()
+    if not cfg.has_section(service_name):
+        raise HTTPException(status_code=404, detail="Servicio no encontrado")
+    cfg.remove_section(service_name)
+    with open(SERVICES_INI, "w", encoding="utf-8") as f:
+        cfg.write(f)
+    return {"status": "deleted", "service": service_name}
+
+
+@app.post("/api/v1/capture")
+async def capture(file: UploadFile = File(...)):
     """
-    try:
-        return {"services": list_services_schema()}
-    except ServicesConfigError as e:
-        raise HTTPException(500, str(e))
-
-
-@app.get("/api/v1/services/{service_id}")
-async def get_service(service_id: str):
-    """Esquema validado de un único servicio (normaliza service_id igual
-    que document_services.normalize_service_id: strip().upper())."""
-    try:
-        normalized = normalize_service_id(service_id)
-    except ValueError as e:
-        raise HTTPException(400, str(e))
-    try:
-        return get_service_schema(normalized)
-    except ServiceNotFoundError as e:
-        raise HTTPException(404, str(e))
-    except ServicesConfigError as e:
-        raise HTTPException(500, str(e))
-
-
-@app.post("/api/v1/jobs")
-async def create_jobs(
-    files: List[UploadFile] = File(...),
-    operator_identity: tuple[str, Role] = Depends(get_operator_identity),
-):
-    """Carga uno o varios documentos. Crea jobs en cola (no bloqueante)."""
-    if not files:
-        raise HTTPException(400, "No se enviaron archivos")
-    operator_id, operator_role = operator_identity
-    created = []
-    for f in files:
-        try:
-            dest = _save_upload(f)
-            job_id = queue.enqueue(
-                str(dest),
-                f.filename or dest.name,
-                source="web",
-                operator_id=operator_id,
-                operator_role=operator_role.value,
-            )
-            created.append({"job_id": job_id, "filename": f.filename})
-        except HTTPException:
-            raise
-        except Exception as e:
-            raise HTTPException(400, f"Error al guardar '{f.filename}': {e}")
-    return {"created": created, "queued": len(created)}
-
-
-@app.get("/api/v1/jobs")
-async def list_jobs():
-    return {"jobs": queue.status_list()}
-
-
-@app.get("/api/v1/jobs/{job_id}")
-async def get_job(job_id: str):
-    if not JOB_ID_RE.match(job_id):
-        raise HTTPException(400, "job_id inválido")
-    job = store.get(job_id)
-    if not job and not store.original_exists(job_id):
-        raise HTTPException(404, "Job no encontrado")
-    if not job:
-        job = {"job_id": job_id, "status": "ready"}
-    confirmed = store.confirmed_exists(job_id)
-    return {**job, "confirmed": confirmed}
-
-
-@app.post("/api/v1/jobs/{job_id}/retry")
-async def retry_job(
-    job_id: str,
-    authz: tuple[str, Role] = Depends(require_job_owner_or_reviewer(store)),
-):
-    if not JOB_ID_RE.match(job_id):
-        raise HTTPException(400, "job_id inválido")
-    ok = queue.retry(job_id)
-    if not ok:
-        raise HTTPException(409, "No se Puede reintentar (no existe o ya listo)")
-    return {"job_id": job_id, "status": "queued"}
-
-
-@app.post("/api/v1/jobs/{job_id}/confirm")
-async def confirm_job(
-    job_id: str,
-    payload: ConfirmPayload,
-    authz: tuple[str, Role] = Depends(require_job_owner_or_reviewer(store)),
-):
-    if not JOB_ID_RE.match(job_id):
-        raise HTTPException(400, "job_id inválido")
-    if not store.original_exists(job_id):
-        raise HTTPException(404, "Job no encontrado")
-    operator_id, operator_role = authz
-    try:
-        result = confirm_review(
-            store,
-            job_id,
-            [c.model_dump() for c in payload.confirmed_fields],
-            operator_id=operator_id,
-            operator_role=operator_role.value,
-        )
-    except FileNotFoundError as e:
-        raise HTTPException(404, str(e))
-    except ValueError as e:
-        raise HTTPException(400, str(e))
-    return result
-
-
-@app.get("/api/v1/jobs/{job_id}/download")
-async def download_confirmed(job_id: str):
-    if not JOB_ID_RE.match(job_id):
-        raise HTTPException(400, "job_id inválido")
-    if not store.original_exists(job_id):
-        raise HTTPException(404, "Job no encontrado")
-    if not store.confirmed_exists(job_id):
-        raise HTTPException(409, "Resultado no confirmado. Confirme la revisión antes de descargar.")
-    doc = store.load_confirmed(job_id)
-    if doc is None:
-        # Carrera improbable entre el chequeo confirmed_exists() y la
-        # lectura: el archivo desapareció justo después de confirmarse.
-        raise HTTPException(404, "Job no encontrado")
-    final_filename = doc.get("confirmation_metadata", {}).get("final_filename") or store.build_final_filename(
-        "doc", job_id
-    )
-    return FileResponse(str(store.confirmed_path(job_id)), media_type="application/json", filename=final_filename)
-
-
-@app.get("/api/v1/jobs/{job_id}/original")
-async def download_original(job_id: str):
-    if not JOB_ID_RE.match(job_id):
-        raise HTTPException(400, "job_id inválido")
-    if not store.original_exists(job_id):
-        raise HTTPException(404, "Resultado original no encontrado")
-    return FileResponse(str(store.job_path(job_id)), media_type="application/json", filename=f"{job_id}_original.json")
-
-
-@app.get("/api/v1/jobs/{job_id}/image")
-async def get_job_image(job_id: str):
-    """Sirve la imagen original subida para el job (para visor en consola de revisión)."""
-    if not JOB_ID_RE.match(job_id):
-        raise HTTPException(400, "job_id inválido")
-    if not store.original_exists(job_id):
-        raise HTTPException(404, "Job no encontrado")
-    original = store.load_original(job_id)
-    if not original:
-        raise HTTPException(404, "Job no encontrado")
-    # La imagen original se guarda en output/uploads/ con nombre aleatorio
-    # El path original no se persiste directamente; buscamos en uploads por job_id
-    # En el job original, source_document_reference tiene el path del upload
-    source_ref = original.get("structured_output", {}).get("source_document_reference", "")
-    if not source_ref:
-        raise HTTPException(404, "Imagen no disponible para este job")
-    # source_ref es el path absoluto al archivo en output/uploads/
-    img_path = Path(source_ref)
-    if not img_path.exists():
-        # Fallback: buscar en uploads por patrón job_id
-        uploads = DATA_DIR / "uploads"
-        matches = list(uploads.glob(f"*{job_id[:8]}*"))
-        if matches:
-            img_path = matches[0]
-        else:
-            raise HTTPException(404, "Archivo de imagen no encontrado en disco")
-    # Detectar media type por extensión
-    ext = img_path.suffix.lower()
-    media_type = {
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".png": "image/png",
-        ".tif": "image/tiff",
-        ".tiff": "image/tiff",
-        ".pdf": "application/pdf",
-    }.get(ext, "application/octet-stream")
-    return FileResponse(str(img_path), media_type=media_type, filename=img_path.name)
-
-
-@app.get("/api/v1/export")
-async def export_batch(
-    _authz: tuple[str, Role] = Depends(require_role([Role.ADMIN])),
-):
-    """Export del lote: JSON consolidado de resultados confirmados."""
-    items = []
-    for j in store.all():
-        if store.confirmed_exists(j["job_id"]):
-            c = store.load_confirmed(j["job_id"])
-            if c is not None:
-                items.append({"job_id": j["job_id"], **c.get("confirmed_fields", {})})
-    payload = json.dumps({"batch": items, "count": len(items)}, ensure_ascii=False, indent=2)
-    return StreamingResponse(
-        iter([payload]),
-        media_type="application/json",
-        headers={"Content-Disposition": "attachment; filename=batch_export.json"},
-    )
-
-
-@app.post("/api/v1/admin/reconcile")
-async def reconcile_storage_bridge_endpoint(
-    _authz: tuple[str, Role] = Depends(require_role([Role.ADMIN])),
-):
-    """Reconcilia storage_bridge/ready/ con output/confirmed/ (solo ADMIN).
-
-    Compara archivos .DATA v2 en ready/ con JSON confirmados v2 en confirmed/.
-    Reporta: missing_in_ready, orphan_in_ready, content_mismatch.
-    Genera reporte JSON en output/reconciliation/.
+    Capture and extract data from uploaded image.
+    - Detects service from OCR content or filename
+    - Extracts configured fields based on services.ini
+    - Writes data to output file if extraction successful
     """
-    report = reconcile_storage_bridge(
-        confirmed_dir=store.confirmed_dir,
-        ready_dir=BASE_DIR / "storage_bridge" / "ready",
-        output_dir=DATA_DIR / "reconciliation",
+    start_time = time.time()
+
+    # Validate file format
+    if not file.filename.lower().endswith((".png", ".jpg", ".jpeg", ".tif", ".tiff", ".pdf")):
+        raise HTTPException(status_code=400, detail="Formato de archivo no soportado")
+
+    engine_used = "EasyOCR Nativo"
+    ocr_text = ""
+    raw_lines_count = 0
+
+    # Step 1: Extract text from image
+    try:
+        image = Image.open(file.file)
+        image_np = np.array(image)
+
+        # Extract text with preprocessing
+        ocr_text, raw_lines_count = await extract_text_from_image(image_np, use_preprocessing=True)
+
+        if not ocr_text.strip():
+            raise ValueError("EasyOCR returned empty text")
+
+    except Exception as e:
+        print(f"[OCR ERROR] {e}")
+        engine_used = "Hybrid Mode (OCR failed)"
+        ocr_text = f"Error: {str(e)}"
+
+    # Step 2: Detect service from OCR content or filename
+    cfg = _load_config()
+    detected_service = "Generico"
+    configured_fields = []
+    service_zones = {}
+
+    filename_lower = file.filename.lower()
+    for section in cfg.sections():
+        sec_lower = section.lower()
+        if sec_lower in ocr_text.lower() or sec_lower in filename_lower:
+            detected_service = section
+            fields_str = cfg.get(section, "fields", fallback="")
+            fields_str = fields_str.strip('"')
+            configured_fields = [f.strip() for f in fields_str.split(",") if f.strip()]
+
+            # Load zones for this service if they exist
+            zones_str = cfg.get(section, "zones", fallback="")
+            service_zones = parse_zones_from_config(zones_str)
+            break
+
+    # Step 3: Extract values from zones
+    extracted_data = {}
+    zone_texts = {}
+
+    if service_zones and configured_fields:
+        # Extract OCR text from each zone
+        for field in configured_fields:
+            if field in service_zones:
+                zone_coords = service_zones[field]
+                text = await extract_text_from_zone(image_np, zone_coords, use_preprocessing=True)
+                zone_texts[field] = text
+                print(f"[ZONE DEBUG] {field}: '{text}'")
+
+        # Parse extracted zone texts
+        extracted_data = extract_fields_from_zones(zone_texts)
+    else:
+        # Fallback: no zones defined, just return empty
+        extracted_data = {field: None for field in configured_fields}
+
+    # Step 4: Write to output file if we have real data
+    has_real_data = any(v is not None for v in extracted_data.values())
+
+    timestamp = datetime.now().isoformat()
+    file_id = str(uuid.uuid4())[:8]
+    output_path = READY_DIR / f"{detected_service}.txt"
+    data_written = False
+
+    if has_real_data and configured_fields:
+        header_line = ",".join(configured_fields)
+        values_list = [
+            str(extracted_data.get(field, "")) if extracted_data.get(field) is not None else ""
+            for field in configured_fields
+        ]
+        values_line = ",".join(values_list)
+
+        with open(output_path, "a", encoding="utf-8") as f:
+            f.write(f"--- CAPTURA {timestamp} (ID: {file_id}) ---\n")
+            f.write(header_line + "\n")
+            f.write(values_line + "\n")
+            f.write("\n")
+        data_written = True
+
+    elapsed = round(time.time() - start_time, 3)
+
+    # Step 5: Format and return response
+    return format_extraction_result(
+        ocr_text=ocr_text,
+        extracted_data=extracted_data,
+        fields_requested=configured_fields,
+        engine_used=engine_used,
+        filename=file.filename,
+        raw_lines_count=raw_lines_count,
+        execution_time=elapsed
     )
-    return report
-
-
-@app.get("/api/v1/inbound/status")
-async def inbound_status():
-    return watcher.status()
-
-
-@app.post("/api/v1/inbound/config")
-async def inbound_config(
-    payload: dict,
-    _authz: tuple[str, Role] = Depends(require_role([Role.ADMIN])),
-):
-    # Por seguridad, la carpeta inbound es fija (no se permite path traversal).
-    return {"status": "ok", "inbound_dir": str(INBOUND_DIR), "note": "carpeta fija por seguridad"}
-
-
-@app.get("/api/v1/stream")
-async def stream(request: Request):
-    """SSE de progreso de la cola (no bloqueante)."""
-    q = queue.subscribe()
-
-    async def event_gen():
-        yield ": connected\n\n"
-        while True:
-            if await request.is_disconnected():
-                break
-            try:
-                payload = await asyncio.wait_for(q.get(), timeout=15)
-                yield f"data: {json.dumps(payload)}\n\n"
-            except asyncio.TimeoutError:
-                yield ": keepalive\n\n"
-
-    return StreamingResponse(event_gen(), media_type="text/event-stream")
-
-
-# Servir frontend después de las rutas API
-if FRONTEND_DIR.exists():
-    app.mount("", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")

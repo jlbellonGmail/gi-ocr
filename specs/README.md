@@ -1,19 +1,43 @@
 # specs/
 
-Este directorio contiene las specs de las features implementadas **antes**
-de adoptar el circuito agéntico de `AGENTS.md` (T3.1 a T4): T3.3, T3.4,
-T3.5, T4. Se conservan tal cual como historial — no se reescriben ni se
-mueven al nuevo formato retroactivamente.
+Este directorio contiene specs livianas para tareas GI-OCR cuando una feature necesita contexto reusable.
 
-## Features nuevas
+## Convención sugerida
 
-Las features nuevas ya no usan `specs/` ni `.specify/templates/` (ambos
-removidos al adoptar el circuito). Usan en cambio:
+Usar carpetas por tarea:
 
-- `runs/<NN>-<slug>/spec.md`: producida por `analyst-agent`.
-- `runs/<NN>-<slug>/audit-N.md`: producida por `reviewer-agent`.
-- `runs/<NN>-<slug>/test-report-N.md`: producida por `qa-agent`.
-- `runs/<NN>-<slug>/decision.md`: producida por `builder-agent`.
-- `docs/tecnica/<slug>.md` y `docs/usuario/<slug>.md`.
+- specs/T3.1-demo-mvp-e2e/
+- specs/T3.x-nombre-feature/
 
-Ver el circuito completo en `AGENTS.md`.
+Archivos sugeridos:
+
+- spec.md
+- plan.md
+- tasks.md
+- verification.md
+- inspector.md
+
+Usar templates desde:
+
+- .specify/templates/spec-template.md
+- .specify/templates/plan-template.md
+- .specify/templates/tasks-template.md
+- .specify/templates/verification-template.md
+- .specify/templates/inspector-template.md
+- .specify/templates/documentation-template.md
+- .specify/templates/security-template.md
+
+## Regla
+
+La spec debe ayudar a reducir prompts largos, no crear burocracia.
+
+Debe dejar claro:
+
+- objetivo
+- alcance
+- fuera de alcance
+- archivos esperados
+- validaciones
+- criterios de aceptación
+- riesgos
+- evidencia requerida

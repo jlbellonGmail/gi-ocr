@@ -1,7 +1,0 @@
-*
-!.gitignore
-!README.md
-!config.toml
-!*-agent.config.toml
-!prompts/
-!prompts/*.md

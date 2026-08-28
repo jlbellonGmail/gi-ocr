@@ -13,7 +13,6 @@ Salida legacy:
 
 Puede escribir salida local de reportes o DATA atómico en storage_bridge/ready/.
 """
-
 from __future__ import annotations
 
 import argparse
@@ -24,8 +23,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Sequence
 
-import numpy as np
 from PIL import Image
+import numpy as np
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 
@@ -48,21 +47,24 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tiff"}
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+from backend.app.services_config import get_service_fields
+from backend.app.extraction_engine import extract_service_fields
+from backend.app.plain_text_writer import write_data_file
+from backend.app.storage_bridge_writer import write_atomic_data_file
+from backend.app.ocr import extract_text_from_image
 from backend.app.document_services import (
-    DisabledDataEvaluatorServiceError,
     UnsupportedDocumentServiceError,
+    DisabledDataEvaluatorServiceError,
+    validate_data_evaluator_service,
     get_document_service,
 )
-from backend.app.extraction_engine import extract_service_fields
-from backend.app.ocr import extract_text_from_image
-from backend.app.plain_text_writer import write_data_file
 from backend.app.service_data_validation import validate_service_data
-from backend.app.services_config import get_service_fields
-from backend.app.storage_bridge_writer import write_atomic_data_file
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Evaluador local de OCR configurable con salida legacy .DATA.")
+    parser = argparse.ArgumentParser(
+        description="Evaluador local de OCR configurable con salida legacy .DATA."
+    )
     parser.add_argument(
         "--service",
         default=DEFAULT_SERVICE,
@@ -122,7 +124,11 @@ def list_images(samples_dir: Path | None = None) -> list[Path]:
     if not target_dir.exists():
         return []
 
-    return sorted(path for path in target_dir.iterdir() if path.is_file() and path.suffix.lower() in ALLOWED_EXTENSIONS)
+    return sorted(
+        path
+        for path in target_dir.iterdir()
+        if path.is_file() and path.suffix.lower() in ALLOWED_EXTENSIONS
+    )
 
 
 def _get_validated_data_fields(values: dict[str, str], validation: dict | None) -> dict[str, str]:
@@ -136,11 +142,14 @@ def _get_validated_data_fields(values: dict[str, str], validation: dict | None) 
 
     validated_fields = validation.get("validated_fields")
     if isinstance(validated_fields, dict):
-        return {field_name: field_value for field_name, field_value in values.items() if field_name in validated_fields}
+        return {
+            field_name: field_value
+            for field_name, field_value in values.items()
+            if field_name in validated_fields
+        }
 
     # Fallback: if validation uses a different key naming, preserve original values.
     return dict(values)
-
 
 def _calculate_rejected_metrics(normalized_service: str, extraction: dict[str, Any]) -> dict[str, Any]:
     """
@@ -325,7 +334,8 @@ async def main(argv: Sequence[str] | None = None) -> int:
             + (", ".join(result["detected_fields"]) if result["detected_fields"] else "(ninguno)")
         )
         print(
-            "  Campos faltantes: " + (", ".join(result["missing_fields"]) if result["missing_fields"] else "(ninguno)")
+            "  Campos faltantes: "
+            + (", ".join(result["missing_fields"]) if result["missing_fields"] else "(ninguno)")
         )
         print(f"  Archivo .DATA: {result['data_file']}")
 

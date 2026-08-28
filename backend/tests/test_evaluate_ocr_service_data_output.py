@@ -4,6 +4,8 @@ import asyncio
 from pathlib import Path
 from unittest import mock
 
+import pytest
+
 from scripts import evaluate_ocr_service as evaluator
 from scripts.evaluate_ocr_service import evaluate_image
 
@@ -307,7 +309,6 @@ def test_evaluator_does_not_generate_json_output(tmp_path, monkeypatch):
                 json_files = list(reports_dir.glob("*.json"))
                 assert len(json_files) == 0, f"Found unexpected JSON files: {json_files}"
 
-
 def test_parse_args_accepts_bridge_target_and_directories(tmp_path):
     """The evaluator CLI must accept storage bridge target and custom bridge directories."""
     inbound_dir = tmp_path / "bridge" / "inbound"
@@ -343,7 +344,6 @@ def test_parse_args_keeps_reports_as_default_target():
 def test_generic_service_document_writes_data_to_bridge_ready(tmp_path, monkeypatch):
     """Bridge target must write the final DATA file into ready and expose its path."""
     from pathlib import Path
-
     from PIL import Image
 
     image_path = tmp_path / "sample.jpg"
@@ -399,10 +399,9 @@ def test_generic_service_document_writes_data_to_bridge_ready(tmp_path, monkeypa
     assert data_path.name.endswith(".DATA")
     content = data_path.read_text(encoding="utf-8")
     lines = content.strip().splitlines()
-    assert len(lines) == 3
-    assert lines[0] == "VERSION=2"
-    assert lines[1] == "document_type;amount;provider"
-    assert lines[2] == "INVOICE;500.00;Test Provider"
+    assert len(lines) == 2
+    assert lines[0] == "document_type;amount;provider"
+    assert lines[1] == "INVOICE;500.00;Test Provider"
     assert not list(inbound_dir.glob("*.tmp"))
 
 
@@ -605,3 +604,6 @@ def test_evaluator_rejected_metrics_present_in_evaluation_output(tmp_path, monke
                 assert result["rejected_metrics"]["service"] == "GAS"
                 assert result["rejected_metrics"]["rejected_fields_count"] == 1
                 assert "importe" in result["rejected_metrics"]["rejected_by_field"]
+
+
+
