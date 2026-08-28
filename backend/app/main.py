@@ -67,10 +67,22 @@ MAX_BYTES = 30 * 1024 * 1024  # 30 MB, valor por defecto (ver upload_validation.
 store = JobStore(DATA_DIR)
 queue = JobQueue(store, workers=2)
 
-app = FastAPI(title="Captura OCR Local Ágil", version="2.0.0")
 
-# Global watcher (inicializado en startup)
+def _on_new_inbound(p: Path) -> None:
+    """Callback del inbound watcher: encola un nuevo archivo recibido."""
+    queue.enqueue(str(p), p.name, source="inbound", operator_id="system", operator_role="admin")
+
+
+# Global watcher (inicializado a nivel de módulo para que funcione con o
+# sin disparo de lifespan — el TestClient de Starlette no fiablemente
+# dispara los eventos de vida).
 watcher: Optional[InboundWatcher] = None
+if INBOUND_DIR.exists():
+    watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
+
+queue.start()
+
+app = FastAPI(title="Captura OCR Local Ágil", version="2.0.0")
 
 # Correlation ID middleware (debe ser el primero para propagar a todo)
 app.add_middleware(CorrelationIdMiddleware)
@@ -148,16 +160,11 @@ async def _startup() -> None:
     set_ocr_engine_loaded(True)
     logger.info("ocr_engine_warmed_up")
 
-    # Iniciar cola y watcher
-    queue.start()
+    # La cola y el watcher ya están inicializados a nivel de módulo (ver
+    # `_on_new_inbound`, `queue.start()` y `watcher` más abajo), así que el
+    # startup solo registra su estado. Esto hace que la app funcione tanto
+    # con como sin disparo de lifespan (TestClient de Starlette).
     logger.info("job_queue_started", workers=queue.workers)
-
-    def _on_new_inbound(p: Path) -> None:
-        queue.enqueue(str(p), p.name, source="inbound", operator_id="system", operator_role="admin")
-
-    global watcher
-    watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
-    watcher.start()
     logger.info("inbound_watcher_started", inbound_dir=str(INBOUND_DIR))
 
     # Métricas iniciales
