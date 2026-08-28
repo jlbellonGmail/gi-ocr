@@ -1,0 +1,884 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Confianza y Enrutamiento HITL — Guía de Usuario - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#confianza-y-enrutamiento-hitl-guia-de-usuario" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Confianza y Enrutamiento HITL — Guía de Usuario
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tecnica/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#proposito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propósito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuracion-en-servicesini" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuración en services.ini
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuración en services.ini">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parámetros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reglas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reglas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujo-de-decision-automatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flujo de Decisión Automática
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#salida-en-api-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Salida en API / JSON
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#revision-humana-hitl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Revisión Humana (HITL)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exportacion-legacy-storage_bridge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exportación Legacy (storage_bridge)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplos-de-configuracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplos de Configuración
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos de Configuración">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#campo-monetario-critico-bloquear-errores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campo Monetario Crítico (bloquear errores)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campo-opcional-permisivo-revision-humana" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campo Opcional Permisivo (revisión humana)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campo-fecha-estandar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campo Fecha Estándar
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#buenas-practicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Buenas Prácticas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validacion-de-esquema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validación de Esquema
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integracion-con-frontend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integración con Frontend
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solucion-de-problemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solución de Problemas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencias-tecnicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referencias Técnicas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="confianza-y-enrutamiento-hitl-guia-de-usuario">Confianza y Enrutamiento HITL — Guía de Usuario</h1>
+<h2 id="proposito">Propósito</h2>
+<p>Permite configurar umbrales de confianza por campo para automatizar decisiones:
+- <strong>Autoaceptar</strong> campos con alta confianza (sin intervención humana)
+- <strong>Enviar a revisión</strong> campos con confianza media (operador valida/corrige)
+- <strong>Bloquear</strong> falsos positivos en campos sensibles (requiere corrección manual)</p>
+<h2 id="configuracion-en-servicesini">Configuración en <code>services.ini</code></h2>
+<p>Agregue las siguientes claves opcionales a cada campo en la sección correspondiente:</p>
+<pre><code class="language-ini">[GAS]
+Title=Servicio de Gas
+Fields=importe,cliente,periodo
+
+Field.importe.Label=Importe
+Field.importe.Example=$ 23.345,56
+Field.importe.Type=amount
+Field.importe.Required=true
+Field.importe.Regex=(?:importe|total)\D{0,40}(\$?\s?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2}))
+; --- Nuevas claves de confianza ---
+Field.importe.ConfidenceAutoAccept=0.88
+Field.importe.ConfidenceNeedsReview=0.55
+Field.importe.Sensitive=true
+Field.importe.BlockOnValidationFail=true
+</code></pre>
+<h3 id="parametros">Parámetros</h3>
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Valores</th>
+<th>Default</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ConfidenceAutoAccept</code></td>
+<td>0.0 – 1.0</td>
+<td>0.85</td>
+<td>Score mínimo para autoaceptar</td>
+</tr>
+<tr>
+<td><code>ConfidenceNeedsReview</code></td>
+<td>0.0 – 1.0</td>
+<td>0.50</td>
+<td>Score mínimo para enviar a revisión</td>
+</tr>
+<tr>
+<td><code>Sensitive</code></td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>false</code></td>
+<td>Si <code>true</code>, fallo de validación bloquea el campo</td>
+</tr>
+<tr>
+<td><code>BlockOnValidationFail</code></td>
+<td><code>true</code> / <code>false</code></td>
+<td><code>true</code></td>
+<td>Si <code>true</code>, fallo de validación bloquea (vs solo rechazar)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="reglas">Reglas</h3>
+<ul>
+<li><code>ConfidenceAutoAccept</code> debe ser <strong>mayor</strong> que <code>ConfidenceNeedsReview</code></li>
+<li>Booleanos: solo <code>true</code> o <code>false</code> (minúsculas, sin acentos)</li>
+<li>Todas las claves son <strong>opcionales</strong>; si omitidas, usan defaults</li>
+</ul>
+<h2 id="flujo-de-decision-automatica">Flujo de Decisión Automática</h2>
+<p>Para cada campo extraído, el sistema calcula:</p>
+<ol>
+<li><strong><code>ocr_score</code></strong>: Confianza OCR (0.0–1.0) de la mejor caja en la banda del campo</li>
+<li><strong><code>extraction_score</code></strong>: Según cómo se extrajo el valor</li>
+<li>1.0: Regex en zona OCR (two-pass ROI)</li>
+<li>0.9: Regex en texto completo de página</li>
+<li>0.7: Solo ancla textual + fallback genérico</li>
+<li>0.3: Fallback genérico por palabra clave</li>
+<li><strong><code>final_score</code></strong>: <code>(ocr_score × 0.6) + (extraction_score × 0.4)</code></li>
+<li><strong><code>validation_passed</code></strong>: ¿El validador semántico (fecha, monto, etc.) aprobó?</li>
+</ol>
+<p><strong>Decisión final:</strong>
+| Validación | <code>final_score</code> | Decisión |
+|------------|---------------|----------|
+| ✅ Aprobada | ≥ <code>AutoAccept</code> | <code>auto_accepted</code> |
+| ✅ Aprobada | ≥ <code>NeedsReview</code> | <code>needs_review</code> |
+| ✅ Aprobada | &lt; <code>NeedsReview</code> | <code>needs_review</code> |
+| ❌ Fallida | — | <code>blocked</code> si <code>Sensitive</code> o <code>BlockOnValidationFail</code> |
+| ❌ Fallida | — | <code>rejected</code> (legacy) si no sensible |
+| Sin candidato | — | <code>missing</code> |</p>
+<h2 id="salida-en-api-json">Salida en API / JSON</h2>
+<p>El resultado del pipeline incluye <code>structured_output.field_confidence</code>:</p>
+<pre><code class="language-json">{
+  &quot;structured_output&quot;: {
+    &quot;candidate_fields&quot;: { &quot;importe&quot;: &quot;1.234,56&quot;, ... },
+    &quot;validated_fields&quot;: { &quot;importe&quot;: &quot;1234.56&quot;, ... },
+    &quot;rejected_fields&quot;: { },
+    &quot;missing_fields&quot;: { },
+    &quot;field_confidence&quot;: {
+      &quot;importe&quot;: {
+        &quot;ocr_score&quot;: 0.92,
+        &quot;extraction_score&quot;: 1.0,
+        &quot;final_score&quot;: 0.95,
+        &quot;validation_passed&quot;: true,
+        &quot;validation_reason&quot;: null,
+        &quot;decision&quot;: &quot;auto_accepted&quot;,
+        &quot;thresholds&quot;: { &quot;auto&quot;: 0.88, &quot;review&quot;: 0.55 },
+        &quot;sensitive&quot;: true,
+        &quot;block_on_validation_fail&quot;: true
+      },
+      &quot;cliente&quot;: { ... }
+    }
+  },
+  &quot;field_report&quot;: {
+    &quot;confidence_summary&quot;: {
+      &quot;auto_accepted&quot;: 3,
+      &quot;needs_review&quot;: 1,
+      &quot;blocked&quot;: 0,
+      &quot;missing&quot;: 1,
+      &quot;by_field&quot;: { ... }
+    }
+  }
+}
+</code></pre>
+<h2 id="revision-humana-hitl">Revisión Humana (HITL)</h2>
+<p>Los campos con <code>decision = "needs_review"</code> se presentan en el frontend para revisión.</p>
+<p>Al confirmar, el sistema registra en <code>confirmation_metadata</code>:
+- <code>confidence_at_review</code>: snapshot del <code>field_confidence</code> al momento de revisión
+- <code>decision_at_review</code>: estado humano (<code>confirmed</code> / <code>corrected</code> / <code>unresolved</code>)</p>
+<p>Esto permite auditoría completa: decisión automática vs decisión humana.</p>
+<h2 id="exportacion-legacy-storage_bridge">Exportación Legacy (<code>storage_bridge</code>)</h2>
+<p>Además del <code>.DATA</code> (formato plano), se genera un archivo compañero <code>.CONFIDENCE.json</code>:</p>
+<pre><code>storage_bridge/ready/
+  GAS_20260825_143000.DATA
+  GAS_20260825_143000.CONFIDENCE.json
+</code></pre>
+<p>Contenido de <code>.CONFIDENCE.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;service&quot;: &quot;GAS&quot;,
+  &quot;timestamp&quot;: &quot;2026-08-25T14:30:00&quot;,
+  &quot;field_confidence&quot;: {
+    &quot;importe&quot;: { &quot;decision&quot;: &quot;auto_accepted&quot;, &quot;final_score&quot;: 0.95, ... },
+    &quot;cliente&quot;: { &quot;decision&quot;: &quot;needs_review&quot;, &quot;final_score&quot;: 0.62, ... }
+  }
+}
+</code></pre>
+<h2 id="ejemplos-de-configuracion">Ejemplos de Configuración</h2>
+<h3 id="campo-monetario-critico-bloquear-errores">Campo Monetario Crítico (bloquear errores)</h3>
+<pre><code class="language-ini">Field.total_a_pagar.ConfidenceAutoAccept=0.90
+Field.total_a_pagar.ConfidenceNeedsReview=0.60
+Field.total_a_pagar.Sensitive=true
+Field.total_a_pagar.BlockOnValidationFail=true
+</code></pre>
+<h3 id="campo-opcional-permisivo-revision-humana">Campo Opcional Permisivo (revisión humana)</h3>
+<pre><code class="language-ini">Field.observaciones.ConfidenceAutoAccept=0.80
+Field.observaciones.ConfidenceNeedsReview=0.40
+Field.observaciones.Sensitive=false
+Field.observaciones.BlockOnValidationFail=false
+</code></pre>
+<h3 id="campo-fecha-estandar">Campo Fecha Estándar</h3>
+<pre><code class="language-ini">Field.vencimiento.ConfidenceAutoAccept=0.85
+Field.vencimiento.ConfidenceNeedsReview=0.50
+Field.vencimiento.Sensitive=false
+Field.vencimiento.BlockOnValidationFail=false
+</code></pre>
+<h2 id="buenas-practicas">Buenas Prácticas</h2>
+<ol>
+<li><strong>Empiece conservador</strong>: defaults (0.85/0.50) funcionan bien para la mayoría</li>
+<li><strong>Ajuste por campo</strong>: montos y comprobantes → umbrales altos + <code>Sensitive=true</code></li>
+<li><strong>Monitoree <code>field_report.confidence_summary</code></strong>: detecte campos que saturan revisión</li>
+<li><strong>No declare claves innecesarias</strong>: omita para usar defaults y mantener <code>services.ini</code> limpio</li>
+<li><strong>Valide esquema</strong>: ejecute <code>python -m backend.app.services_config</code> para verificar</li>
+</ol>
+<h2 id="validacion-de-esquema">Validación de Esquema</h2>
+<pre><code class="language-bash">python -c &quot;from backend.app.services_config import validate_services_schema; validate_services_schema(); print('OK')&quot;
+</code></pre>
+<p>Errores comunes:
+- <code>ConfidenceAutoAccept</code> ≤ <code>ConfidenceNeedsReview</code> → ajuste valores
+- Valores fuera de rango [0.0, 1.0] → corrija
+- Booleanos no son <code>true</code>/<code>false</code> → use minúsculas exactas</p>
+<h2 id="integracion-con-frontend">Integración con Frontend</h2>
+<p>El endpoint <code>/api/v1/jobs/{job_id}/review</code> incluye <code>field_confidence</code> en la respuesta. El frontend debe:
+1. Mostrar <code>decision</code> y <code>final_score</code> junto a cada campo
+2. Pre-seleccionar campos <code>needs_review</code> para edición
+3. Permitir override humano (cambiar valor, marcar <code>confirmed</code>/<code>corrected</code>)
+4. Enviar correcciones con <code>state</code> y <code>final_value</code> a <code>/api/v1/jobs/{job_id}/confirm</code></p>
+<h2 id="solucion-de-problemas">Solución de Problemas</h2>
+<table>
+<thead>
+<tr>
+<th>Síntoma</th>
+<th>Causa probable</th>
+<th>Solución</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Muchos campos en <code>needs_review</code></td>
+<td>Umbrales muy altos</td>
+<td>Baje <code>ConfidenceAutoAccept</code> o suba <code>ConfidenceNeedsReview</code></td>
+</tr>
+<tr>
+<td>Campos sensibles bloqueados correctamente</td>
+<td><code>Sensitive=true</code> + validación falla</td>
+<td>Corrija regex/validador o baje umbrales</td>
+</tr>
+<tr>
+<td>Campo <code>missing</code> pero visible en imagen</td>
+<td>OCR no detectó / banda mal configurada</td>
+<td>Ajuste <code>zones</code> o <code>band</code> en template</td>
+</tr>
+<tr>
+<td>Error validación <code>services.ini</code></td>
+<td>Sintaxis incorrecta</td>
+<td>Use <code>true</code>/<code>false</code> exactos, floats con punto decimal</td>
+</tr>
+</tbody>
+</table>
+<h2 id="referencias-tecnicas">Referencias Técnicas</h2>
+<ul>
+<li>Documentación técnica: <code>docs/tecnica/confianza-y-enrutamiento-hitl.md</code></li>
+<li>Spec: <code>runs/09-confianza-y-enrutamiento-hitl/spec.md</code></li>
+<li>Tests: <code>backend/tests/test_confidence_routing.py</code></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

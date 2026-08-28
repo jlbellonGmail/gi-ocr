@@ -1,0 +1,820 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Consola de Revisión Humana — Guía de Usuario - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#consola-de-revision-humana-guia-de-usuario" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Consola de Revisión Humana — Guía de Usuario
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tecnica/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#que-es" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué es
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujo-de-trabajo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flujo de trabajo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#la-consola-de-revision-explicacion-por-zonas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La consola de revisión — explicación por zonas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="La consola de revisión — explicación por zonas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-visor-de-imagen-arriba" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Visor de imagen (arriba)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-texto-ocr-bruto-colapsable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Texto OCR bruto (colapsable)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-resumen-de-contadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Resumen de contadores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-tabla-de-campos-zona-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Tabla de campos (zona principal)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Tabla de campos (zona principal)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#que-elegir-en-accion-operador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué elegir en "Acción operador"
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-acciones-finales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Acciones finales
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplos-tipicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplos típicos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplos típicos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caso-1-importe-con-error-de-ocr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caso 1: Importe con error de OCR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caso-2-fecha-invalida-detectada-por-validador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caso 2: Fecha inválida detectada por validador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caso-3-campo-no-encontrado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caso 3: Campo no encontrado
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#atajos-y-consejos-mobile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atajos y consejos mobile
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preguntas-frecuentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preguntas frecuentes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accesibilidad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accesibilidad
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referencia-api-para-desarrolladores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referencia API (para desarrolladores)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="consola-de-revision-humana-guia-de-usuario">Consola de Revisión Humana — Guía de Usuario</h1>
+<h2 id="que-es">Qué es</h2>
+<p>La consola de revisión es la pantalla donde usted, como operador, verifica y corrige los datos que el OCR extrajo automáticamente de un comprobante (factura de gas, luz, etc.) antes de generar el archivo final que se envía al sistema legado.</p>
+<h2 id="flujo-de-trabajo">Flujo de trabajo</h2>
+<ol>
+<li><strong>Suba el documento</strong> (foto, PDF, carpeta) en la sección "Cargar documentos".</li>
+<li><strong>Espere</strong> a que el estado en la cola pase a <strong>"Listo"</strong> (píldora verde).</li>
+<li><strong>Haga clic</strong> en el documento para abrir la consola de revisión.</li>
+<li><strong>Revise cada campo</strong> en la tabla (ver detalle abajo).</li>
+<li><strong>Corrija</strong> si el valor no coincide con la imagen.</li>
+<li><strong>Indique el motivo</strong> de cada corrección o rechazo.</li>
+<li><strong>Pulse "Confirmar revisión"</strong> al terminar.</li>
+<li><strong>Descargue</strong> el JSON final con el botón "Descargar JSON final".</li>
+</ol>
+<h2 id="la-consola-de-revision-explicacion-por-zonas">La consola de revisión — explicación por zonas</h2>
+<h3 id="1-visor-de-imagen-arriba">1. Visor de imagen (arriba)</h3>
+<ul>
+<li>Muestra la foto/PDF del comprobante.</li>
+<li><strong>Zoom</strong>: rueda del ratón (Ctrl + rueda) / pellizco en pantalla táctil / botones + − ⟲.</li>
+<li><strong>Mover</strong>: arrastrar con ratón o dedo.</li>
+<li>Úselo para comparar el valor OCR con lo que se ve en el documento.</li>
+</ul>
+<h3 id="2-texto-ocr-bruto-colapsable">2. Texto OCR bruto (colapsable)</h3>
+<ul>
+<li>Texto completo que el motor OCR leyó, sin procesar.</li>
+<li>Útil si un campo no aparece en la tabla: busque aquí el texto original.</li>
+</ul>
+<h3 id="3-resumen-de-contadores">3. Resumen de contadores</h3>
+<ul>
+<li><strong>Aceptados</strong>: campos que el sistema validó y confía (auto-aceptados).</li>
+<li><strong>Rechazados</strong>: campos que el sistema detectó como inválidos (ej. fecha malformada).</li>
+<li><strong>Faltantes</strong>: campos obligatorios que el OCR no encontró.</li>
+<li><strong>Proveedor</strong>: servicio detectado (GAS, CEVT, etc.) y confianza.</li>
+</ul>
+<h3 id="4-tabla-de-campos-zona-principal">4. Tabla de campos (zona principal)</h3>
+<table>
+<thead>
+<tr>
+<th>Columna</th>
+<th>Qué muestra</th>
+<th>Qué hace usted</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Campo</strong></td>
+<td>Nombre legible (ej. "Importe", "Cliente")</td>
+<td>Solo lectura</td>
+</tr>
+<tr>
+<td><strong>Candidato (OCR)</strong></td>
+<td>Lo que el OCR leyó en la zona del campo</td>
+<td>Solo lectura; "—" si no leyó nada</td>
+</tr>
+<tr>
+<td><strong>Valor validado (editable)</strong></td>
+<td>Valor tras validación automática (o candidato si no hay validación)</td>
+<td><strong>Edite aquí</strong> si el valor es incorrecto</td>
+</tr>
+<tr>
+<td><strong>Decisión automática</strong></td>
+<td>Badge de color: <span class="decision-badge auto">Auto-aceptado</span> <span class="decision-badge review">Requiere revisión</span> <span class="decision-badge blocked">Bloqueado</span> <span class="decision-badge missing">No encontrado</span></td>
+<td>Solo lectura; indica confianza del sistema</td>
+</tr>
+<tr>
+<td><strong>Acción operador</strong></td>
+<td>Selector: <strong>Confirmado</strong> / <strong>Corregido</strong> / <strong>Sin resolver</strong></td>
+<td>Elija según corresponda (ver abajo)</td>
+</tr>
+<tr>
+<td><strong>Motivo (req. si ≠ Confirmado)</strong></td>
+<td>Texto libre; prellenado con razón automática si el sistema rechazó el campo</td>
+<td><strong>Obligatorio</strong> si eligió "Corregido" o "Sin resolver"</td>
+</tr>
+<tr>
+<td><strong>Scores</strong></td>
+<td>Puntuación final (0.00–1.00) = 60% OCR + 40% extracción</td>
+<td>Solo lectura; mayor = más confianza</td>
+</tr>
+</tbody>
+</table>
+<h4 id="que-elegir-en-accion-operador">Qué elegir en "Acción operador"</h4>
+<ul>
+<li><strong>Confirmado</strong>: el valor es correcto, no toca nada. (Por defecto en campos <em>Auto-aceptado</em>).</li>
+<li><strong>Corregido</strong>: cambió el valor en "Valor validado". Debe escribir <strong>por qué</strong> (ej. "OCR leyó 23.345,66; real es 23.345,56").</li>
+<li><strong>Sin resolver</strong>: no puede confirmar ni corregir (ej. campo ilegible, tachado, no aplica). Debe escribir <strong>motivo</strong> (ej. "Mancha de tinta sobre el importe").</li>
+</ul>
+<blockquote>
+<p><strong>Regla</strong>: el botón <strong>"Confirmar revisión" está deshabilitado</strong> hasta que <strong>todos</strong> los campos con acción <em>Corregido</em> o <em>Sin resolver</em> tengan un motivo escrito.</p>
+</blockquote>
+<h3 id="5-acciones-finales">5. Acciones finales</h3>
+<ul>
+<li><strong>Confirmar revisión</strong>: envía sus decisiones al servidor, genera JSON confirmado.</li>
+<li><strong>Ver JSON original</strong>: abre el resultado crudo del OCR (antes de su revisión).</li>
+<li><strong>Descargar JSON final</strong>: (solo tras confirmar) descarga el archivo listo para <code>storage_bridge/</code>.</li>
+</ul>
+<h2 id="ejemplos-tipicos">Ejemplos típicos</h2>
+<h3 id="caso-1-importe-con-error-de-ocr">Caso 1: Importe con error de OCR</h3>
+<ul>
+<li><strong>Candidato</strong>: <code>$ 23.345,66</code></li>
+<li><strong>Valor validado</strong>: <code>$ 23.345,66</code> (igual, validación de formato pasó)</li>
+<li><strong>Decisión</strong>: <em>Requiere revisión</em> (score 0.72 &lt; umbral 0.88)</li>
+<li><strong>Usted ve en la imagen</strong>: <code>$ 23.345,56</code></li>
+<li><strong>Acción</strong>: <strong>Corregido</strong> → edite valor a <code>$ 23.345,56</code> → motivo: "Último dígito mal leído (6 vs 5)"</li>
+</ul>
+<h3 id="caso-2-fecha-invalida-detectada-por-validador">Caso 2: Fecha inválida detectada por validador</h3>
+<ul>
+<li><strong>Candidato</strong>: <code>31/02/2026</code></li>
+<li><strong>Rechazado automáticamente</strong>: razón "fecha inválida (31 feb)"</li>
+<li><strong>Valor validado</strong>: (vacío)</li>
+<li><strong>Decisión</strong>: <em>Bloqueado</em></li>
+<li><strong>Usted ve en la imagen</strong>: <code>28/02/2026</code></li>
+<li><strong>Acción</strong>: <strong>Corregido</strong> → edite a <code>28/02/2026</code> → motivo: "Validador detectó 31 feb; real es 28 feb"</li>
+</ul>
+<h3 id="caso-3-campo-no-encontrado">Caso 3: Campo no encontrado</h3>
+<ul>
+<li><strong>Candidato</strong>: —</li>
+<li><strong>Decisión</strong>: <em>No encontrado</em></li>
+<li><strong>Acción</strong>: <strong>Sin resolver</strong> → motivo: "Medidor no visible en foto (recorte)"</li>
+</ul>
+<h2 id="atajos-y-consejos-mobile">Atajos y consejos mobile</h2>
+<ul>
+<li><strong>Desplazamiento horizontal</strong> en la tabla: arrastre con el dedo.</li>
+<li><strong>Zoom imagen</strong>: pellizco (pinch) o doble toque.</li>
+<li><strong>Foco en input</strong>: toque el campo "Valor validado" → teclado numérico si es importe/fecha.</li>
+<li><strong>Navegación por teclado</strong>: Tab avanza campo a campo; Enter en select abre opciones.</li>
+</ul>
+<h2 id="preguntas-frecuentes">Preguntas frecuentes</h2>
+<p><strong>¿Qué pasa si confirmo sin revisar todo?</strong>
+El botón no se habilita hasta que todos los campos con acción ≠ Confirmado tengan motivo. No puede saltárselo.</p>
+<p><strong>¿Puedo volver a editar después de confirmar?</strong>
+No. Una vez confirmado, el JSON es inmutable. Si hay error, debe <strong>reintentar</strong> el job (botón "Reintentar" en la cola) y repetir la revisión.</p>
+<p><strong>¿Dónde va el JSON final?</strong>
+Se guarda en <code>output/confirmed/</code> y también se copia a <code>storage_bridge/ready/</code> para que el sistema legado lo consuma.</p>
+<p><strong>¿Se guarda mi motivo?</strong>
+Sí. Queda en el JSON confirmado bajo <code>confirmation_metadata.correction_reasons</code> para auditoría.</p>
+<h2 id="accesibilidad">Accesibilidad</h2>
+<ul>
+<li>Contraste AA en todos los estados (badges, inputs, botones).</li>
+<li>Targets táctiles ≥ 44×44 px.</li>
+<li>Labels asociados a cada input (<code>&lt;label for="..."&gt;</code>).</li>
+<li>ARIA en tabla (<code>role="grid"</code>, <code>scope="col"</code>).</li>
+<li>Orden de tabulación lógico: imagen → tabla fila a fila → botones.</li>
+</ul>
+<h2 id="referencia-api-para-desarrolladores">Referencia API (para desarrolladores)</h2>
+<ul>
+<li><code>GET /api/v1/jobs/{id}</code> — detalle del job con <code>structured_output</code></li>
+<li><code>GET /api/v1/jobs/{id}/image</code> — imagen original</li>
+<li><code>POST /api/v1/jobs/{id}/confirm</code> — body: <code>{ "confirmed_fields": [ { "field", "state", "final_value", "reason?" } ] }</code></li>
+<li><code>GET /api/v1/jobs/{id}/download</code> — JSON confirmado (solo tras confirmar)</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

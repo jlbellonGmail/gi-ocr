@@ -1,0 +1,933 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Contrato de Integración Legacy v2 — Guía de usuario - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#contrato-de-integracion-legacy-v2-guia-de-usuario" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Contrato de Integración Legacy v2 — Guía de usuario
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tecnica/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#proposito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propósito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flujo-general" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Flujo general
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formato-data-v2-para-sistema-legacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formato .DATA v2 (para sistema legacy)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Formato .DATA v2 (para sistema legacy)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#especificacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Especificación
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ejemplo-real-gas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo real (GAS)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nomenclatura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nomenclatura
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#json-confirmado-v2-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Confirmado v2 (API)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON Confirmado v2 (API)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#endpoint-de-descarga" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Endpoint de descarga
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estructura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estructura
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#campos-clave-para-integracion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Campos clave para integración
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reconciliacion-admin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reconciliación (Admin)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reconciliación (Admin)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Endpoint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpretacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpretación
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#garantias-contractuales-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Garantías contractuales v2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migracion-desde-v1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migración desde v1
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplo-completo-confirmar-y-descargar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo completo: Confirmar y descargar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preguntas-frecuentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preguntas frecuentes
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="contrato-de-integracion-legacy-v2-guia-de-usuario">Contrato de Integración Legacy v2 — Guía de usuario</h1>
+<h2 id="proposito">Propósito</h2>
+<p>Este documento describe cómo consumir la salida estructurada que gi-ocr genera para integración con sistemas externos/legacy. Cubre el formato <code>.DATA</code> v2 (archivo plano legado) y el JSON confirmado v2 (API), ambos versionados contractualmente.</p>
+<h2 id="flujo-general">Flujo general</h2>
+<ol>
+<li>Usuario sube comprobante → job en cola</li>
+<li>OCR + extracción + validación → resultado <code>ready</code></li>
+<li>Usuario revisa/confirma en consola → <code>POST /api/v1/jobs/{job_id}/confirm</code></li>
+<li>Sistema genera:</li>
+<li><strong>JSON confirmado</strong> → <code>output/confirmed/&lt;job_id&gt;.confirmed.json</code> (descargable vía API)</li>
+<li><strong><code>.DATA</code> v2</strong> → <code>storage_bridge/ready/SERVICIO_YYYYMMDD_HHMMSS.DATA</code> (para sistema legacy)</li>
+<li><strong><code>.CONFIDENCE.json</code></strong> → <code>storage_bridge/ready/...CONFIDENCE.json</code> (trazabilidad confianza)</li>
+</ol>
+<h2 id="formato-data-v2-para-sistema-legacy">Formato <code>.DATA</code> v2 (para sistema legacy)</h2>
+<h3 id="especificacion">Especificación</h3>
+<pre><code>VERSION=2
+campo1;campo2;campo3
+valor1;valor2;valor3
+</code></pre>
+<ul>
+<li><strong>Encoding</strong>: UTF-8 sin BOM</li>
+<li><strong>Separador</strong>: Punto y coma (<code>;</code>)</li>
+<li><strong>Línea 1</strong>: <code>VERSION=2</code> (identifica contrato v2)</li>
+<li><strong>Línea 2</strong>: Nombres de campos en orden de <code>services.ini</code></li>
+<li><strong>Línea 3</strong>: Valores correspondientes</li>
+<li><strong>Valores vacíos</strong>: Campo presente pero vacío (<code>;;</code>)</li>
+<li><strong>Prohibido en valores</strong>: <code>;</code>, saltos de línea</li>
+</ul>
+<h3 id="ejemplo-real-gas">Ejemplo real (GAS)</h3>
+<p>Archivo: <code>storage_bridge/ready/GAS_20260826_153045.DATA</code></p>
+<pre><code>VERSION=2
+importe;cliente;nro_medidor;a_pagar_hasta;periodo
+23.345,56;045-987654;34572;20/06/2026;01/2026
+</code></pre>
+<h3 id="nomenclatura">Nomenclatura</h3>
+<p><code>SERVICIO_YYYYMMDD_HHMMSS[.seq].DATA</code></p>
+<ul>
+<li><code>SERVICIO</code>: Mayúsculas (ej. <code>GAS</code>, <code>CEVT</code>)</li>
+<li>Timestamp: UTC</li>
+<li><code>.seq</code>: <code>_001</code>, <code>_002</code> si colisión mismo segundo</li>
+</ul>
+<h2 id="json-confirmado-v2-api">JSON Confirmado v2 (API)</h2>
+<h3 id="endpoint-de-descarga">Endpoint de descarga</h3>
+<pre><code>GET /api/v1/jobs/{job_id}/download
+</code></pre>
+<p><strong>Requiere</strong>: Job confirmado (<code>POST /api/v1/jobs/{job_id}/confirm</code> previo)</p>
+<p><strong>Response</strong>: <code>application/json</code> con <code>Content-Disposition: attachment; filename="GAS_abc12345.json"</code></p>
+<h3 id="estructura">Estructura</h3>
+<pre><code class="language-json">{
+  &quot;job_id&quot;: &quot;abc123def456...&quot;,
+  &quot;document_type&quot;: &quot;GAS&quot;,
+  &quot;confirmed_fields&quot;: {
+    &quot;importe&quot;: &quot;23.345,56&quot;,
+    &quot;cliente&quot;: &quot;045-987654&quot;,
+    &quot;nro_medidor&quot;: &quot;34572&quot;,
+    &quot;a_pagar_hasta&quot;: &quot;20/06/2026&quot;,
+    &quot;periodo&quot;: &quot;01/2026&quot;
+  },
+  &quot;validated_fields&quot;: { ... },
+  &quot;corrections&quot;: [&quot;importe&quot;],
+  &quot;summary&quot;: {
+    &quot;confirmed_count&quot;: 4,
+    &quot;corrected_count&quot;: 1,
+    &quot;unresolved_count&quot;: 0
+  },
+  &quot;confirmation_metadata&quot;: {
+    &quot;final_filename&quot;: &quot;GAS_abc12345.json&quot;,
+    &quot;confirmed_at&quot;: &quot;2026-08-26T15:30:45.123456+00:00&quot;,
+    &quot;original_source&quot;: &quot;output/uploads/random_name.jpg&quot;,
+    &quot;confidence_at_review&quot;: {
+      &quot;importe&quot;: { &quot;ocr_score&quot;: 0.92, &quot;extraction_score&quot;: 1.0, &quot;final_score&quot;: 0.95, &quot;decision&quot;: &quot;auto_accepted&quot;, ... }
+    },
+    &quot;decision_at_review&quot;: { &quot;importe&quot;: &quot;corrected&quot;, &quot;cliente&quot;: &quot;confirmed&quot;, ... },
+    &quot;correction_reasons&quot;: { &quot;importe&quot;: &quot;OCR leyó 23.345,66&quot; },
+    &quot;audit_trail&quot;: [
+      { &quot;field&quot;: &quot;importe&quot;, &quot;operator_id&quot;: &quot;op1&quot;, &quot;operator_role&quot;: &quot;reviewer&quot;, &quot;original_value&quot;: &quot;23.345,66&quot;, &quot;final_value&quot;: &quot;23.345,56&quot;, &quot;action&quot;: &quot;corrected&quot;, &quot;reason&quot;: &quot;OCR leyó 23.345,66&quot;, &quot;timestamp&quot;: &quot;2026-08-26T15:30:45.123456+00:00&quot; }
+    ],
+    &quot;contract_version&quot;: 2,
+    &quot;data_file&quot;: &quot;storage_bridge/ready/GAS_20260826_153045.DATA&quot;,
+    &quot;confidence_file&quot;: &quot;storage_bridge/ready/GAS_20260826_153045.CONFIDENCE.json&quot;,
+    &quot;data_hash&quot;: &quot;sha256:a1b2c3d4e5f6...&quot;
+  },
+  &quot;original_result_ref&quot;: &quot;abc123def456...&quot;
+}
+</code></pre>
+<h3 id="campos-clave-para-integracion">Campos clave para integración</h3>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>confirmed_fields</code></td>
+<td>Valores finales tras revisión humana (fuente de verdad)</td>
+</tr>
+<tr>
+<td><code>confirmation_metadata.contract_version</code></td>
+<td>Versión del contrato (2)</td>
+</tr>
+<tr>
+<td><code>confirmation_metadata.data_file</code></td>
+<td>Path al <code>.DATA</code> en <code>storage_bridge/ready/</code></td>
+</tr>
+<tr>
+<td><code>confirmation_metadata.data_hash</code></td>
+<td>SHA-256 del contenido <code>.DATA</code> para verificación de integridad</td>
+</tr>
+<tr>
+<td><code>confirmation_metadata.audit_trail</code></td>
+<td>Trazabilidad completa: quién cambió qué, valor original/final, motivo, cuándo</td>
+</tr>
+</tbody>
+</table>
+<h2 id="reconciliacion-admin">Reconciliación (Admin)</h2>
+<h3 id="endpoint">Endpoint</h3>
+<pre><code>POST /api/v1/admin/reconcile
+</code></pre>
+<p><strong>Requiere</strong>: Role ADMIN</p>
+<h3 id="response">Response</h3>
+<pre><code class="language-json">{
+  &quot;generated_at&quot;: &quot;2026-08-26T15:35:00.000000+00:00&quot;,
+  &quot;contract_version&quot;: 2,
+  &quot;missing_in_ready&quot;: [
+    { &quot;job_id&quot;: &quot;abc123...&quot;, &quot;service&quot;: &quot;GAS&quot;, &quot;expected_timestamp&quot;: &quot;20260826_153045&quot; }
+  ],
+  &quot;orphan_in_ready&quot;: [
+    { &quot;ready_key&quot;: &quot;GAS_20260826_153045&quot;, &quot;service&quot;: &quot;GAS&quot;, &quot;timestamp&quot;: &quot;20260826_153045&quot;, &quot;path&quot;: &quot;storage_bridge/ready/GAS_20260826_153045.DATA&quot; }
+  ],
+  &quot;content_mismatch&quot;: [],
+  &quot;summary&quot;: {
+    &quot;total_confirmed_v2&quot;: 100,
+    &quot;total_ready_v2&quot;: 98,
+    &quot;missing_count&quot;: 2,
+    &quot;orphan_count&quot;: 1,
+    &quot;mismatch_count&quot;: 0
+  },
+  &quot;report_path&quot;: &quot;output/reconciliation/reconciliation_20260826_153500.json&quot;
+}
+</code></pre>
+<h3 id="interpretacion">Interpretación</h3>
+<ul>
+<li><strong>missing_in_ready</strong>: Jobs confirmados que NO tienen <code>.DATA</code> en <code>ready/</code> → investigar fallo de escritura</li>
+<li><strong>orphan_in_ready</strong>: Archivos <code>.DATA</code> en <code>ready/</code> SIN job confirmado correspondiente → posible residuo de reintentos o procesamiento manual</li>
+<li><strong>content_mismatch</strong>: Mismo job correlacionado, pero contenido <code>.DATA</code> difiere del JSON confirmado → posible carrera de condición o re-procesamiento parcial</li>
+</ul>
+<h2 id="garantias-contractuales-v2">Garantías contractuales v2</h2>
+<table>
+<thead>
+<tr>
+<th>Garantía</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Versionado</strong></td>
+<td><code>VERSION=2</code> en <code>.DATA</code>, <code>contract_version: 2</code> en JSON</td>
+</tr>
+<tr>
+<td><strong>Idempotencia</strong></td>
+<td>Mismo contenido → mismo archivo en <code>ready/</code> (no duplicados)</td>
+</tr>
+<tr>
+<td><strong>Reintentos</strong></td>
+<td>Escritura con backoff exponencial (100/200/400/800ms)</td>
+</tr>
+<tr>
+<td><strong>Atomicidad</strong></td>
+<td>Escritura tmp → rename atómico (nunca archivos parciales)</td>
+</tr>
+<tr>
+<td><strong>Trazabilidad</strong></td>
+<td>Hash SHA-256 en JSON y <code>.CONFIDENCE.json</code></td>
+</tr>
+<tr>
+<td><strong>Reconciliación</strong></td>
+<td>Endpoint admin para detectar desfasajes</td>
+</tr>
+<tr>
+<td><strong>Errores</strong></td>
+<td>Registrados en <code>storage_bridge/failed/*_error.json</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="migracion-desde-v1">Migración desde v1</h2>
+<table>
+<thead>
+<tr>
+<th>v1 (implícito)</th>
+<th>v2 (explícito)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Sin línea VERSION</td>
+<td><code>VERSION=2</code> primera línea</td>
+</tr>
+<tr>
+<td>Sin hash</td>
+<td><code>data_hash</code> SHA-256</td>
+</tr>
+<tr>
+<td>Sin reintentos</td>
+<td>Backoff exponencial</td>
+</tr>
+<tr>
+<td>Sin errores estructurados</td>
+<td><code>failed/*_error.json</code></td>
+</tr>
+<tr>
+<td>Sin reconciliación</td>
+<td>Endpoint <code>/admin/reconcile</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Compatibilidad</strong>: Lectores v1 que esperan header en línea 1 deben saltar la primera línea si empieza con <code>VERSION=</code>. Escritores v1 no existen (solo v2 en producción).</p>
+<h2 id="ejemplo-completo-confirmar-y-descargar">Ejemplo completo: Confirmar y descargar</h2>
+<pre><code class="language-bash"># 1. Confirmar revisión (ejemplo con curl)
+curl -X POST &quot;http://localhost:8000/api/v1/jobs/abc123def456/confirm&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer &lt;token&gt;&quot; \
+  -d '{
+    &quot;confirmed_fields&quot;: [
+      {&quot;field&quot;: &quot;importe&quot;, &quot;state&quot;: &quot;corrected&quot;, &quot;final_value&quot;: &quot;23.345,56&quot;, &quot;reason&quot;: &quot;OCR leyó 23.345,66&quot;},
+      {&quot;field&quot;: &quot;cliente&quot;, &quot;state&quot;: &quot;confirmed&quot;},
+      {&quot;field&quot;: &quot;nro_medidor&quot;, &quot;state&quot;: &quot;confirmed&quot;},
+      {&quot;field&quot;: &quot;a_pagar_hasta&quot;, &quot;state&quot;: &quot;confirmed&quot;},
+      {&quot;field&quot;: &quot;periodo&quot;, &quot;state&quot;: &quot;confirmed&quot;}
+    ]
+  }'
+
+# Response incluye data_file, confidence_file, data_hash
+
+# 2. Descargar JSON confirmado
+curl -X GET &quot;http://localhost:8000/api/v1/jobs/abc123def456/download&quot; \
+  -H &quot;Authorization: Bearer &lt;token&gt;&quot; \
+  -o GAS_abc12345.json
+
+# 3. Verificar integridad del .DATA (opcional)
+# Leer data_hash del JSON y comparar con hash del archivo en storage_bridge/ready/
+</code></pre>
+<h2 id="preguntas-frecuentes">Preguntas frecuentes</h2>
+<p><strong>¿Por qué <code>VERSION=2</code> en una línea separada?</strong>
+Para no romper parsers simples que leen línea 1 = header, línea 2 = valores. Lectores v2 detectan la línea de versión y la saltan.</p>
+<p><strong>¿Qué pasa si el sistema legacy borra/mueve archivos de <code>ready/</code>?</strong>
+La reconciliación lo detecta como <code>orphan_in_ready</code> (si legacy mueve) o <code>missing_in_ready</code> (si legacy borra tras leer). gi-ocr no re-escribe automáticamente; requiere intervención manual o re-confirmación.</p>
+<p><strong>¿Puedo desactivar la escritura en <code>storage_bridge/</code>?</strong>
+No en v2 — es parte del contrato. Para desactivar, no confirmar la revisión (el JSON confirmado no se genera sin confirmación).</p>
+<p><strong>¿El hash <code>data_hash</code> cubre el <code>.CONFIDENCE.json</code> también?</strong>
+No, solo el contenido del <code>.DATA</code>. El <code>.CONFIDENCE.json</code> tiene su propia trazabilidad.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

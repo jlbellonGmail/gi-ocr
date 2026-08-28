@@ -1,0 +1,1280 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Calidad de captura mobile (control de calidad previo al OCR) - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#calidad-de-captura-mobile-control-de-calidad-previo-al-ocr" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Calidad de captura mobile (control de calidad previo al OCR)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usuario/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#proposito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propósito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#punto-de-integracion-en-el-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Punto de integración en el pipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#veredicto-agregado-de-tres-niveles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Veredicto agregado de tres niveles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#las-8-senales" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Las 8 señales
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Las 8 señales">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-blur-desenfoque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Blur / desenfoque
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-baja-resolucion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Baja resolución
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-reflejos-glare" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Reflejos / glare
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sombras-iluminacion-desigual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sombras / iluminación desigual
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-documento-cortado-fuera-de-encuadre" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Documento cortado (fuera de encuadre)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Documento cortado (fuera de encuadre)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-que-find_document_contour-no-detecta-documentos-cortados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por qué find_document_contour no detecta documentos cortados
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-mala-perspectiva" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Mala perspectiva
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-mala-iluminacion-subsobreexpuesta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Mala iluminación (sub/sobreexpuesta)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-encuadre-insuficiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Encuadre insuficiente
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reutilizacion-de-la-deteccion-de-contorno-no-duplicacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reutilización de la detección de contorno (no duplicación)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estado-de-job-nuevo-needs_new_photo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estado de job nuevo: needs_new_photo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#umbrales-configurables-por-variable-de-entorno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Umbrales configurables por variable de entorno
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#riesgo-de-calibracion-conocido-no-bloqueante-a-revisar-post-despliegue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Riesgo de calibración conocido (no bloqueante, a revisar post-despliegue)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-borde-cubiertos-y-donde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos borde cubiertos (y dónde)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ubicacion-del-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ubicación del código
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="calidad-de-captura-mobile-control-de-calidad-previo-al-ocr">Calidad de captura mobile (control de calidad previo al OCR)</h1>
+<h2 id="proposito">Propósito</h2>
+<p>El caso de uso real de este sistema es un frontend mobile-first
+(<code>frontend/</code>) donde el usuario fotografía un comprobante rápido, muchas
+veces con mala luz, encuadre apurado o superficies reflectantes (plástico,
+vidrio). Sin un filtro previo:</p>
+<ul>
+<li>Se gasta cómputo OCR (RapidOCR/ONNX, ~2.35–2.57 s/documento medido en
+  <code>01-captura-ocr-local-agil</code>, ver <code>docs/tecnica/captura-ocr-local-agil.md</code>)
+  en fotos que no tienen ninguna chance de producir campos útiles
+  (documento cortado a la mitad, foto negra/blanca casi pura).</li>
+<li>El usuario recibe recién en la pantalla de revisión (<code>job</code> en estado
+  <code>ready</code> con <code>missing_fields</code> lleno) la señal de que algo salió mal, en
+  vez de en el momento de la captura, cuando todavía tiene el documento a
+  mano para repetir la foto.</li>
+</ul>
+<p><code>backend/app/quality_gate.py</code> agrega un chequeo de calidad de imagen
+sincrónico que corre <strong>antes</strong> del motor OCR, evalúa 8 señales de calidad
+de captura y produce un veredicto de tres niveles (<code>ok</code>/<code>warn</code>/<code>reject</code>)
+que decide si el documento sigue el pipeline normal, sigue con una
+advertencia, o vuelve al usuario pidiendo una foto nueva sin gastar OCR.</p>
+<h2 id="punto-de-integracion-en-el-pipeline">Punto de integración en el pipeline</h2>
+<p><code>backend/app/capture_pipeline.py::process_document</code>, en el camino de
+imagen (no PDF, ver "Fuera de alcance"):</p>
+<pre><code class="language-python">img: Image.Image = Image.open(path)
+img, exif_applied = image_prep.apply_exif_orientation(img)
+img = img.convert(&quot;RGB&quot;)
+arr = np.array(img)
+
+quality = quality_gate.evaluate(arr)
+if quality[&quot;verdict&quot;] == &quot;reject&quot;:
+    return _quality_rejected_result(src, quality)   # no se invoca OCR
+
+prepared = image_prep.prepare(arr, exif_orientation_applied=exif_applied)
+result = process_image(prepared, src)
+result[&quot;processing_metadata&quot;][&quot;quality_gate&quot;] = quality
+return result
+</code></pre>
+<p>El chequeo corre <strong>después</strong> de <code>apply_exif_orientation</code> (para no penalizar
+como "mala perspectiva" o "documento cortado" una foto que solo estaba
+rotada por metadata) y <strong>antes</strong> de <code>image_prep.prepare</code> (deskew/
+perspectiva/escala) y de OCR (<code>ocr_engine</code>/<code>process_image</code>), coherente con
+el objetivo de "evitar gastar cómputo OCR": el chequeo debe ocurrir antes
+de cualquier preparación cara, no después.</p>
+<h2 id="veredicto-agregado-de-tres-niveles">Veredicto agregado de tres niveles</h2>
+<p><code>quality_gate.evaluate(image_np: np.ndarray) -&gt; dict</code> devuelve:</p>
+<pre><code class="language-json">{
+  &quot;verdict&quot;: &quot;ok&quot; | &quot;warn&quot; | &quot;reject&quot;,
+  &quot;reasons&quot;: [
+    {&quot;signal&quot;: &quot;&lt;id&gt;&quot;, &quot;severity&quot;: &quot;warn&quot; | &quot;reject&quot;, &quot;message&quot;: &quot;&lt;texto para UI&gt;&quot;}
+  ],
+  &quot;signals&quot;: {
+    &quot;&lt;id&gt;&quot;: {&quot;metric&quot;: &lt;float o null&gt;, &quot;verdict&quot;: &quot;ok&quot; | &quot;warn&quot; | &quot;reject&quot; | &quot;not_evaluable&quot;}
+  }
+}
+</code></pre>
+<ul>
+<li>Cada una de las 8 señales produce un sub-veredicto independiente
+  (<code>ok</code>/<code>warn</code>/<code>reject</code>), o <code>not_evaluable</code> cuando la señal no pudo
+  evaluarse (por ejemplo, no se detectó ningún contorno de documento).</li>
+<li>El veredicto agregado es el <strong>peor</strong> sub-veredicto entre todas las
+  señales evaluables (<code>reject</code> &gt; <code>warn</code> &gt; <code>ok</code>). <code>reasons</code> lista <strong>todas</strong>
+  las señales en <code>warn</code>/<code>reject</code>, no solo la primera encontrada.</li>
+<li>Semántica en <code>capture_pipeline</code>/<code>job_queue</code>:</li>
+<li><strong><code>ok</code></strong>: pipeline normal. <code>processing_metadata.quality_gate</code> queda
+    como bloque informativo neutro (<code>verdict: "ok"</code>, <code>reasons: []</code>).</li>
+<li><strong><code>warn</code></strong>: pipeline normal igual que <code>ok</code> (no se bloquea, no se pide
+    nueva foto), pero <code>processing_metadata.quality_gate.verdict == "warn"</code>
+    con las razones concretas, para que la UI de revisión (<code>renderReady</code>
+    en <code>frontend/src/app.js</code>) muestre un aviso de "posible baja confianza".</li>
+<li><strong><code>reject</code></strong>: <strong>no se invoca OCR</strong>. <code>capture_pipeline.process_document</code>
+    devuelve un resultado mínimo (mismo "shape" que el resultado normal,
+    con <code>structured_output</code>/<code>field_scores</code> vacíos) y <code>job_queue.py::_process</code>
+    deja el job en el estado <code>needs_new_photo</code> (ver más abajo), sin llamar
+    <code>store.save_original</code>.</li>
+</ul>
+<h2 id="las-8-senales">Las 8 señales</h2>
+<p>Todas las funciones viven en <code>backend/app/quality_gate.py</code>. Cada señal
+nunca lanza excepción: <code>evaluate()</code> envuelve cada cálculo en
+<code>_safe_signal</code>/<code>try-except</code>, y ante cualquier error de OpenCV o imagen
+degenerada devuelve <code>(None, None)</code> — la señal queda <code>not_evaluable</code> en vez
+de romper el pipeline (ver "Casos borde").</p>
+<h3 id="1-blur-desenfoque">1. Blur / desenfoque</h3>
+<ul>
+<li><strong>Métrica</strong>: varianza del Laplaciano (<code>cv2.Laplacian(gray, cv2.CV_64F).var()</code>)
+  sobre la imagen en escala de grises. Valores más altos = imagen más
+  nítida (más bordes de alta frecuencia).</li>
+<li><strong>Umbrales por defecto</strong>: <code>GI_OCR_QUALITY_BLUR_REJECT_BELOW=40.0</code>,
+  <code>GI_OCR_QUALITY_BLUR_WARN_BELOW=100.0</code>. <code>metric &lt; 40</code> → <code>reject</code>;
+  <code>40 &lt;= metric &lt; 100</code> → <code>warn</code>; <code>metric &gt;= 100</code> → <code>ok</code>.</li>
+<li><strong>Justificación del umbral</strong>: calibrado empíricamente contra fixtures
+  sintéticas de este repo (documento con texto denso 1200x1600, variantes
+  con <code>cv2.GaussianBlur</code> de distinto <code>sigma</code>). No calibrado contra fotos
+  reales de celular (ver "Riesgo de calibración" más abajo).</li>
+<li><strong>Limitación conocida documentada explícitamente</strong> (exigida por el
+  criterio 6 del spec): una imagen nítida pero de <strong>fondo uniforme</strong> (poco
+  detalle, por ejemplo un documento fotografiado sobre una superficie lisa
+  sin apenas texto) puede dar una varianza de Laplaciano baja aunque la
+  imagen esté perfectamente enfocada, porque la métrica depende de que
+  haya suficiente densidad de bordes/texto para ser representativa. Los
+  tests (<code>backend/tests/test_quality_gate.py</code>) usan una fixture con texto
+  denso para evitar este falso positivo en la suite, pero la limitación en
+  sí sigue existiendo en producción para documentos realmente muy
+  "vacíos" (por ejemplo, un documento casi en blanco con una sola línea de
+  texto). Es un trade-off inherente a esta métrica, no un bug.</li>
+</ul>
+<h3 id="2-baja-resolucion">2. Baja resolución</h3>
+<ul>
+<li><strong>Métrica</strong>: <code>min(height, width)</code> de la imagen tal como llega —
+  <strong>antes</strong> de <code>image_prep.normalize_scale</code> (que reduce el lado <em>mayor</em> a
+  1600px pero nunca sube resolución). El chequeo corre sobre <code>arr</code>
+  (imagen original recién orientada por EXIF), no sobre ninguna copia ya
+  preparada.</li>
+<li><strong>Umbrales por defecto</strong>: <code>GI_OCR_QUALITY_MIN_SIDE_REJECT_BELOW=500.0</code>,
+  <code>GI_OCR_QUALITY_MIN_SIDE_WARN_BELOW=900.0</code>.</li>
+<li><strong>Justificación</strong>: 500px de lado menor es, en la práctica, el punto
+  donde el texto de un comprobante fotografiado completo deja de tener
+  suficiente detalle para que RapidOCR reconozca caracteres pequeños
+  (importes, números de medidor). 900px da margen de alerta temprana
+  (<code>warn</code>) antes de llegar al piso duro. Ambos valores son heurísticos, no
+  medidos contra un corpus real (mismo riesgo de calibración).</li>
+<li><strong>Caso borde explícito (identificador estable)</strong>: una imagen con
+  resolución baja por limitación real del dispositivo (celular viejo,
+  cámara de baja resolución) no se puede corregir pidiendo "otra" foto —
+  sería la misma resolución. El identificador de razón (<code>"signal":
+  "low_resolution"</code>) es estable y distinto de cualquier otra señal, y el
+  mensaje (<code>REASON_MESSAGES["low_resolution"]</code>) lo aclara explícitamente
+  ("Si tu dispositivo no permite una foto de mayor calidad, el resultado
+  puede no ser preciso"), en vez de simplemente decir "sacá otra foto"
+  como en el resto de señales.</li>
+</ul>
+<h3 id="3-reflejos-glare">3. Reflejos / glare</h3>
+<ul>
+<li><strong>Métrica</strong>: máscara de píxeles con brillo <code>&gt;= GI_OCR_QUALITY_GLARE_BRIGHT_THRESHOLD</code>
+  (default <code>245.0</code>) sobre la imagen en escala de grises, componentes
+  conexos (<code>cv2.connectedComponentsWithStats</code>, conectividad 8), y del
+  componente más grande: <code>area_ratio</code> = área del componente / área total
+  de la imagen, <code>bbox_ratio</code> = área del bounding box del componente / área
+  total.</li>
+<li><strong>Distinción compacto vs. difuso (evita el falso positivo del criterio
+  8)</strong>: si <code>bbox_ratio &gt; GI_OCR_QUALITY_GLARE_MAX_BBOX_RATIO</code> (default
+  <code>0.5</code>), el brillo está demasiado disperso por todo el frame para ser un
+  reflejo puntual (por ejemplo, un fondo de papel blanco brillante y
+  uniforme) — se considera <code>ok</code> para esta señal específica. Ese caso lo
+  cubre, si corresponde, la señal de "mala iluminación" (que sí mira el
+  brillo global/difuso, criterio 12), no esta.</li>
+<li><strong>Umbrales por defecto</strong>: <code>GI_OCR_QUALITY_GLARE_AREA_WARN_ABOVE=0.02</code>
+  (2 % del frame), <code>GI_OCR_QUALITY_GLARE_AREA_REJECT_ABOVE=0.06</code> (6 %).
+  Solo se aplican si el componente es "compacto" (no descartado por
+  <code>bbox_ratio</code>).</li>
+<li><strong>Justificación</strong>: un reflejo que cubre más del 6 % del frame en una
+  zona compacta tiene alta probabilidad de tapar texto relevante (número
+  de cliente, importe); 2 % es el piso de advertencia temprana.</li>
+</ul>
+<h3 id="4-sombras-iluminacion-desigual">4. Sombras / iluminación desigual</h3>
+<ul>
+<li><strong>Métrica</strong>: la imagen en escala de grises se divide en una grilla 4x4;
+  se calcula el brillo medio de cada uno de los 16 bloques; la métrica es
+  <code>max(brillo_bloques) - min(brillo_bloques)</code>.</li>
+<li><strong>Umbrales por defecto</strong>: <code>GI_OCR_QUALITY_SHADOW_DIFF_WARN_ABOVE=45.0</code>,
+  <code>GI_OCR_QUALITY_SHADOW_DIFF_REJECT_ABOVE=80.0</code> (escala 0-255).</li>
+<li><strong>Distinción frente a "mala iluminación" (evita el falso positivo del
+  criterio 9)</strong>: esta señal mira <strong>varianza entre regiones</strong>, no el nivel
+  absoluto de brillo global. Una imagen uniformemente oscura (sin
+  variación entre bloques) da una diferencia baja aquí (<code>ok</code>) y dispara,
+  en cambio, la señal de "mala iluminación" (criterio 12). Verificado por
+  test (<code>test_shadow_does_not_fire_for_uniformly_dark_image</code>).</li>
+</ul>
+<h3 id="5-documento-cortado-fuera-de-encuadre">5. Documento cortado (fuera de encuadre)</h3>
+<ul>
+<li><strong>Heurística</strong>: reutiliza <code>image_prep.largest_contour_bounding_box</code>
+  (bounding box del contorno de bordes —<code>cv2.Canny</code> + <code>cv2.findContours</code>—
+  con <strong>mayor extensión espacial</strong>, no necesariamente cerrado en un
+  cuadrilátero). Si el bounding box cubre al menos
+  <code>GI_OCR_QUALITY_CUT_MIN_AREA_RATIO</code> (default <code>0.15</code>, 15 %) del área
+  total, se evalúa si toca o cruza el borde del frame en <strong>más de un
+  lado</strong>, con un margen de tolerancia
+  <code>GI_OCR_QUALITY_EDGE_TOUCH_MARGIN_RATIO</code> (default <code>0.015</code>, 1.5 % del
+  ancho/alto). Si toca 2 o más lados → <code>reject</code>. Esta señal es binaria
+  (<code>ok</code>/<code>reject</code>, sin nivel <code>warn</code> intermedio): un documento cortado no es
+  ambiguo, o está completo o no lo está.</li>
+<li><strong>Por qué bounding box y no el cuadrilátero cerrado de
+  <code>find_document_contour</code></strong>: un documento que se sale del encuadre produce
+  un contorno de bordes <em>abierto</em> (no hay gradiente detectable exactamente
+  en el límite del frame, ver más abajo "Por qué <code>find_document_contour</code>
+  no detecta documentos cortados"), cuya área <strong>encerrada</strong>
+  (<code>cv2.contourArea</code>) es casi nula — es apenas el trazo del borde visible,
+  no el interior del documento. Por eso
+  <code>image_prep.largest_contour_bounding_box</code> ordena los contornos
+  candidatos por área de <strong>bounding box</strong> (<code>w * h</code>), no por área
+  encerrada: así el contorno abierto del documento (que sí tiene un
+  bounding box grande, aunque encierre poca área) no pierde frente a un
+  trazo de texto pequeño pero cerrado (por ejemplo, el interior de una
+  "0" o una "8" en el texto del comprobante).</li>
+<li><strong>Tolerancia de margen documentada explícitamente (evita el falso
+  positivo del criterio 10)</strong>: un documento que llena legítimamente casi
+  todo el frame, sin quedar cortado (borde del documento cerca del borde
+  de la imagen pero sin tocarlo), no debe confundirse con "cortado". El
+  margen (<code>EDGE_TOUCH_MARGIN_RATIO</code>, 1.5 %) da ese colchón: solo se
+  considera "toca el borde" cuando el bounding box llega a menos de ese
+  margen del límite real del frame.</li>
+<li><strong>Por qué requiere <code>&gt;= 2</code> lados tocados, no 1</strong>: un documento
+  correctamente encuadrado que llena el frame en una sola dirección (por
+  ejemplo, ocupa todo el ancho pero tiene margen arriba/abajo) puede tocar
+  o casi tocar un solo lado sin estar cortado. Tocar 2+ lados es una señal
+  mucho más específica de que el documento efectivamente se sale del
+  cuadro por más de un costado.</li>
+</ul>
+<h4 id="por-que-find_document_contour-no-detecta-documentos-cortados">Por qué <code>find_document_contour</code> no detecta documentos cortados</h4>
+<p>Este es el detalle técnico central para entender por qué la señal de corte
+usa una función distinta a la de perspectiva/encuadre. Cuando un
+documento claro sobre fondo oscuro se sale del frame por un lado (por
+ejemplo, por la izquierda), Canny detecta gradiente en los tres bordes
+visibles (arriba, derecha, abajo) pero <strong>no</strong> en el borde que coincide
+exactamente con el límite del array de píxeles: no hay "columna -1" contra
+la cual calcular un gradiente horizontal en <code>x=0</code>, así que ese lado nunca
+aparece como línea de borde. El resultado es un contorno de bordes
+<strong>abierto</strong> (forma de "U" o "C", no un lazo cerrado). <code>cv2.findContours</code>
+sobre ese trazo delgado y abierto calcula, vía la fórmula del shoelace, un
+área encerrada minúscula (aproximadamente <code>perímetro × grosor_del_trazo</code>),
+muy por debajo de cualquier umbral razonable de <code>min_area_ratio</code> — y
+<code>cv2.approxPolyDP</code> tampoco lo reduce a un cuadrilátero de 4 lados limpio.
+Por diseño, entonces, <code>find_document_contour(...)</code> devuelve <code>None</code> para un
+documento cortado, <strong>sin necesidad de ningún caso especial en el código</strong>:
+es una consecuencia natural de cómo Canny + findContours tratan una forma
+abierta.</p>
+<h3 id="6-mala-perspectiva">6. Mala perspectiva</h3>
+<ul>
+<li><strong>Heurística</strong>: a partir del <strong>mismo</strong> cuadrilátero devuelto por
+  <code>image_prep.find_document_contour</code> (reutilizado, no reimplementado; ver
+  más abajo "Reutilización de la detección de contorno"), se calculan los
+  4 lados del cuadrilátero ordenado <code>(tl, tr, br, bl)</code>: <code>top = |tr-tl|</code>,
+  <code>bottom = |br-bl|</code>, <code>left = |bl-tl|</code>, <code>right = |br-tr|</code>. La métrica es
+  <code>max(top/bottom, bottom/top, left/right, right/left)</code> — la mayor
+  desviación entre lados opuestos que deberían ser iguales si el
+  documento estuviera fotografiado de frente sobre un plano paralelo a la
+  cámara.</li>
+<li><strong>Umbrales por defecto</strong>: <code>GI_OCR_QUALITY_PERSPECTIVE_RATIO_WARN_ABOVE=1.25</code>,
+  <code>GI_OCR_QUALITY_PERSPECTIVE_RATIO_REJECT_ABOVE=1.6</code>. Un ratio de <code>1.0</code>
+  es un rectángulo perfecto; <code>1.6</code> significa que un lado mide un 60 % más
+  que su opuesto, una deformación de perspectiva ya severa.</li>
+<li><strong>Deduplicación de causa raíz con "documento cortado" (caso borde
+  explícito del spec, criterio 11)</strong>: si <code>find_document_contour</code> devuelve
+  <code>None</code> (no se encontró un cuadrilátero de 4 lados claro — lo más común
+  cuando el documento está cortado, ver la explicación técnica arriba),
+  esta señal devuelve <code>(None, None)</code> — <strong>no evaluable</strong>, sin agregar
+  ninguna razón. No hay ningún <code>if</code> especial para "si ya se reportó
+  corte, no reportar perspectiva": simplemente, sin cuadrilátero no hay
+  con qué medir deformación, así que la señal queda muda por construcción.
+  Esto evita reportar dos razones independientes ("documento cortado" +
+  "mala perspectiva") por la misma causa raíz (contorno no detectado).
+  Verificado por test
+  (<code>test_cut_document_deduplicates_perspective_reason</code>).</li>
+</ul>
+<h3 id="7-mala-iluminacion-subsobreexpuesta">7. Mala iluminación (sub/sobreexpuesta)</h3>
+<ul>
+<li><strong>Métrica</strong>: brillo medio global (<code>gray.mean()</code>) de la imagen completa
+  en escala de grises.</li>
+<li><strong>Umbrales por defecto</strong>:
+  <code>GI_OCR_QUALITY_BRIGHTNESS_DARK_REJECT_BELOW=40.0</code>,
+  <code>GI_OCR_QUALITY_BRIGHTNESS_DARK_WARN_BELOW=70.0</code>,
+  <code>GI_OCR_QUALITY_BRIGHTNESS_BRIGHT_WARN_ABOVE=250.0</code>,
+  <code>GI_OCR_QUALITY_BRIGHTNESS_BRIGHT_REJECT_ABOVE=254.5</code>.</li>
+<li><strong>Justificación del umbral oscuro</strong>: por debajo de brillo medio 40 (de
+  255), en la práctica el texto ya no es legible ni para un humano; 70 es
+  el piso de advertencia.</li>
+<li><strong>Justificación del umbral claro, deliberadamente muy cerca del techo
+  (254.5 de 255)</strong>: este es el punto de calibración más delicado de toda
+  la feature. Los comprobantes de este proyecto (tanto fixtures sintéticas
+  como el comprobante real usado en tests,
+  <code>backend/tests/fixtures/gas_sample.jpg</code>) son, por convención, imágenes
+  de <strong>fondo blanco/muy claro con texto oscuro disperso</strong>: el brillo medio
+  global de un documento de este tipo ya está naturalmente muy cerca de
+  255 (por ejemplo, <code>gas_sample.jpg</code> mide <code>~254.1</code> de brillo medio, sin
+  estar sobreexpuesto ni tener ningún problema real). Un umbral de
+  "sobreexpuesta" más conservador (por ejemplo, <code>&gt;240</code>) generaría falsos
+  positivos sistemáticos contra el estilo de documento que este propio
+  proyecto usa como referencia — literalmente rechazaría por calidad el
+  comprobante de ejemplo del repo. Por eso el umbral de <code>reject</code> se fijó
+  apenas por encima de ese piso empírico (<code>254.5</code>), de forma que solo
+  dispare para imágenes verdaderamente "lavadas" (mean muy próximo a 255,
+  con texto ya invisible). Es una limitación reconocida de usar el brillo
+  medio <em>global</em> como métrica única (ver "Riesgo de calibración" más
+  abajo): esta señal, con estos valores por defecto, es efectivamente poco
+  sensible para detectar sobreexposición sobre documentos de fondo claro
+  con densidad de texto baja — solo atrapa los casos más extremos.</li>
+<li><strong>Distinción frente a "reflejos" y "sombras" (evita los falsos positivos
+  de los criterios 8 y 9)</strong>: esta señal solo mira el nivel medio global,
+  sin importar si el brillo está concentrado (glare) o disperso de forma
+  desigual (sombras) — esas dos situaciones las cubren señales aparte.</li>
+</ul>
+<h3 id="8-encuadre-insuficiente">8. Encuadre insuficiente</h3>
+<ul>
+<li><strong>Métrica</strong>: área del cuadrilátero devuelto por
+  <code>image_prep.find_document_contour</code> (mismo cuadrilátero que la señal de
+  perspectiva, con un umbral de detección relajado,
+  <code>GI_OCR_QUALITY_CONTOUR_MIN_AREA_RATIO=0.01</code>, para poder detectar
+  también documentos que ocupan una fracción pequeña del frame) dividida
+  por el área total de la imagen.</li>
+<li><strong>Umbral por defecto</strong>: <code>GI_OCR_QUALITY_FRAME_FILL_WARN_BELOW=0.35</code>
+  (35 % del frame). Por debajo de ese umbral → <code>warn</code>.</li>
+<li><strong>Techo <code>warn</code>, nunca <code>reject</code> (regla explícita del spec, criterio
+  13)</strong>: un documento que no llena bien el frame pero por lo demás es
+  nítido, bien iluminado y no está cortado sigue siendo procesable (con
+  posible pérdida de resolución efectiva de la región de interés). Esta
+  señal jamás agrega una razón con severidad <code>reject</code> — el código de
+  <code>_framing_signal</code> solo puede devolver <code>"warn"</code> u <code>"ok"</code>, nunca
+  <code>"reject"</code>.</li>
+<li><strong>Degradación sin inventar datos (evita el falso positivo del criterio
+  13)</strong>: si <code>find_document_contour</code> no detecta ningún cuadrilátero claro
+  (por ejemplo, fondo muy uniforme donde el documento es indistinguible),
+  esta señal devuelve <code>(None, None)</code> — no evaluable, sin afectar el
+  veredicto agregado por esta señal específica; las demás señales (blur,
+  iluminación, etc.) siguen aplicando igual. Verificado por test
+  (<code>test_framing_degrades_gracefully_without_document_contour</code>).</li>
+</ul>
+<h2 id="reutilizacion-de-la-deteccion-de-contorno-no-duplicacion">Reutilización de la detección de contorno (no duplicación)</h2>
+<p><code>image_prep.correct_perspective</code> ya implementaba, antes de esta feature,
+la detección del contorno más grande de un documento vía <code>cv2.Canny</code> +
+<code>cv2.findContours</code> + <code>cv2.approxPolyDP</code>. Esta feature <strong>extrajo</strong> esa
+lógica a dos funciones reutilizables en <code>image_prep.py</code> en vez de
+duplicarla dentro de <code>quality_gate.py</code>:</p>
+<ul>
+<li><code>image_prep._document_edge_contours(image_np)</code>: contornos crudos (sin
+  ordenar ni filtrar) sobre el mapa de bordes Canny de la imagen — base
+  compartida.</li>
+<li><code>image_prep.find_document_contour(image_np, min_area_ratio) -&gt;
+  Optional[np.ndarray]</code>: ordena los contornos candidatos por <strong>área
+  encerrada</strong> (<code>cv2.contourArea</code>, mayor primero) y devuelve el primer
+  cuadrilátero de 4 lados (<code>cv2.approxPolyDP</code>) cuya área supere
+  <code>min_area_ratio</code> del total, ya ordenado <code>(tl, tr, br, bl)</code>. Usada por:</li>
+<li><code>correct_perspective</code> (umbral histórico <code>0.3</code>, <strong>sin cambio de
+    comportamiento</strong> respecto a antes de esta feature — mismo resultado
+    para la misma imagen).</li>
+<li><code>quality_gate._document_geometry</code> (umbral relajado, <code>0.01</code> por
+    defecto) para las señales de "mala perspectiva" y "encuadre
+    insuficiente".</li>
+<li><code>image_prep.largest_contour_bounding_box(image_np) -&gt;
+  Optional[Tuple[int,int,int,int]]</code>: ordena los mismos contornos crudos
+  por <strong>área de bounding box</strong> (<code>w * h</code>, no área encerrada) y devuelve el
+  bounding box del más grande, sin exigir que cierre en un cuadrilátero.
+  Usada exclusivamente por la señal de "documento cortado" (ver el detalle
+  técnico de por qué en la sección de esa señal, arriba).</li>
+</ul>
+<p><code>correct_perspective</code> quedó reescrita para llamar a
+<code>find_document_contour(img, min_area_ratio=0.3)</code> en vez de tener su propia
+copia del bucle Canny/findContours/approxPolyDP; se verificó por test
+(<code>backend/tests/test_image_prep.py</code>, sin cambios) que el comportamiento es
+idéntico al de antes de esta feature.</p>
+<h2 id="estado-de-job-nuevo-needs_new_photo">Estado de job nuevo: <code>needs_new_photo</code></h2>
+<p><code>backend/app/job_queue.py::JobQueue._process</code> — antes de esta feature, el
+flujo era <code>queued → processing → ready | failed</code>. Con esta feature:</p>
+<pre><code>queued → processing → ready | needs_new_photo | failed
+</code></pre>
+<ul>
+<li><strong>Nombre elegido</strong>: <code>needs_new_photo</code> (constante
+  <code>quality_gate.REJECTED_JOB_STATUS</code>, importada en <code>job_queue.py</code>). Se
+  prefirió sobre alternativas como <code>rejected_quality</code> o <code>quality_rejected</code>
+  porque describe la <strong>acción que el usuario debe tomar</strong> (sacar una foto
+  nueva), coherente con el resto de estados del sistema que describen
+  situación/acción sobre el job (<code>queued</code>, <code>processing</code>, <code>ready</code>,
+  <code>confirmed</code>, <code>failed</code>), y es el texto que efectivamente se muestra en el
+  frontend.</li>
+<li><strong>Cuándo se asigna</strong>: <code>job_queue.py::_process</code>, después de llamar a
+  <code>capture_pipeline.process_document</code>, inspecciona
+  <code>result["processing_metadata"]["quality_gate"]["verdict"]</code>. Si es
+  <code>"reject"</code>, el job pasa a <code>needs_new_photo</code> (en vez de <code>"ready"</code>).</li>
+<li><strong>No se llama <code>store.save_original</code></strong> en este camino — igual que en el
+  camino <code>failed</code> existente. Esto es lo que garantiza, sin código
+  adicional en <code>main.py</code>, que:</li>
+<li><code>POST /api/v1/jobs/{job_id}/confirm</code> siga devolviendo <code>404</code> (vía
+    <code>store.original_exists(job_id)</code>, que depende únicamente de si existe
+    el archivo <code>jobs/{id}.json</code> escrito por <code>save_original</code>) — criterio 18
+    del spec.</li>
+<li><code>GET /api/v1/jobs/{job_id}/download</code> y <code>/original</code> también sigan dando
+    404/409 sin cambios de código.</li>
+<li><strong><code>retry</code> sigue funcionando sin cambios de código</strong> — criterio 19 del
+  spec. <code>JobQueue.retry()</code> solo bloquea los estados <code>"ready"</code> y
+  <code>"confirmed"</code>:
+  <code>python
+  if job["status"] in ("ready", "confirmed"):
+      return False</code>
+  <code>"needs_new_photo"</code> no está en esa tupla, así que <code>retry()</code> reencola el
+  job normalmente (<code>status = "queued"</code>, se reprocesa el mismo archivo).
+  Como <code>quality_gate.evaluate</code> es una función pura y determinística sobre
+  los mismos píxeles de entrada (sin aleatoriedad, sin estado global), un
+  reintento sobre el mismo archivo produce <strong>el mismo veredicto y las
+  mismas razones</strong>, verificado por test
+  (<code>test_job_queue_retry_on_rejected_job_is_deterministic</code>,
+  <code>test_api_retry_on_rejected_job_returns_200_and_requeues</code>).</li>
+</ul>
+<h2 id="umbrales-configurables-por-variable-de-entorno">Umbrales configurables por variable de entorno</h2>
+<p>Igual patrón que <code>upload_validation.max_upload_bytes</code>
+(<code>GI_OCR_MAX_UPLOAD_BYTES</code>): cada umbral se lee de una variable de entorno
+en cada llamada (no se cachea al importar el módulo), con un default
+razonable si la variable no está definida, está vacía o no es un <code>float</code>
+válido. Los umbrales son <strong>globales al sistema</strong>, no configuración por
+servicio en <code>backend/config/services.ini</code>: el chequeo de calidad corre
+<strong>antes</strong> de que se clasifique el proveedor/servicio del documento (esa
+clasificación ocurre dentro del propio OCR, en
+<code>capture_pipeline.process_image</code>), así que no hay forma de tener un umbral
+"por servicio" sin invertir el orden del pipeline — decisión ya declarada
+explícitamente como riesgo/supuesto en <code>runs/06-calidad-captura-mobile/
+spec.md</code> y no objetada por la auditoría (<code>audit-1.md</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Señal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GI_OCR_QUALITY_BLUR_REJECT_BELOW</code></td>
+<td><code>40.0</code></td>
+<td>Blur</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_BLUR_WARN_BELOW</code></td>
+<td><code>100.0</code></td>
+<td>Blur</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_MIN_SIDE_REJECT_BELOW</code></td>
+<td><code>500.0</code></td>
+<td>Baja resolución</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_MIN_SIDE_WARN_BELOW</code></td>
+<td><code>900.0</code></td>
+<td>Baja resolución</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_GLARE_BRIGHT_THRESHOLD</code></td>
+<td><code>245.0</code></td>
+<td>Reflejos</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_GLARE_AREA_WARN_ABOVE</code></td>
+<td><code>0.02</code></td>
+<td>Reflejos</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_GLARE_AREA_REJECT_ABOVE</code></td>
+<td><code>0.06</code></td>
+<td>Reflejos</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_GLARE_MAX_BBOX_RATIO</code></td>
+<td><code>0.5</code></td>
+<td>Reflejos (compacidad)</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_SHADOW_DIFF_WARN_ABOVE</code></td>
+<td><code>45.0</code></td>
+<td>Sombras</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_SHADOW_DIFF_REJECT_ABOVE</code></td>
+<td><code>80.0</code></td>
+<td>Sombras</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_BRIGHTNESS_DARK_REJECT_BELOW</code></td>
+<td><code>40.0</code></td>
+<td>Mala iluminación</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_BRIGHTNESS_DARK_WARN_BELOW</code></td>
+<td><code>70.0</code></td>
+<td>Mala iluminación</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_BRIGHTNESS_BRIGHT_WARN_ABOVE</code></td>
+<td><code>250.0</code></td>
+<td>Mala iluminación</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_BRIGHTNESS_BRIGHT_REJECT_ABOVE</code></td>
+<td><code>254.5</code></td>
+<td>Mala iluminación</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_EDGE_TOUCH_MARGIN_RATIO</code></td>
+<td><code>0.015</code></td>
+<td>Documento cortado</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_CUT_MIN_AREA_RATIO</code></td>
+<td><code>0.15</code></td>
+<td>Documento cortado</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_CONTOUR_MIN_AREA_RATIO</code></td>
+<td><code>0.01</code></td>
+<td>Perspectiva / encuadre (detección de contorno)</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_PERSPECTIVE_RATIO_WARN_ABOVE</code></td>
+<td><code>1.25</code></td>
+<td>Mala perspectiva</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_PERSPECTIVE_RATIO_REJECT_ABOVE</code></td>
+<td><code>1.6</code></td>
+<td>Mala perspectiva</td>
+</tr>
+<tr>
+<td><code>GI_OCR_QUALITY_FRAME_FILL_WARN_BELOW</code></td>
+<td><code>0.35</code></td>
+<td>Encuadre insuficiente</td>
+</tr>
+</tbody>
+</table>
+<h2 id="riesgo-de-calibracion-conocido-no-bloqueante-a-revisar-post-despliegue">Riesgo de calibración conocido (no bloqueante, a revisar post-despliegue)</h2>
+<p>Todos los valores por defecto de la tabla anterior se calibraron
+empíricamente contra <strong>fixtures 100% sintéticas</strong> (rectángulos, texto
+dibujado con PIL, transformaciones OpenCV controladas —
+<code>cv2.GaussianBlur</code>, <code>cv2.warpPerspective</code>, desplazamientos de brillo
+aditivos/multiplicativos), siguiendo la política de este repo de no
+versionar comprobantes reales ni derivarlos de <code>storage_bridge/</code>. Es un
+riesgo conocido y explícitamente reconocido (señalado también por la
+auditoría, <code>runs/06-calidad-captura-mobile/audit-1.md</code>): estos umbrales
+<strong>no</strong> están calibrados contra un corpus de fotos reales de celular
+(variedad real de cámaras, condiciones de luz, tipos de papel, reflejos de
+plástico/vidrio). Quedan como candidatos razonables de partida, no como
+valores definitivos. Se recomienda revisar/recalibrar contra datos reales
+una vez que el flujo esté en uso, ajustando las variables de entorno de la
+tabla sin necesidad de cambios de código. Ver también
+<code>runs/06-calidad-captura-mobile/decision.md</code>.</p>
+<h2 id="casos-borde-cubiertos-y-donde">Casos borde cubiertos (y dónde)</h2>
+<p>Todos verificados por test en <code>backend/tests/test_quality_gate.py</code>:</p>
+<ul>
+<li>Señales simultáneas en <code>reject</code> (documento cortado + baja resolución):
+  el veredicto agregado es <code>reject</code> una sola vez, con <strong>todas</strong> las
+  razones listadas (<code>test_verdict_worst_subverdict_wins_with_all_reasons_listed</code>).</li>
+<li>Severidad mixta (una señal en <code>warn</code>, otra en <code>reject</code>): el agregado es
+  <code>reject</code>, pero ambas razones quedan listadas
+  (<code>test_verdict_mixed_severity_reject_wins_but_both_listed</code>).</li>
+<li>Deduplicación de causa raíz entre "documento cortado" y "mala
+  perspectiva" (<code>test_cut_document_deduplicates_perspective_reason</code>).</li>
+<li>Imagen muy pequeña <strong>además de</strong> con documento cortado: ambas señales
+  se disparan de forma independiente y legítima, sin que una suprima a la
+  otra (mismo test de "señales simultáneas" arriba).</li>
+<li>Identificador de razón estable para "baja resolución por limitación real
+  del dispositivo" (<code>test_low_resolution_reason_identifier_is_stable_and_distinguishable</code>).</li>
+<li>PDF cargado como documento: no pasa por este chequeo (mismo patrón que
+  <code>apply_exif_orientation</code>, ver <code>docs/tecnica/correccion-orientacion-exif.md</code>,
+  "Fuera de alcance") — <code>test_pdf_path_bypasses_quality_gate</code>, con spy
+  sobre <code>quality_gate.evaluate</code> verificando que no se invoca.</li>
+<li>Imagen con contenido degenerado (todo negro, todo blanco, <code>1x1</code> px): no
+  lanza excepción, degrada a <code>reject</code> con razones claras
+  (<code>test_degenerate_all_black_image_does_not_raise_and_rejects</code>,
+  <code>test_degenerate_all_white_image_does_not_raise_and_rejects</code>,
+  <code>test_degenerate_1x1_image_does_not_raise</code>).</li>
+<li>Imagen ilegible/corrupta que pasó la validación de firma pero falla al
+  abrirse con Pillow: se trata como error de procesamiento (<code>status ==
+  "failed"</code>, camino de excepción ya existente en <code>JobQueue._process</code>), no
+  como rechazo de calidad — son conceptualmente distintos
+  (<code>test_process_document_corrupt_file_raises_not_quality_reject</code>).</li>
+<li>Reintento (<code>retry</code>) de un job rechazado por calidad: mismo veredicto,
+  determinístico, ni excepción ni resultado distinto por azar
+  (<code>test_evaluate_is_deterministic</code>,
+  <code>test_job_queue_retry_on_rejected_job_is_deterministic</code>,
+  <code>test_api_retry_on_rejected_job_returns_200_and_requeues</code>).</li>
+<li>Umbrales configurables por variable de entorno, con fallback a default
+  ante valor ausente/inválido (<code>test_threshold_overridable_by_env_var</code>,
+  <code>test_threshold_invalid_env_var_falls_back_to_default</code>).</li>
+<li>Regresión: un job que sigue el pipeline normal (<code>ok</code>/<code>warn</code>) sigue
+  llamando <code>store.save_original</code> como antes de esta feature
+  (<code>test_job_queue_ready_job_still_calls_save_original</code>).</li>
+<li>Criterios 18/19 verificados también a nivel HTTP real (<code>TestClient</code>
+  sobre <code>backend/app/main.py</code>):
+  <code>test_api_job_rejected_by_quality_gate_returns_needs_new_photo_status</code>,
+  <code>test_api_confirm_on_rejected_job_returns_404</code>,
+  <code>test_api_retry_on_rejected_job_returns_200_and_requeues</code>.</li>
+</ul>
+<h2 id="ubicacion-del-codigo">Ubicación del código</h2>
+<ul>
+<li><code>backend/app/quality_gate.py</code>: las 8 señales, el veredicto agregado
+  (<code>evaluate</code>), los umbrales configurables y los mensajes por razón.</li>
+<li><code>backend/app/image_prep.py</code>: <code>find_document_contour</code> y
+  <code>largest_contour_bounding_box</code> (extraídas/refactorizadas desde
+  <code>correct_perspective</code>, reutilizadas por <code>quality_gate.py</code>).</li>
+<li><code>backend/app/capture_pipeline.py::process_document</code>: punto de
+  integración; <code>_quality_rejected_result</code> (resultado mínimo sin OCR).</li>
+<li><code>backend/app/job_queue.py::JobQueue._process</code>: estado nuevo
+  <code>needs_new_photo</code>.</li>
+<li><code>frontend/src/app.js</code>, <code>frontend/src/style.css</code>: <code>renderNeedsNewPhoto</code>
+  (estado nuevo, mismo patrón visual <code>pill</code>/<code>error-box</code> que <code>failed</code>),
+  aviso <code>warn-box</code> dentro de <code>renderReady</code>, contador <code>stat-quality</code> en el
+  dashboard.</li>
+<li><code>backend/tests/test_quality_gate.py</code>: cobertura de tests.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1020 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Administración de servicios/documentos (services.ini) — documentación técnica - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#administracion-de-serviciosdocumentos-servicesini-documentacion-tecnica" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Administración de servicios/documentos (services.ini) — documentación técnica
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usuario/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#alcance-que-toca-esta-feature-y-que-no" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alcance: qué toca esta feature y qué no
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#esquema-formal-de-servicesini" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Esquema formal de services.ini
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Esquema formal de services.ini">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-seccion-servicio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por sección (servicio)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#por-campo-declarado-en-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por campo declarado en Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#por-que-regex-es-obligatoria-y-patterns-es-solo-documental" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por qué Regex es obligatoria y Patterns es solo documental
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mensajes-de-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mensajes de error
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#el-bug-de-desconexion-corregido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        El bug de desconexión corregido
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="El bug de desconexión corregido">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ejemplo-concreto-cliente-de-gas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo concreto: cliente de GAS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#la-correccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        La corrección
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fieldnombrepatterns-metadata-documental-nunca-aplicada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Field.&lt;nombre&gt;.Patterns: metadata documental, nunca aplicada
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tercer-mecanismo-muerto-zonespatterns-en-minuscula" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tercer mecanismo muerto: zones=/patterns= en minúscula
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relacion-entre-servicesini-y-document_servicesjson" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relación entre services.ini y document_services.json
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#endpoint-de-introspeccion-get-apiv1servicesservice_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Endpoint de introspección GET /api/v1/services[/{service_id}]
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#algoritmo-de-validacion-resumen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algoritmo de validación (resumen)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-borde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos borde
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tests
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="administracion-de-serviciosdocumentos-servicesini-documentacion-tecnica">Administración de servicios/documentos (<code>services.ini</code>) — documentación técnica</h1>
+<p>Profesionaliza el alta de servicios/documentos configurables en
+<code>backend/config/services.ini</code> (ADR-007, ver
+<a href="../arquitectura/">arquitectura.md</a>): valida su esquema formalmente,
+corrige una desconexión real entre esa configuración y el motor de
+extracción, y expone un endpoint de solo lectura para introspección. Vive
+dentro del subsistema <strong>DATA evaluator</strong>
+(<code>backend/app/services_config.py</code>, <code>backend/app/extraction_engine.py</code>,
+<code>backend/app/document_services.py</code>, <code>scripts/evaluate_ocr_service.py</code>).</p>
+<h2 id="alcance-que-toca-esta-feature-y-que-no">Alcance: qué toca esta feature y qué no</h2>
+<p><code>services.ini</code> <strong>no</strong> es la única forma de definir un servicio/proveedor
+en este repo. Hoy existen <strong>tres mecanismos independientes</strong>:</p>
+<ol>
+<li><strong><code>services.ini</code> + <code>services_config.py</code> + <code>extraction_engine.py</code></strong> —
+   usado solo por el DATA evaluator (<code>scripts/evaluate_ocr_service.py</code>).
+   <strong>Es el único que toca esta feature.</strong></li>
+<li><strong><code>backend/app/templates/providers.py</code></strong> — dataclasses Python
+   hardcodeadas por proveedor (<code>ProviderTemplate</code>/<code>FieldTemplate</code>) con
+   ROI + anclas + regex + validadores tipados, usadas por el <strong>pipeline
+   HTTP en vivo</strong> (<code>backend/app/capture_pipeline.py</code>, <code>classifier.py</code>,
+   endpoint <code>/api/v1/jobs</code>). <strong>No afectado por esta feature.</strong> Editar
+   <code>services.ini</code> <strong>no</strong> cambia el comportamiento de captura en vivo —
+   son sistemas de configuración completamente distintos, con motores de
+   Python separados. Un futuro mantenedor no debe asumir lo contrario.</li>
+<li><strong><code>backend/app/gas_extractor.py</code></strong> — extractor Python específico de
+   GAS, usado solo por <code>t3_2_orchestrator.py</code> (fixtures T3.2 antiguas).
+   Tampoco afectado.</li>
+</ol>
+<p>Unificar los tres mecanismos es un cambio de arquitectura mayor, no
+pedido por el ítem <code>16</code> de <code>ROADMAP.md</code> (que dice explícitamente "en
+<code>services.ini</code>"), y queda fuera de alcance.</p>
+<h2 id="esquema-formal-de-servicesini">Esquema formal de <code>services.ini</code></h2>
+<p>Validado por <code>backend/app/services_config.py::validate_services_schema()</code>
+(y las funciones internas <code>_validate_section_schema</code>/
+<code>_validate_field_block</code> que usa). No usa caché: relee el archivo en cada
+llamada (<code>_load_parser()</code>), por lo que cambios en caliente se reflejan sin
+reiniciar el proceso — confirmado por
+<code>test_hot_reload_reflects_changes_without_restart</code> en
+<code>backend/tests/test_services_config_schema.py</code>.</p>
+<h3 id="por-seccion-servicio">Por sección (servicio)</h3>
+<table>
+<thead>
+<tr>
+<th>Clave</th>
+<th>Obligatoria</th>
+<th>Regla</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Title</code></td>
+<td>sí</td>
+<td>No vacía.</td>
+</tr>
+<tr>
+<td><code>Fields</code></td>
+<td>sí</td>
+<td>Lista no vacía, separada por comas, sin nombres duplicados (comparación case-insensitive) ni vacíos.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="por-campo-declarado-en-fields">Por campo declarado en <code>Fields</code></h3>
+<p>Cada nombre listado en <code>Fields</code> debe tener un bloque
+<code>Field.&lt;nombre&gt;.*</code> con:</p>
+<table>
+<thead>
+<tr>
+<th>Clave</th>
+<th>Obligatoria</th>
+<th>Regla</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Label</code></td>
+<td>sí</td>
+<td>No vacía.</td>
+</tr>
+<tr>
+<td><code>Type</code></td>
+<td>sí</td>
+<td>Uno de <code>text</code>, <code>amount</code>, <code>date</code> (<code>services_config.ALLOWED_FIELD_TYPES</code>).</td>
+</tr>
+<tr>
+<td><code>Required</code></td>
+<td>sí</td>
+<td>Exactamente <code>true</code> o <code>false</code> (comparación case-sensitive; no se aceptan variantes localizadas como <code>si</code>/<code>no</code>/<code>True</code>, ni se asume <code>false</code> por defecto ante clave ausente o vacía).</td>
+</tr>
+<tr>
+<td><code>Example</code></td>
+<td>sí</td>
+<td>No vacía.</td>
+</tr>
+<tr>
+<td><code>Regex</code></td>
+<td><strong>sí</strong></td>
+<td>Debe compilar con <code>re.compile</code> y tener <strong>al menos un grupo de captura</strong>.</td>
+</tr>
+<tr>
+<td><code>Patterns</code></td>
+<td>no</td>
+<td>Opcional, puramente <strong>documental</strong> (ver más abajo). Si está presente, solo se exige que no esté vacía; no se valida su formato.</td>
+</tr>
+</tbody>
+</table>
+<p>No se permiten <strong>bloques huérfanos</strong>: si existe cualquier clave
+<code>Field.&lt;nombre&gt;.*</code> para un <code>&lt;nombre&gt;</code> que no está en <code>Fields</code> de esa
+sección, la validación falla.</p>
+<h3 id="por-que-regex-es-obligatoria-y-patterns-es-solo-documental">Por qué <code>Regex</code> es obligatoria y <code>Patterns</code> es solo documental</h3>
+<p>Decisión tomada explícitamente en el intento 2 del spec (ver
+<code>runs/16-administracion-servicios-documentos/decision.md</code>), corrigiendo
+una ambigüedad señalada por el <code>reviewer-agent</code> en el intento 1: si
+<code>Patterns</code> fuera una alternativa válida a <code>Regex</code>, un campo declarado
+solo con <code>Patterns</code> pasaría la validación "profesional" y sin embargo
+seguiría cayendo para siempre en el fallback genérico (ver más abajo) —
+reproduciendo exactamente el defecto de "documentación muerta" que esta
+feature corrige. Por eso <code>Regex</code> es obligatoria para todo campo válido y
+<code>Patterns</code> pasa a ser exclusivamente informativo (palabras clave de
+anclaje separadas por <code>|</code>, sin grupo de captura) para quien lee
+<code>services.ini</code> a ojo — nunca aplicado por el motor de extracción real.</p>
+<h3 id="mensajes-de-error">Mensajes de error</h3>
+<p>Todos los errores de esquema levantan
+<code>services_config.ServicesConfigError</code> (subclase de <code>ValueError</code>) con un
+mensaje que <strong>siempre</strong> nombra sección, campo y clave exacta
+involucrados — nunca una traza cruda de <code>configparser</code>/<code>KeyError</code>/
+<code>re.error</code>. Ejemplos reales (ver
+<code>backend/tests/test_services_config_schema.py</code>):</p>
+<ul>
+<li><code>Sección [TEST]: falta la clave 'Fields' o está vacía (debe listar al
+  menos un nombre de campo separado por comas).</code></li>
+<li><code>Sección [TEST], campo 'cliente': falta 'Field.cliente.Label' (no puede
+  estar vacío).</code></li>
+<li><code>Sección [TEST]: existe un bloque 'Field.huerfano.*' pero 'huerfano' no
+  está declarado en 'Fields' de esa sección (bloque huérfano).</code></li>
+<li><code>Sección [TEST], campo 'email': 'Field.email.Type' inválido ('email').
+  Debe ser uno de: text, amount, date.</code></li>
+<li><code>Sección [TEST], campo 'importe': 'Field.importe.Required' debe ser
+  exactamente 'true' o 'false' (valor actual: 'si').</code></li>
+<li><code>Sección [TEST], campo 'importe': 'Field.importe.Regex' no compila como
+  expresión regular válida: missing ), unterminated subpattern at
+  position 0.</code></li>
+<li><code>Sección [TEST], campo 'importe': 'Field.importe.Regex' debe tener al
+  menos un grupo de captura, para no capturar el match completo
+  (incluyendo texto de anclaje) como valor.</code></li>
+<li><code>Sección [TEST], campo 'cliente': falta 'Field.cliente.Regex'
+  (obligatoria para todo campo — declarar únicamente
+  'Field.cliente.Patterns' no es suficiente, porque el motor de
+  extracción real nunca la aplica).</code></li>
+<li><code>Sección [TEST]: campo duplicado 'importe' en 'Fields'.</code></li>
+</ul>
+<p>También se envuelven con el mismo tipo de mensaje accionable (no traza
+cruda):</p>
+<ul>
+<li>Encoding no UTF-8/corrupto (<code>UnicodeDecodeError</code> durante
+  <code>configparser.read()</code>).</li>
+<li>Secciones duplicadas (<code>configparser.DuplicateSectionError</code>), con
+  sección y línea si <code>configparser</code> la expone.</li>
+<li>Claves duplicadas dentro de una misma sección
+  (<code>configparser.DuplicateOptionError</code>).</li>
+</ul>
+<h2 id="el-bug-de-desconexion-corregido">El bug de desconexión corregido</h2>
+<p><strong>Verificado leyendo el código real, no asumido.</strong> Antes de esta feature,
+<code>services_config.py::get_service_config()</code> solo exponía tres claves por
+servicio: <code>fields</code> (lista de <code>Fields</code>), <code>zones</code> (clave de sección en
+minúscula <code>zones=</code>, formato <code>campo:x1,y1,x2,y2</code>) y <code>patterns</code> (clave de
+sección en minúscula <code>patterns=</code>, formato <code>campo:regex</code>). <strong>Ninguna</strong>
+sección real de <code>services.ini</code> (<code>GAS</code>, <code>CEVT</code>) declara esas dos últimas
+claves en minúscula — solo existen los bloques <code>Field.&lt;nombre&gt;.Patterns</code>/
+<code>Field.&lt;nombre&gt;.Regex</code> por campo, con el prefijo <code>Field.</code> y mayúscula
+inicial. El resultado: <code>zones</code> y <code>patterns</code> en el dict devuelto por
+<code>get_service_config()</code> estaban <strong>siempre vacíos</strong>, y
+<code>extraction_engine.py::extract_service_fields()</code> nunca llegaba a aplicar
+ninguna regex declarativa — caía siempre en <code>_extract_generic()</code>, una
+heurística genérica por palabra clave en el <strong>nombre del campo</strong>, no en
+el contenido de <code>services.ini</code>.</p>
+<h3 id="ejemplo-concreto-cliente-de-gas">Ejemplo concreto: <code>cliente</code> de <code>GAS</code></h3>
+<p><code>services.ini</code> declara <code>Field.cliente.Example=045-987654</code> (con guion) y
+<code>Field.cliente.Regex=(?:cliente|nro cliente|n° cliente|numero
+cliente)\D{0,40}([0-9\-]{6,20})</code>.</p>
+<p>Para el texto OCR normalizado <code>"Medidor 12345678 Cliente 045-987654"</code>:</p>
+<ul>
+<li><code>_extract_generic("cliente", texto)</code> busca <code>\d{8,10}</code> (dígitos puros,
+  sin guion ni anclaje de contexto) en <strong>todo</strong> el texto. <code>"12345678"</code>
+  (el número de <strong>medidor</strong>, no de cliente) es una corrida exacta de 8
+  dígitos y matchea primero — se devuelve tal cual. <strong>Resultado
+  incorrecto: <code>"12345678"</code>.</strong></li>
+<li><code>Field.cliente.Regex</code>, si se aplica, ancla primero a la palabra
+  <code>"cliente"</code> y solo entonces captura el grupo <code>([0-9\-]{6,20})</code> que
+  sigue — devuelve correctamente <code>"045-987654"</code>.</li>
+</ul>
+<p>Este no es un caso hipotético: es el resultado real que produce el
+código, verificado por trazado directo y cubierto por
+<code>backend/tests/test_services_config_schema.py::
+test_extract_generic_reproduces_the_documented_bug</code> (reproduce el bug
+tal como existía) y
+<code>test_extract_service_fields_gas_cliente_uses_declared_regex</code>
+(verifica la corrección).</p>
+<h3 id="la-correccion">La corrección</h3>
+<ol>
+<li><code>services_config.get_service_field_regex(service)</code> — función nueva
+   que expone, por campo, la regex declarada en <code>Field.&lt;nombre&gt;.Regex</code>
+   (el namespace <strong>real</strong>, con el prefijo <code>Field.</code> y mayúscula inicial —
+   distinto del namespace <code>zones=</code>/<code>patterns=</code> en minúscula, que sigue
+   sin uso real).</li>
+<li><code>services_config.get_service_config(service)["field_regex"]</code> — se
+   agregó esta clave nueva al dict que ya devolvía la función, sin
+   remover <code>zones</code>/<code>patterns</code> (se conservan por compatibilidad hacia
+   atrás, documentadas como muertas más abajo).</li>
+<li>
+<p><code>extraction_engine.py::extract_service_fields()</code> — se agregó
+   <code>_extract_with_field_regex(field, text, field_regex)</code>, que aplica la
+   regex declarada con <code>re.search(..., flags=re.IGNORECASE)</code> y devuelve
+   <code>match.group(1)</code> (siempre el primer grupo de captura, nunca
+   <code>match.group(0)</code> — a diferencia de <code>_extract_with_patterns</code>, que sí
+   cae a <code>group(0)</code> si no hay grupos, un comportamiento que aquí se evita
+   porque el esquema ya garantiza al menos un grupo). Se intercala en el
+   orden de resolución de cada campo, <strong>antes</strong> del fallback genérico:</p>
+</li>
+<li>
+<p>Si hay zona configurada para el campo (mecanismo <code>zones=</code>, hoy sin
+      uso real) y hay imagen, se intenta con el texto de esa zona.</p>
+</li>
+<li><strong>Si el campo declara <code>Field.&lt;nombre&gt;.Regex</code>, se aplica sobre el
+      texto completo normalizado</strong> (el camino real, antes inexistente).</li>
+<li>Si no hay <code>Regex</code> declarada o no matcheó, se intenta con
+      <code>Patterns</code> de sección en minúscula (mecanismo legado, hoy siempre
+      vacío en <code>services.ini</code> real).</li>
+<li>Fallback final: <code>_extract_generic()</code>, la heurística por palabra
+      clave — sin cambios, se mantiene como red de seguridad.</li>
+</ol>
+<p><code>_extract_generic()</code> <strong>no se modificó</strong>. Sigue siendo alcanzado solo si:</p>
+<ul>
+<li>un campo llega a <code>extract_service_fields</code> sin <code>Field.&lt;nombre&gt;.Regex</code>
+  declarada (una configuración que no pasó por
+  <code>validate_services_schema()</code>, por ejemplo un <code>services.ini</code> editado a
+  mano sin revalidar — cubierto por
+  <code>test_extract_generic_still_used_as_fallback_without_declared_regex</code>),
+  o</li>
+<li>la regex declarada es válida pero no matchea nada en el texto real
+  (regex demasiado estricta o texto sin el dato — comportamiento
+  preexistente, sin cambios; el campo termina en <code>missing_fields</code>, no
+  con un valor incorrecto).</li>
+</ul>
+<h2 id="fieldnombrepatterns-metadata-documental-nunca-aplicada"><code>Field.&lt;nombre&gt;.Patterns</code>: metadata documental, nunca aplicada</h2>
+<p><code>extraction_engine._extract_with_patterns</code> existe y funciona (hace
+<code>re.search</code> y devuelve <code>group(1)</code> si hay grupos, si no <code>group(0)</code>), pero
+hoy solo se alimenta de <code>services_config.get_service_patterns()</code>, que lee
+la clave de sección en minúscula <code>patterns=</code> — <strong>no</strong> el namespace
+<code>Field.&lt;nombre&gt;.Patterns</code>. Ninguna sección real de <code>services.ini</code>
+declara esa clave de sección en minúscula, así que
+<code>get_service_patterns()</code> siempre devuelve <code>{}</code> para <code>GAS</code>/<code>CEVT</code>.</p>
+<p>Los valores reales de <code>Field.&lt;nombre&gt;.Patterns</code> (ej.
+<code>Field.cliente.Patterns=cliente|nro cliente|n° cliente|numero cliente</code>)
+son alternancias de palabras clave <strong>sin ningún grupo de captura</strong>. Si se
+conectaran tal cual a <code>_extract_with_patterns</code>, devolverían el texto del
+ancla matcheado (<code>match.group(0)</code>, ej. la palabra <code>"cliente"</code> misma), no
+el valor real — conectarlo sin rediseñar el formato produciría salidas
+incorrectas, no una alternativa funcional a <code>Regex</code>. Por eso esta
+feature deja <code>Patterns</code> como metadata opcional y puramente documental
+(ayuda de lectura humana de qué palabras ancla la regex), y exige
+<code>Regex</code> obligatoria como el único mecanismo real de extracción
+declarativa. Rediseñar <code>Patterns</code> para que sea funcional (agregar
+grupos, redefinir su sintaxis) es trabajo nuevo, no pedido por el ítem
+<code>16</code> de <code>ROADMAP.md</code>.</p>
+<h2 id="tercer-mecanismo-muerto-zonespatterns-en-minuscula">Tercer mecanismo muerto: <code>zones=</code>/<code>patterns=</code> en minúscula</h2>
+<p><code>services_config.py::get_service_zones()</code>/<code>get_service_patterns()</code> leen
+claves de <strong>sección</strong> (no de campo) llamadas <code>zones=</code> y <code>patterns=</code>, en
+minúscula, con formato multilínea <code>campo:valor</code>. <strong>Ningún</strong> <code>services.ini</code>
+real usa hoy esas claves — es un <strong>tercer</strong> mecanismo de configuración,
+completamente muerto, distinto tanto del namespace <code>Field.&lt;nombre&gt;.*</code>
+(el vigente) como del bug corregido arriba. Se conservan en el código
+(y en <code>get_service_config()</code>) por compatibilidad hacia atrás y porque
+<code>extraction_engine.py</code> ya tiene la lógica de zonas/imagen lista para
+usarlas si algún día se declaran, pero <strong>no se debe invertir tiempo
+investigándolas como si fueran el mecanismo vigente</strong>: hoy no tienen
+ningún efecto observable porque ninguna sección las declara.</p>
+<h2 id="relacion-entre-servicesini-y-document_servicesjson">Relación entre <code>services.ini</code> y <code>document_services.json</code></h2>
+<p><code>backend/config/document_services.json</code> es un <strong>inventario separado</strong>
+(<code>data_evaluator_enabled</code>, <code>expected_fields</code> por servicio) que gatea si
+el DATA evaluator corre para un servicio dado — no reemplaza ni fusiona
+con <code>services.ini</code>. Ya existe un test de consistencia parcial entre
+ambos: <code>backend/tests/test_document_services_inventory.py::
+test_inventory_data_evaluator_contract_t23</code>, que valida que
+<code>expected_fields</code> (JSON) coincide exactamente con <code>Fields</code> (INI). Esta
+feature <strong>no</strong> reemplaza ese mecanismo ni lo rompe; agrega, además,
+validación de esquema <strong>dentro</strong> de <code>services.ini</code> (algo que ese test no
+cubre: no valida que cada <code>Field.&lt;nombre&gt;.*</code> esté completo o bien
+formado, solo que la lista de nombres coincida entre los dos archivos).</p>
+<p>No se fusionan ambos archivos en esta feature: es un cambio de
+arquitectura mayor no pedido por el ítem <code>16</code> de <code>ROADMAP.md</code>.</p>
+<h2 id="endpoint-de-introspeccion-get-apiv1servicesservice_id">Endpoint de introspección <code>GET /api/v1/services[/{service_id}]</code></h2>
+<p><code>backend/app/main.py</code> expone, de solo lectura, el esquema validado sobre
+<code>services_config.list_services_schema()</code>/<code>get_service_schema()</code>:</p>
+<ul>
+<li><code>GET /api/v1/services</code> → <code>{"services": [{"id", "title", "fields": [...]}, ...]}</code>.
+  <code>services.ini</code> sin secciones responde <code>200</code> con <code>{"services": []}</code>, no
+  un error (estado válido: "no hay servicios configurados todavía").</li>
+<li><code>GET /api/v1/services/{service_id}</code> → detalle de un servicio. Normaliza
+  <code>service_id</code> igual que <code>document_services.normalize_service_id</code>
+  (<code>strip().upper()</code>), así que <code>gas</code>, <code>GAS</code>, <code>gas</code> y <code>%20gas%20</code>
+  resuelven al mismo servicio <code>GAS</code>.</li>
+<li>Servicio no configurado → <code>404</code> con mensaje claro (nunca <code>500</code>).</li>
+<li>Sección con esquema inválido → <code>500</code> con el <strong>mismo mensaje</strong> que
+    produce <code>ServicesConfigError</code> al validar la carga (sección, campo y
+    clave exactos) — nunca un <code>500</code> sin explicación ni una traza cruda.</li>
+</ul>
+<p>Sin autenticación (es de solo lectura, sin datos sensibles: expone
+nombres de campos y metadata de configuración, no comprobantes ni datos
+de clientes) — igual que el resto de <code>/api/v1/*</code> hoy. <code>14-seguridad-privacidad-documentos</code>
+queda pendiente en el backlog para eso.</p>
+<p>Este endpoint es un sistema <strong>separado</strong> del pipeline HTTP en vivo de
+<code>/api/v1/jobs</code> — no expone ni afecta las plantillas de
+<code>templates/providers.py</code>.</p>
+<h2 id="algoritmo-de-validacion-resumen">Algoritmo de validación (resumen)</h2>
+<p><code>validate_services_schema(cfg=None)</code>:</p>
+<ol>
+<li>Si no se pasa un <code>ConfigParser</code> ya cargado, llama a <code>_load_parser()</code>
+   (que ya envuelve errores de lectura/parseo en <code>ServicesConfigError</code>).</li>
+<li>Para cada sección: valida <code>Title</code> y <code>Fields</code> (no vacíos, sin
+   duplicados case-insensitive dentro de <code>Fields</code>).</li>
+<li>Calcula los nombres de campo con al menos una clave <code>Field.&lt;nombre&gt;.*</code>
+   declarada (<code>_iter_field_block_names</code>) y los compara contra <code>Fields</code>:
+   cualquier nombre en el primer conjunto que no esté en el segundo es un
+   bloque huérfano → error.</li>
+<li>Para cada nombre en <code>Fields</code>, valida su bloque completo
+   (<code>_validate_field_block</code>): <code>Label</code>, <code>Type</code>, <code>Required</code>, <code>Example</code>,
+   <code>Regex</code> (compila + tiene grupo de captura) y, si está presente,
+   <code>Patterns</code> no vacía.</li>
+</ol>
+<p><code>list_services_schema()</code>/<code>get_service_schema(service)</code> reusan
+<code>_validate_section_schema</code> internamente antes de construir la respuesta
+expuesta por la API — así una sección inválida nunca llega a construir
+una respuesta parcial o inconsistente.</p>
+<h2 id="casos-borde">Casos borde</h2>
+<ul>
+<li><code>Type=amount</code> sin ninguna referencia de moneda en <code>Regex</code>/<code>Patterns</code>:
+  <strong>no</strong> es un error de esquema (no hay forma automática de saber si es
+  intencional). Queda como responsabilidad del autor del alta.</li>
+<li><code>Field.&lt;nombre&gt;.Regex</code> que compila y tiene grupo de captura pero nunca
+  matchea nada en el texto real (regex demasiado estricta): <strong>no</strong> es un
+  error de esquema — el campo cae en <code>missing_fields</code>, comportamiento
+  preexistente sin cambios.</li>
+<li>Un campo declara <code>Field.&lt;nombre&gt;.Patterns</code> pero no <code>Field.&lt;nombre&gt;.Regex</code>:
+  <strong>sí</strong> es un error de esquema explícito — ver criterio de mensajes
+  arriba.</li>
+<li><code>services.ini</code> no existe todavía: <code>_load_parser()</code> lo autocrea vacío;
+  cero secciones sigue siendo válido.</li>
+<li>Codificación no UTF-8/corrupta: mensaje claro, no traza cruda.</li>
+<li>Secciones duplicadas: <code>configparser.DuplicateSectionError</code> envuelto en
+  el mismo tipo de mensaje accionable.</li>
+<li><code>GET /api/v1/services/{service_id}</code> con minúsculas/espacios: se
+  normaliza igual que <code>document_services.normalize_service_id</code>.</li>
+<li>Cambios en caliente sin reiniciar el proceso: confirmado por test
+  (<code>test_hot_reload_reflects_changes_without_restart</code>), no asumido.</li>
+</ul>
+<h2 id="tests">Tests</h2>
+<ul>
+<li><code>backend/tests/test_services_config_schema.py</code>: criterios 1–11 del
+  spec (esquema completo + regresión del bug de desconexión, <code>GAS</code> y
+  <code>CEVT</code>).</li>
+<li><code>backend/tests/test_services_admin_api.py</code>: criterio 12 (endpoint de
+  introspección, casos borde de archivo vacío/sección inválida,
+  normalización de <code>service_id</code>).</li>
+<li>Sin regresión sobre <code>test_document_services_inventory.py</code>,
+  <code>test_gas_extractor.py</code>, <code>test_empty_text.py</code>,
+  <code>test_evaluate_ocr_service_data_output.py</code> (verificado corriendo la
+  suite completa).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

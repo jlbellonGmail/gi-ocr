@@ -1,0 +1,667 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Corrección de orientación EXIF — documentación de usuario - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#correccion-de-orientacion-exif-documentacion-de-usuario" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Corrección de orientación EXIF — documentación de usuario
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tecnica/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnica/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#proposito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propósito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-no-cambia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué NO cambia
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ejemplo-de-uso-http" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ejemplo de uso HTTP
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Ejemplo de uso HTTP">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-subir-una-foto-de-comprobante-venga-o-no-rotada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Subir una foto de comprobante (venga o no rotada)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-consultar-el-resultado-del-job" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Consultar el resultado del job
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-el-resto-del-flujo-sigue-igual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. El resto del flujo sigue igual
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#que-formatos-se-benefician-de-esta-correccion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Qué formatos se benefician de esta corrección
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ver-tambien" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ver también
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="correccion-de-orientacion-exif-documentacion-de-usuario">Corrección de orientación EXIF — documentación de usuario</h1>
+<h2 id="proposito">Propósito</h2>
+<p>Cuando se saca una foto de un comprobante con el celular sosteniéndolo de
+costado o boca abajo, la cámara guarda la imagen tal como sale del sensor
+y anota en la metadata EXIF (tag <code>Orientation</code>) cómo debe rotarse para
+verse "derecha". Muchas apps la muestran ya rotada, pero <strong>el archivo de
+píxeles en sí sigue estando de costado</strong>.</p>
+<p>Antes de esta mejora, el sistema ignoraba ese dato y procesaba la imagen
+tal como estaba guardada en disco: si venía de costado, el OCR la recibía
+de costado, y la extracción de campos (número de cliente, período,
+importe, etc.) fallaba o devolvía resultados pobres — sin que hubiera
+ningún indicio visible del problema para quien subió la foto.</p>
+<p>Con esta mejora, el sistema lee el tag EXIF antes de procesar la imagen y
+la endereza automáticamente si hace falta, para las fotos donde ese dato
+esté presente (la gran mayoría de fotos de celular en JPEG). El resultado
+práctico: <strong>una foto de comprobante sacada de costado o al revés ahora se
+procesa igual de bien que una sacada derecha</strong>, sin que el usuario tenga
+que rotarla manualmente antes de subirla.</p>
+<h2 id="que-no-cambia">Qué NO cambia</h2>
+<ul>
+<li><strong>El contrato de la API no cambia.</strong> No hay ningún campo nuevo en el
+  request ni en la response de los endpoints existentes. La corrección es
+  interna al procesamiento del documento.</li>
+<li>Los formatos aceptados por el endpoint de subida siguen siendo los
+  mismos: <code>.jpg</code>, <code>.jpeg</code>, <code>.png</code>, <code>.tif</code>, <code>.tiff</code>, <code>.pdf</code>.</li>
+<li>Los PDF no se ven afectados por este cambio (se renderizan a imagen y no
+  traen este tipo de metadata de cámara).</li>
+<li>Una foto ya derecha (sin necesidad de rotación) se procesa exactamente
+  igual que antes.</li>
+</ul>
+<h2 id="ejemplo-de-uso-http">Ejemplo de uso HTTP</h2>
+<p>El flujo de subida es el mismo de siempre
+(<code>docs/usuario/captura-ocr-local-agil.md</code>): se sube el documento, se
+consulta el resultado del job, y — si la foto venía rotada por el
+celular — el resultado ya viene con el documento correctamente orientado
+y sus campos extraídos, sin pasos adicionales.</p>
+<h3 id="1-subir-una-foto-de-comprobante-venga-o-no-rotada">1. Subir una foto de comprobante (venga o no rotada)</h3>
+<pre><code class="language-http">POST /api/v1/jobs
+Content-Type: multipart/form-data
+
+files=&lt;foto_comprobante_gas.jpg&gt;
+</code></pre>
+<p>Respuesta (<code>200 OK</code>) — igual sea la foto derecha o rotada, la respuesta
+inmediata es la misma (encolado no bloqueante):</p>
+<pre><code class="language-json">{
+  &quot;created&quot;: [
+    { &quot;job_id&quot;: &quot;a1b2c3d4e5f6&quot;, &quot;filename&quot;: &quot;foto_comprobante_gas.jpg&quot; }
+  ],
+  &quot;queued&quot;: 1
+}
+</code></pre>
+<h3 id="2-consultar-el-resultado-del-job">2. Consultar el resultado del job</h3>
+<pre><code class="language-http">GET /api/v1/jobs/a1b2c3d4e5f6
+</code></pre>
+<p>Respuesta (<code>200 OK</code>) una vez procesado. Si la foto traía el tag EXIF de
+rotación (por ejemplo, <code>Orientation=6</code>, típico de sostener el celular de
+costado hacia la derecha), el documento ya se corrigió antes de llegar a
+OCR y los campos se extraen con normalidad:</p>
+<pre><code class="language-json">{
+  &quot;job_id&quot;: &quot;a1b2c3d4e5f6&quot;,
+  &quot;status&quot;: &quot;ready&quot;,
+  &quot;confirmed&quot;: false,
+  &quot;result&quot;: {
+    &quot;processing_metadata&quot;: {
+      &quot;provider_detected&quot;: &quot;LITORAL_GAS&quot;,
+      &quot;provider_confidence&quot;: 1.0,
+      &quot;engine&quot;: &quot;RapidOCR-ONNX-PP-OCRv3&quot;
+    },
+    &quot;raw_ocr_text&quot;: &quot;COMPROBANTE GAS\nLitoral Gas - Servicio de Gas Natural\nN Cliente: 12345678\n...&quot;,
+    &quot;structured_output&quot;: {
+      &quot;document_type&quot;: &quot;GAS&quot;,
+      &quot;candidate_fields&quot;: { &quot;cliente&quot;: &quot;12345678&quot;, &quot;periodo&quot;: &quot;05/2026&quot;, &quot;...&quot;: &quot;...&quot; },
+      &quot;validated_fields&quot;: { &quot;cliente&quot;: &quot;12345678&quot;, &quot;periodo&quot;: &quot;05/2026&quot;, &quot;...&quot;: &quot;...&quot; },
+      &quot;rejected_fields&quot;: {},
+      &quot;missing_fields&quot;: {}
+    }
+  }
+}
+</code></pre>
+<p>Sin esta mejora, la misma foto rotada habría llegado a OCR de costado y
+<code>raw_ocr_text</code> habría salido vacío o con texto irreconocible, dejando la
+mayoría de los campos en <code>missing_fields</code>.</p>
+<h3 id="3-el-resto-del-flujo-sigue-igual">3. El resto del flujo sigue igual</h3>
+<p>Confirmación de revisión humana y descarga del resultado final funcionan
+exactamente como en el flujo general (ver
+<code>docs/usuario/captura-ocr-local-agil.md</code>):</p>
+<pre><code class="language-http">POST /api/v1/jobs/a1b2c3d4e5f6/confirm
+GET  /api/v1/jobs/a1b2c3d4e5f6/download
+</code></pre>
+<h2 id="que-formatos-se-benefician-de-esta-correccion">Qué formatos se benefician de esta corrección</h2>
+<ul>
+<li><strong>JPEG (<code>.jpg</code>/<code>.jpeg</code>)</strong>: el caso relevante. Es el formato que producen
+  las cámaras de celular y casi siempre trae el tag <code>Orientation</code>.</li>
+<li><strong>TIFF (<code>.tif</code>/<code>.tiff</code>)</strong>: también soporta el tag y se beneficia igual,
+  aunque es menos común como formato de foto de celular (más frecuente en
+  escaneos).</li>
+<li><strong>PNG (<code>.png</code>)</strong>: no suele traer esta metadata (las cámaras no producen
+  PNG), así que en la práctica no cambia nada para este formato — sigue
+  procesándose igual que antes.</li>
+<li><strong>PDF (<code>.pdf</code>)</strong>: no aplica; los PDF no se ven afectados por este
+  cambio.</li>
+</ul>
+<h2 id="ver-tambien">Ver también</h2>
+<ul>
+<li>Flujo completo de subida/revisión/confirmación:
+  <a href="../captura-ocr-local-agil/">docs/usuario/captura-ocr-local-agil.md</a>.</li>
+<li>Detalle técnico del algoritmo y las decisiones de diseño:
+  <a href="../../tecnica/correccion-orientacion-exif/">docs/tecnica/correccion-orientacion-exif.md</a>.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

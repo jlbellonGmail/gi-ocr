@@ -1,0 +1,978 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Calidad de CI y Supply Chain - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#calidad-de-ci-y-supply-chain" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Calidad de CI y Supply Chain
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usuario/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#jobs-de-ciyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jobs de ci.yml
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alcance-de-rutas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alcance de rutas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reglas-de-ruff" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reglas de ruff
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reglas de ruff">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#volumen-de-violaciones-preexistentes-y-como-se-resolvieron" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Volumen de violaciones preexistentes y cómo se resolvieron
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#alcance-y-configuracion-de-mypy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alcance y configuración de mypy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Alcance y configuración de mypy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#errores-encontrados-y-como-se-resolvieron-12-en-6-archivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Errores encontrados y cómo se resolvieron (12 en 6 archivos)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrategia-de-fijado-de-versiones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrategia de fijado de versiones
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#politica-de-excepciones-de-pip-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Política de excepciones de pip-audit
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-borde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos borde
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Casos borde">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pip-audit-sin-conexion-a-internet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pip-audit sin conexión a internet
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diferencia-de-terminador-de-linea-crlflf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diferencia de terminador de línea (CRLF/LF)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reformateo-masivo-separado-de-cambios-de-logica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reformateo masivo separado de cambios de lógica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backendrequirements-devtxt-no-se-filtra-al-dockerfile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        backend/requirements-dev.txt no se filtra al Dockerfile
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#easyocrtorch-como-dependencia-pesada-en-el-job-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        easyocr/torch como dependencia pesada en el job quality
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="calidad-de-ci-y-supply-chain">Calidad de CI y Supply Chain</h1>
+<p>Agrega gates de calidad de código y de cadena de suministro (supply
+chain) al workflow <code>.github/workflows/ci.yml</code>, que hasta esta feature
+solo corría <code>pytest</code>: lint (<code>ruff check</code>), formato (<code>ruff format
+--check</code>), chequeo de tipos (<code>mypy</code>) y auditoría de vulnerabilidades de
+dependencias (<code>pip-audit</code>). No toca el pipeline de negocio
+(OCR/extracción/validación/<code>storage_bridge</code>) ni el frontend
+funcionalmente — es infraestructura de calidad de todo el repo Python
+(<code>backend/</code>, <code>scripts/</code>, <code>tests/</code>).</p>
+<p><code>AGENTS.md</code> dejaba constancia explícita de que el lint quedó pendiente a
+propósito ("no se agrega sin antes dejar el código base limpio para
+evitar romper el CI el mismo día de la adopción del circuito"): esta
+feature salda esa deuda.</p>
+<h2 id="jobs-de-ciyml">Jobs de <code>ci.yml</code></h2>
+<p>El workflow tiene dos jobs independientes (no hay dependencia entre
+ellos, corren en paralelo):</p>
+<ul>
+<li><strong><code>test</code></strong> (sin cambios de comportamiento): instala
+  <code>backend/requirements.txt</code> y corre <code>pytest -v</code> sobre <code>backend/tests/</code> +
+  <code>tests/</code>. Mismo comando que antes de esta feature.</li>
+<li><strong><code>quality</code></strong> (nuevo): instala <code>backend/requirements-dev.txt</code> (que
+  incluye <code>backend/requirements.txt</code> vía <code>-r</code>, más <code>ruff</code>, <code>mypy</code>,
+  <code>pip-audit</code> y <code>playwright</code> sin fijar) y corre, en este orden:</li>
+<li><code>ruff check backend/app backend/tests scripts tests</code></li>
+<li><code>ruff format --check backend/app backend/tests scripts tests</code></li>
+<li><code>mypy backend/app</code></li>
+<li><code>pip-audit -r backend/requirements.txt</code> + excepciones de
+     <code>backend/config/pip-audit-ignore.txt</code> (<strong>gate</strong>)</li>
+<li><code>pip-audit -r backend/requirements-dev.txt</code> (<strong>informativo</strong>, paso
+     con <code>continue-on-error: true</code>: un hallazgo ahí no tumba el job)</li>
+</ul>
+<p>Los pasos 1 a 4 son gate obligatorio: si fallan, el job <code>quality</code> falla y
+bloquea el merge de la PR (ver <code>AGENTS.md</code>, paso 7 del circuito). El paso
+5 nunca falla el job por sí mismo.</p>
+<h2 id="alcance-de-rutas">Alcance de rutas</h2>
+<p>Las cuatro herramientas (excepto <code>mypy</code>, ver más abajo) cubren
+<code>backend/app/</code>, <code>backend/tests/</code>, <code>scripts/</code> y <code>tests/</code>: todo el código
+Python fuente del repo, salvo <code>backend/config/</code> (no es código Python) y
+artefactos generados (<code>storage_bridge/</code>, <code>output/</code>, <code>.venv/</code>). Se pasan
+rutas explícitas en cada comando de CI (no <code>ruff check .</code>) para que el
+alcance quede fijo y auditable en el propio workflow, sin depender de
+exclusiones implícitas de <code>pyproject.toml</code>.</p>
+<h2 id="reglas-de-ruff">Reglas de <code>ruff</code></h2>
+<p>Configuración en <code>pyproject.toml</code>, sección <code>[tool.ruff]</code> /
+<code>[tool.ruff.lint]</code>:</p>
+<ul>
+<li><code>line-length = 120</code>. El default de <code>ruff</code> es 88; con 88 el código
+  existente reportaba 287 violaciones <code>E501</code> (línea larga) solo por ese
+  motivo, la mayoría en docstrings/asserts descriptivos en español o
+  f-strings de reporte, sin valor real en acortarlas agresivamente. Con
+  120 (convención también usada por otros proyectos, ej. Django: 119)
+  bajan a 15, resueltas manualmente sin perder legibilidad.</li>
+<li><code>select = ["E", "F", "W", "I"]</code>: subconjunto deliberadamente acotado
+  para esta primera iteración, tal como sugiere el spec de esta feature
+  ("por ejemplo E, F, W, I"):</li>
+<li><code>E</code>/<code>W</code> — pycodestyle (estilo/espaciado/EOF).</li>
+<li><code>F</code> — Pyflakes (imports/variables no usadas, errores lógicos
+    evidentes).</li>
+<li><code>I</code> — isort (orden de imports).</li>
+<li><strong>No</strong> se activan <code>B</code> (bugbear), <code>UP</code> (pyupgrade), <code>C90</code>
+    (complejidad), <code>ANN</code> (anotaciones obligatorias), <code>D</code> (docstrings) ni
+    otras categorías en esta iteración, para no forzar una reescritura
+    masiva no pedida por el spec. Queda declarado como mejora incremental
+    futura de roadmap, no deuda oculta.</li>
+<li><code>[tool.ruff.lint.per-file-ignores]</code>: excepción puntual de <code>E402</code>
+  (import no ubicado al inicio del archivo) para:</li>
+<li><code>scripts/*.py</code>: todos los scripts ejecutables standalone insertan la
+    raíz del repo en <code>sys.path</code> <strong>antes</strong> de importar <code>backend.app.*</code> o
+    <code>scripts.*</code> propios, para poder correrse sin instalar el paquete
+    (<code>python scripts/proceso.py</code>). Es un patrón intencional repetido en
+    varios scripts, no deuda de lint.</li>
+<li><code>backend/tests/test_document_result_exporter.py</code>,
+    <code>backend/tests/test_process_document_cli.py</code>: mismo patrón
+    <code>sys.path.insert()</code> antes del import, en tests que ejecutan código de
+    <code>scripts/</code>/<code>backend/app</code> fuera del paquete instalado.</li>
+<li><code>backend/tests/test_pdf_util.py</code>: import condicionado a un
+    <code>pytest.importorskip("pypdfium2")</code> previo (el import solo debe
+    ejecutarse si el guard no saltó el módulo).</li>
+<li><code>tests/e2e/test_e2e_playwright.py</code>: mismo patrón con
+    <code>pytest.importorskip("playwright")</code> (scaffolding de la feature
+    17-pruebas-e2e-mobile-real, aún <code>[ ]</code> pendiente).</li>
+</ul>
+<p>Ninguna exclusión es un <code>ignore</code> global de una categoría completa (ej.
+  desactivar todo <code>F</code> o todo <code>E</code>); son excepciones puntuales por
+  archivo/regla con justificación en el propio <code>pyproject.toml</code>.</p>
+<h3 id="volumen-de-violaciones-preexistentes-y-como-se-resolvieron">Volumen de violaciones preexistentes y cómo se resolvieron</h3>
+<p>Con el ruleset elegido y <code>line-length = 120</code>, el código existente
+reportaba 462 violaciones antes de esta feature (con <code>line-length = 88</code>
+por defecto de <code>ruff</code>). Desglose y tratamiento:</p>
+<table>
+<thead>
+<tr>
+<th>Regla</th>
+<th style="text-align: right;">Cantidad</th>
+<th>Tratamiento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>E501</code> línea larga</td>
+<td style="text-align: right;">287 (15 con <code>line-length=120</code>)</td>
+<td>151 quedaron dentro del límite de 120 automáticamente; las 15 restantes se reformatearon a mano (multilínea) sin cambiar lógica ni asserts.</td>
+</tr>
+<tr>
+<td><code>F401</code> import no usado</td>
+<td style="text-align: right;">65</td>
+<td><code>ruff check --fix</code> (autofix seguro: eliminación de imports realmente no referenciados).</td>
+</tr>
+<tr>
+<td><code>W292</code> sin newline final</td>
+<td style="text-align: right;">47</td>
+<td><code>ruff check --fix</code>.</td>
+</tr>
+<tr>
+<td><code>I001</code> imports desordenados</td>
+<td style="text-align: right;">31</td>
+<td><code>ruff check --fix</code> (más una segunda pasada tras ediciones manuales).</td>
+</tr>
+<tr>
+<td><code>E402</code> import no al inicio</td>
+<td style="text-align: right;">21 (20 tras autofix)</td>
+<td>Excepciones documentadas por archivo (ver arriba), patrón <code>sys.path.insert</code>/<code>importorskip</code> intencional.</td>
+</tr>
+<tr>
+<td><code>W293</code> línea en blanco con espacios</td>
+<td style="text-align: right;">4</td>
+<td><code>ruff check --fix</code>.</td>
+</tr>
+<tr>
+<td><code>F541</code> f-string sin placeholders</td>
+<td style="text-align: right;">3</td>
+<td><code>ruff check --fix</code>.</td>
+</tr>
+<tr>
+<td><code>F841</code> variable local no usada</td>
+<td style="text-align: right;">3</td>
+<td>Revisadas una por una: una era dead code genuino en <code>t3_2_orchestrator.py</code> (se eliminó); dos en tests eran variables de resultado sin assert asociado — se corrigieron sin tocar aserciones (una se prefijó <code>_</code> para conservar el ejercicio de la llamada async, otra se eliminó por ser un literal sin uso).</td>
+</tr>
+<tr>
+<td><code>E713</code> <code>not in</code></td>
+<td style="text-align: right;">1</td>
+<td><code>ruff check --fix</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>El reformateo automático de <code>ruff format</code> (57 archivos con diffs, 8 ya
+formateados) y el autofix de lint (157 violaciones) se separaron en
+commits dedicados de "reformateo automático" distintos del commit que
+agrega la configuración de CI y de los commits con fixes manuales que sí
+tocan lógica (variables no usadas, líneas largas reescritas, tipado),
+para que el diff de reformateo puro no se mezcle con cambios de
+comportamiento (ver spec, caso borde "Reformateo masivo mezclado con
+lógica").</p>
+<h2 id="alcance-y-configuracion-de-mypy">Alcance y configuración de <code>mypy</code></h2>
+<p><code>mypy backend/app</code> — <strong>solo</strong> <code>backend/app/</code>, no <code>backend/tests/</code>,
+<code>scripts/</code> ni <code>tests/</code>. Decisión explícita del spec ("Alcance inicial de
+mypy limitado a backend/app/"), no una omisión silenciosa: ampliar el
+tipado a tests/scripts es una migración de esfuerzo mayor, fuera de
+alcance de esta primera iteración; queda como mejora incremental futura
+de roadmap.</p>
+<p>Configuración en <code>pyproject.toml</code>, sección <code>[tool.mypy]</code>, deliberadamente
+permisiva:</p>
+<pre><code class="language-toml">[tool.mypy]
+python_version = &quot;3.12&quot;
+files = [&quot;backend/app&quot;]
+ignore_missing_imports = true
+disallow_untyped_defs = false
+check_untyped_defs = false
+warn_unused_ignores = true
+warn_redundant_casts = true
+</code></pre>
+<ul>
+<li><code>ignore_missing_imports = true</code>: varias dependencias (<code>cv2</code>,
+  <code>rapidocr_onnxruntime</code>, <code>easyocr</code>, <code>pypdfium2</code>) no publican stubs de
+  tipo; sin este flag, mypy fallaría solo por no encontrar <code>.pyi</code>, sin
+  relación con errores reales del código propio.</li>
+<li><code>disallow_untyped_defs = false</code> / <code>check_untyped_defs = false</code>: no se
+  exige anotar todas las funciones ni se chequean los cuerpos de las que
+  no están anotadas. Foco en errores de tipo evidentes en el código que
+  ya tiene anotaciones (la mayoría de <code>backend/app/</code> usa
+  <code>from __future__ import annotations</code> y type hints), no una migración a
+  tipado estricto completo (<code>mypy --strict</code>, explícitamente fuera de
+  alcance del spec).</li>
+<li><code>warn_unused_ignores = true</code>: evita que un <code># type: ignore</code> quede
+  "vivo" después de que el error que lo motivó ya no existe (deuda
+  invisible).</li>
+</ul>
+<h3 id="errores-encontrados-y-como-se-resolvieron-12-en-6-archivos">Errores encontrados y cómo se resolvieron (12 en 6 archivos)</h3>
+<p>Todos se corrigieron con anotaciones/guards reales, ninguno se silenció
+con un <code># type: ignore</code> sin necesidad — solo un caso usó <code>type: ignore</code>
+puntual, documentado:</p>
+<ul>
+<li><code>service_data_validation.py</code>: el diccionario <code>result</code> se infería como
+  <code>dict[str, object]</code> por mezclar valores <code>str</code>/<code>bool</code>/<code>dict</code>/<code>list</code> sin
+  anotación. Fix: <code>result: Dict[str, Any] = {...}</code>.</li>
+<li><code>templates/providers.py</code>: <code>FieldTemplate.validator</code> declaraba
+  <code>Callable[[str], Tuple[Optional[str], Optional[str]]]</code>, pero
+  <code>validators.validate_amount</code> (usado en los campos <code>total</code>) devuelve
+  <code>Tuple[Optional[float], Optional[str]]</code> — un mismatch real de tipos
+  declarados vs. reales, no un bug de runtime (el llamador en
+  <code>capture_pipeline.py</code> ya hace <code>str(value)</code> sobre el resultado). Fix:
+  ampliar el tipo declarado a <code>Tuple[Optional[str] | Optional[float],
+  Optional[str]]</code>, con comentario explicando por qué el valor normalizado
+  puede ser <code>str</code> o <code>float</code> según el campo.</li>
+<li><code>ocr_engine.py</code>: <code>_IMPORT_ERROR</code> se asignaba <code>None</code> en la rama <code>else</code>
+  del <code>try/except</code> después de asignarse <code>e: Exception</code> en el <code>except</code>;
+  mypy infería el tipo desde la primera asignación vista y marcaba la
+  segunda como incompatible. Fix: anotación explícita
+  <code>_IMPORT_ERROR: Exception | None = None</code> antes del <code>try</code>.</li>
+<li><code>image_prep.py</code>: <code>~gray</code> (invert bit a bit) sobre el resultado de
+  <code>cv2.cvtColor(..., COLOR_RGB2GRAY)</code> — los stubs de <code>cv2</code>/<code>numpy</code> no
+  tipan ese resultado como <code>uint8</code> puro, mypy infiere un dtype que
+  incluye <code>floating</code>, para el cual <code>__invert__</code> no está definido. En
+  runtime <code>gray</code> siempre es <code>uint8</code> (es la salida de una conversión a
+  escala de grises). Único <code># type: ignore[misc]</code> de esta feature, con
+  comentario explicando el motivo (falso positivo de stubs, no un bug
+  real).</li>
+<li><code>job_queue.py</code>: <code>self._queue: "asyncio.Queue[str]" = None</code> declaraba un
+  tipo no-opcional pero se inicializaba en <code>None</code> (creado recién en
+  <code>start()</code>). Fix: <code>Optional["asyncio.Queue[str]"]</code>, más un guard
+  adicional (<code>if self._loop and self._queue:</code>) en los dos call sites que
+  llaman <code>self._queue.put_nowait(...)</code>, ya que ambos atributos se crean
+  juntos en el mismo método pero mypy no puede inferir esa invariante
+  entre atributos de instancia.</li>
+<li><code>main.py</code>: dos errores relacionados:</li>
+<li><code>InboundWatcher(..., on_new=lambda p: queue.enqueue(...))</code>: el
+    <code>lambda</code> devolvía el <code>str</code> (<code>job_id</code>) de <code>enqueue()</code>, pero
+    <code>on_new</code> está tipado <code>Callable[[Path], None]</code>. Fix: reemplazar el
+    <code>lambda</code> por una función nombrada <code>_on_new_inbound(p: Path) -&gt; None</code>
+    que descarta el valor de retorno explícitamente (mejora de
+    legibilidad además de fix de tipo).</li>
+<li><code>download_confirmed</code>: <code>store.load_confirmed(job_id)</code> devuelve
+    <code>Optional[Dict[str, Any]]</code>; el código accedía <code>doc.get(...)</code>
+    asumiendo que nunca es <code>None</code> (aunque <code>confirmed_exists(job_id)</code> ya
+    se había chequeado antes). Fix: guard explícito <code>if doc is None:
+    raise HTTPException(404, ...)</code> — además de resolver el error de tipo,
+    cubre una carrera improbable pero real (el archivo desaparece entre
+    el chequeo <code>confirmed_exists()</code> y la lectura).</li>
+</ul>
+<h2 id="estrategia-de-fijado-de-versiones">Estrategia de fijado de versiones</h2>
+<p><code>backend/requirements.txt</code> pasa de rangos abiertos (<code>&gt;=</code>) a versiones
+exactas (<code>==</code>) para todas las dependencias directas (<code>fastapi</code>,
+<code>uvicorn</code>, <code>python-multipart</code>, <code>pydantic</code>, <code>pydantic-settings</code>, <code>Pillow</code>,
+<code>numpy</code>, <code>opencv-python-headless</code>, <code>pypdfium2</code>, <code>easyocr</code>, <code>pytest</code>,
+<code>httpx</code>), preservando sin modificar el pin y el comentario ya existentes
+de <code>rapidocr-onnxruntime==1.2.3</code> / <code>onnxruntime==1.28.0</code> (ver
+<code>docs/tecnica/captura-ocr-local-agil.md</code> para el motivo original de ese
+pin: <code>ocr_engine.py</code> depende de atributos internos de
+<code>text_detector</code>/<code>text_recognizer</code> que cambiaron en versiones más nuevas
+de <code>rapidocr-onnxruntime</code>).</p>
+<p>Las versiones fijadas son las resueltas por <code>pip install -r
+backend/requirements.txt</code> en un entorno limpio durante la implementación
+de esta feature (instaladas y verificadas con <code>pytest -v</code> completo
+pasando en ese mismo entorno), no versiones arbitrarias elegidas a mano.</p>
+<p><code>backend/requirements-dev.txt</code> (archivo ya existente, scaffolding de la
+feature 17-pruebas-e2e-mobile-real) queda extendido, no reemplazado:</p>
+<ul>
+<li>conserva <code>-r requirements.txt</code> sin modificar;</li>
+<li><strong>elimina</strong> <code>pytest&gt;=8.0.0</code> y <code>httpx&gt;=0.27.0</code>: quedaban redundantes una
+  vez que el criterio 7 los fija (<code>==</code>) en <code>backend/requirements.txt</code>
+  (que ya se incluye vía <code>-r</code>); mantener un rango abierto duplicado ahí
+  contradecía el objetivo de "dependencias fijadas";</li>
+<li><strong>agrega</strong> <code>ruff==0.16.4</code>, <code>mypy==2.3.1</code>, <code>pip-audit==2.10.1</code> (últimas
+  versiones estables publicadas al momento de implementar esta feature);</li>
+<li><strong>deja intacta, sin fijar</strong>, <code>playwright&gt;=1.40.0</code>: pertenece al
+  scaffolding de la feature 17-pruebas-e2e-mobile-real, aún <code>[ ]</code>
+  pendiente en <code>ROADMAP.md</code>. Fijar su versión (y la de los navegadores
+  compatibles) es una decisión de esa feature, no de esta.</li>
+</ul>
+<p>El <code>Dockerfile</code> de producción (Feature 03/ADR-009) sigue instalando
+únicamente <code>backend/requirements.txt</code> (excluyendo <code>easyocr</code> vía <code>grep
+-v</code>, sin cambios de esta feature): <code>ruff</code>/<code>mypy</code>/<code>pip-audit</code>/<code>playwright</code>
+nunca llegan a la imagen de producción.</p>
+<h2 id="politica-de-excepciones-de-pip-audit">Política de excepciones de <code>pip-audit</code></h2>
+<p>El gate obligatorio (<code>pip-audit -r backend/requirements.txt</code>) admite
+excepciones explícitas vía <code>backend/config/pip-audit-ignore.txt</code>: un
+archivo de texto plano, un ID de vulnerabilidad (CVE/GHSA) por línea con
+motivo en comentario, traducido a flags <code>--ignore-vuln &lt;ID&gt;</code> en el paso
+de CI (<code>.github/workflows/ci.yml</code>, job <code>quality</code>). Ninguna vulnerabilidad
+se silencia deshabilitando el paso completo o bajando su severidad fuera
+de este archivo.</p>
+<p><strong>Esta lista de excepciones no es una declaración de una sola vez: debe
+revisarse cada vez que se modifica <code>backend/requirements.txt</code></strong> —
+agregar, quitar o cambiar de versión cualquier dependencia obliga a
+confirmar que cada excepción activa sigue siendo necesaria (no quedó
+obsoleta por un upgrade ya disponible) y que no se introdujeron
+vulnerabilidades nuevas sin registrar. Esta política está declarada como
+texto explícito tanto en el propio archivo
+(<code>backend/config/pip-audit-ignore.txt</code>) como aquí, de forma verificable
+(ver <code>backend/tests/test_data_file_emptiness.py</code> y el resto de la suite
+para el patrón de verificación por grep/test usado en este repo; la
+verificación puntual de esta frase queda a cargo del reviewer humano de
+cada PR que toque <code>requirements.txt</code>, apoyado en el texto de la
+política — no se automatizó con un script propio en esta iteración, ver
+spec, "Riesgos/supuestos").</p>
+<p>Al momento de implementar esta feature, <strong>no hay excepciones activas</strong>:
+<code>backend/config/pip-audit-ignore.txt</code> documenta la política y queda listo
+para recibir entradas si una vulnerabilidad futura en una dependencia
+fijada (por ejemplo <code>rapidocr-onnxruntime==1.2.3</code> u
+<code>onnxruntime==1.28.0</code>, ya fijadas por la incompatibilidad documentada en
+<code>ocr_engine.py</code>) no tuviera upgrade disponible.</p>
+<h2 id="casos-borde">Casos borde</h2>
+<h3 id="pip-audit-sin-conexion-a-internet"><code>pip-audit</code> sin conexión a internet</h3>
+<p>Durante la implementación de esta feature, el entorno de desarrollo local
+usado por el <code>builder-agent</code> no pudo completar <code>pip-audit -r
+backend/requirements.txt</code> contra el índice real de PyPI: la conexión
+HTTPS a <code>pypi.org</code> falló con <code>SSLCertVerificationError</code> (certificado no
+verificable, típico de un entorno con proxy/sandbox de red restringido),
+tanto con la configuración SSL por defecto como apuntando explícitamente
+al bundle de certifi. No es un falso verde: el comando terminó con
+traceback y código de salida distinto de 0, de forma claramente
+distinguible de "sin vulnerabilidades encontradas". En GitHub Actions
+(<code>ubuntu-latest</code>, con acceso real a <code>pypi.org</code>), se espera que el paso
+gate corra normalmente; su primer resultado real debe revisarse en el
+primer run de CI de la PR de esta feature, y esa primera revisión cuenta
+como el punto de partida de la política de excepciones descripta arriba.
+El paso informativo (<code>requirements-dev.txt</code>) tiene el mismo riesgo, pero
+al ser <code>continue-on-error: true</code> no bloquea el job aunque no pueda
+completarse.</p>
+<h3 id="diferencia-de-terminador-de-linea-crlflf">Diferencia de terminador de línea (CRLF/LF)</h3>
+<p><code>.gitattributes</code> ya normaliza <code>*.py</code> a <code>eol=lf</code> en el repo (independiente
+del entorno de desarrollo primario en Windows). <code>ruff format</code> no generó
+diffs relacionados con finales de línea distintos de lo que ya normaliza
+Git; no hizo falta configuración adicional.</p>
+<h3 id="reformateo-masivo-separado-de-cambios-de-logica">Reformateo masivo separado de cambios de lógica</h3>
+<p>Ver "Volumen de violaciones preexistentes" arriba: el commit de <code>ruff
+format</code> (57 archivos) se mantiene separado de los commits que sí cambian
+comportamiento o tipos.</p>
+<h3 id="backendrequirements-devtxt-no-se-filtra-al-dockerfile"><code>backend/requirements-dev.txt</code> no se filtra al <code>Dockerfile</code></h3>
+<p>Verificado leyendo <code>Dockerfile</code>: sigue copiando únicamente
+<code>backend/requirements.txt</code> (con el filtro <code>grep -v -E '^easyocr'</code> ya
+existente de la Feature 03), sin referencia a
+<code>backend/requirements-dev.txt</code>. <code>ruff</code>, <code>mypy</code>, <code>pip-audit</code>, <code>playwright</code>
+y <code>torch</code> (vía <code>easyocr</code>, ya excluido) no llegan a la imagen de
+producción.</p>
+<h3 id="easyocrtorch-como-dependencia-pesada-en-el-job-quality"><code>easyocr</code>/<code>torch</code> como dependencia pesada en el job <code>quality</code></h3>
+<p>Igual que el job <code>test</code> (sin cambios de esta feature), <code>pip install -r
+backend/requirements-dev.txt</code> arrastra <code>torch</code> vía <code>easyocr</code> (declarado
+en <code>backend/requirements.txt</code>, incluido en <code>requirements-dev.txt</code> vía
+<code>-r</code>). Esto aumenta el tiempo de instalación del job <code>quality</code> de forma
+comparable al job <code>test</code> ya existente; se acepta como riesgo conocido, no
+bloqueante para esta feature (ver spec, "Casos borde").</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

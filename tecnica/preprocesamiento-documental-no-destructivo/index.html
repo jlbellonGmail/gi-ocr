@@ -1,0 +1,1021 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Preprocesamiento documental no destructivo - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#preprocesamiento-documental-no-destructivo" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Preprocesamiento documental no destructivo
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usuario/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#proposito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propósito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#no-destructividad-del-original" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        No-destructividad del original
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#donde-vive-la-traza" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dónde vive la traza
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formato-de-cada-paso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formato de cada paso
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementacion-__impl-internas-prepare-trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Implementación: _*_impl internas + prepare(..., trace=...)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#camino-pdf-misma-funcion-misma-traza-honesta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Camino PDF: misma función, misma traza honesta
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#paso-nuevo-normalizacion-de-contrasteiluminacion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paso nuevo: normalización de contraste/iluminación
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Paso nuevo: normalización de contraste/iluminación">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-que-despues-de-normalize_scale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por qué después de normalize_scale
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#algoritmo-clahe-sobre-el-canal-l-de-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algoritmo: CLAHE sobre el canal L de LAB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#salvaguarda-contra-sobre-procesamiento-criterio-15-del-spec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Salvaguarda contra sobre-procesamiento (criterio 15 del spec)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametros-reportados-en-la-traza" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parámetros reportados en la traza
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#regla-de-dominio-ocr-paso-de-contraste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regla de dominio OCR (paso de contraste)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-borde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos borde
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ubicacion-del-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ubicación del código
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ver-tambien" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ver también
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="preprocesamiento-documental-no-destructivo">Preprocesamiento documental no destructivo</h1>
+<h2 id="proposito">Propósito</h2>
+<p><code>backend/app/image_prep.py</code>/<code>backend/app/capture_pipeline.py</code> ya
+preparaban cada documento antes de OCR (corrección de orientación EXIF,
+heurística de orientación por contenido, deskew, perspectiva opcional,
+normalización de escala), y ya operaban de hecho sin modificar el archivo
+original en disco — pero ninguna de esas dos propiedades estaba <strong>probada
+explícitamente</strong> ni <strong>registrada</strong>: si un campo salía mal, no había forma
+de saber, sin reinstrumentar el código a mano, qué transformaciones se
+aplicaron realmente sobre la imagen que vio el motor OCR.</p>
+<p>Esta feature agrega dos cosas, sin reabrir la lógica de <code>05-correccion-
+orientacion-exif</code> ni <code>06-calidad-captura-mobile</code>:</p>
+<ol>
+<li><strong>Garantía verificada por test</strong> de que el archivo persistido en
+   <code>output/uploads/</code> nunca se modifica, en ningún camino (imagen, PDF,
+   incluido <code>POST /api/v1/jobs/{job_id}/retry</code>).</li>
+<li><strong>Traza determinística</strong> de las transformaciones efectivamente
+   aplicadas, dentro de <code>processing_metadata.preparation_trace</code>, más un
+   paso nuevo de normalización de contraste/iluminación que no existía en
+   el pipeline.</li>
+</ol>
+<h2 id="no-destructividad-del-original">No-destructividad del original</h2>
+<p><code>capture_pipeline.process_document</code> sólo <strong>lee</strong> el archivo
+(<code>Image.open(path)</code> en el camino imagen, <code>pdfium.PdfDocument(path)</code> en el
+camino PDF): ninguna de las dos rutas vuelve a abrir <code>path</code> en modo
+escritura. Todas las transformaciones de <code>image_prep.py</code> (existentes y la
+nueva) reciben y devuelven <code>np.ndarray</code> en memoria — no hay ningún
+<code>cv2.imwrite</code>/<code>Image.save</code> sobre la ruta de entrada en todo el módulo.</p>
+<p>Esto ya era así <strong>antes</strong> de esta feature (confirmado en el spec contra el
+código); lo que agrega esta feature es la verificación explícita:</p>
+<ul>
+<li><code>backend/tests/test_preparation_trace.py::test_process_document_does_not_modify_original_file</code>
+  (parametrizado <code>.jpg</code>/<code>.png</code>) y
+  <code>test_process_document_does_not_modify_original_pdf</code>: hash SHA-256 del
+  archivo antes y después de <code>capture_pipeline.process_document(path)</code>.</li>
+<li><code>test_retry_endpoint_does_not_modify_original_file</code>: mismo hash
+  antes/después, pero disparado vía <code>TestClient</code> real sobre
+  <code>POST /api/v1/jobs/{job_id}/retry</code> (no una llamada directa a Python). Se
+  usa un job en estado <code>needs_new_photo</code> (rechazado por <code>quality_gate</code>)
+  porque <code>JobQueue.retry()</code> sólo bloquea los estados <code>ready</code>/<code>confirmed</code>
+  (no se puede reintentar un job ya <code>ready</code> para este test) — el archivo
+  original (<code>job["file_path"]</code>, bajo <code>output/uploads/</code>) se hashea antes y
+  después del <code>retry</code>.</li>
+</ul>
+<h2 id="donde-vive-la-traza">Dónde vive la traza</h2>
+<p><code>processing_metadata.preparation_trace</code>: una lista ordenada de dicts
+<code>{"step": &lt;str&gt;, "applied": &lt;bool&gt;, ...parámetros}</code>, agregada al mismo
+diccionario <code>processing_metadata</code> que ya llevaba <code>quality_gate</code>, <code>timings</code>
+y <code>engine</code> — se serializa igual, sin cambios, en <code>output/jobs/{job_id}.json</code>
+vía <code>JobStore.save_original</code>, y se expone sin ningún endpoint nuevo a
+través de <code>GET /api/v1/jobs/{job_id}</code> y <code>GET /api/v1/jobs/{job_id}/original</code>.</p>
+<p>No se persiste una imagen "preparada" nueva como archivo aparte (ver
+<code>runs/07-preprocesamiento-documental-no-destructivo/spec.md</code>, "Riesgos /
+supuestos"): la traza es metadata suficiente para auditar qué pasó, sin
+introducir un tipo de artefacto persistente nuevo con implicaciones de
+retención propias (responsabilidad futura de
+<code>21-politica-almacenamiento-retencion</code>, no iniciada).</p>
+<h2 id="formato-de-cada-paso">Formato de cada paso</h2>
+<p>Cada entrada tiene como mínimo <code>{"step": str, "applied": bool}</code>, más
+parámetros específicos por paso:</p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Cuándo aparece</th>
+<th>Parámetros además de <code>step</code>/<code>applied</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apply_exif_orientation</code></td>
+<td>Sólo camino imagen (nunca en PDF)</td>
+<td><code>reason</code></td>
+</tr>
+<tr>
+<td><code>correct_orientation</code></td>
+<td>Siempre que corre <code>image_prep.prepare()</code></td>
+<td><code>reason</code>, y <code>rotation</code> (<code>"90_cw"</code>/<code>"90_ccw"</code>) o <code>angle_deg</code> cuando aplica; <code>error: true</code> si degradó por excepción</td>
+</tr>
+<tr>
+<td><code>deskew</code></td>
+<td>Siempre que corre <code>prepare()</code></td>
+<td><code>reason</code>, <code>angle_deg</code> (estimado, aplicado o no)</td>
+</tr>
+<tr>
+<td><code>correct_perspective</code></td>
+<td>Siempre que corre <code>prepare()</code></td>
+<td><code>reason</code>, <code>requested</code> (bool: se pidió <code>apply_perspective=True</code>), <code>width</code>/<code>height</code> cuando <code>applied=True</code></td>
+</tr>
+<tr>
+<td><code>normalize_scale</code></td>
+<td>Siempre que corre <code>prepare()</code></td>
+<td><code>reason</code>, <code>original_size: [w, h]</code>, <code>final_size: [w, h]</code>, <code>scale_factor</code></td>
+</tr>
+<tr>
+<td><code>normalize_contrast</code></td>
+<td>Siempre que corre <code>prepare()</code></td>
+<td><code>reason</code>, <code>method</code> (<code>"clahe_lab_l_channel"</code>), <code>std_before</code>/<code>std_after</code>, y <code>sharpness_before</code>/<code>sharpness_after</code> cuando se llegó a evaluar la salvaguarda</td>
+</tr>
+</tbody>
+</table>
+<p><code>apply_exif_orientation</code> se agrega <strong>fuera</strong> de <code>image_prep.prepare()</code>, en
+<code>capture_pipeline.process_document</code> (camino imagen), justo después de
+llamarlo — es un paso previo a <code>prepare()</code>, no interno a esa función (ver
+<code>docs/tecnica/correccion-orientacion-exif.md</code>). Los demás cinco pasos
+corren <strong>dentro</strong> de <code>prepare()</code> y se registran ahí mismo.</p>
+<h2 id="implementacion-__impl-internas-prepare-trace">Implementación: <code>_*_impl</code> internas + <code>prepare(..., trace=...)</code></h2>
+<p>Las funciones públicas ya existentes (<code>correct_orientation</code>, <code>deskew</code>,
+<code>correct_perspective</code>, <code>normalize_scale</code>) y la nueva (<code>normalize_contrast</code>)
+<strong>mantienen su firma exacta</strong> (<code>np.ndarray -&gt; np.ndarray</code>, más los
+parámetros que ya tenían): quien ya las llama directo (otros tests,
+scripts) no se ve afectado. Cada una delega en una función interna
+<code>_*_impl(...)</code> que calcula la misma transformación y además devuelve un
+<code>dict</code> de metadata:</p>
+<pre><code class="language-python">def _deskew_impl(image_np: np.ndarray) -&gt; Tuple[np.ndarray, Dict[str, Any]]:
+    ...
+    return rotated, {&quot;applied&quot;: True, &quot;reason&quot;: &quot;...&quot;, &quot;angle_deg&quot;: 2.3}
+
+def deskew(image_np: np.ndarray) -&gt; np.ndarray:
+    img, _meta = _deskew_impl(image_np)
+    return img
+</code></pre>
+<p><code>image_prep.prepare(image_np, ..., trace: Optional[list] = None)</code> invoca
+directamente las <code>_*_impl</code> (no las funciones públicas envolventes), agrega
+cada <code>meta</code> a <code>trace</code> en el orden de ejecución, y devuelve únicamente la
+imagen final — sin cambiar su tipo de retorno respecto de antes de esta
+feature. Si <code>trace</code> es <code>None</code> (comportamiento por defecto, sin cambios
+para quien no pide traza), no se construye ninguna lista ni se paga costo
+extra de metadata más allá de lo que ya calculaba cada paso. Esto evita
+duplicar cómputo entre "hacer la transformación" y "calcular qué
+reportar", y evita agregar una rama de comportamiento condicional nueva
+por tipo de llamador (ver más abajo, "Camino PDF").</p>
+<p><code>capture_pipeline.process_document</code> arma la lista <code>trace</code>, agrega primero
+la entrada de <code>apply_exif_orientation</code> (sólo camino imagen) y se la pasa a
+<code>image_prep.prepare(..., trace=trace)</code>; al terminar, adjunta
+<code>result["processing_metadata"]["preparation_trace"] = trace</code>.</p>
+<h2 id="camino-pdf-misma-funcion-misma-traza-honesta">Camino PDF: misma función, misma traza honesta</h2>
+<p><code>capture_pipeline._process_pdf</code> llama a <strong>la misma</strong> <code>image_prep.prepare()</code>
+sobre la imagen renderizada de la página que necesita OCR
+(<code>pdf_util.extract_text_and_render</code>), con los mismos valores por defecto
+que el camino imagen (<code>apply_perspective=False</code>,
+<code>exif_orientation_applied=False</code> porque nunca se pasa ese argumento). Esto
+significa que <code>correct_orientation</code> (con <code>skip=False</code>, la heurística de
+contenido corre igual), <code>deskew</code> (incondicional), <code>correct_perspective</code>
+(si se pide) y <code>normalize_scale</code>/<code>normalize_contrast</code> <strong>sí corren y se
+trazan igual que sobre una imagen</strong>, porque comparten la misma función.</p>
+<p>Los únicos dos pasos que genuinamente <strong>nunca</strong> se invocan en el camino
+PDF son <code>apply_exif_orientation</code> (basado en metadata EXIF de PIL — un
+render de PDF vía <code>pypdfium2</code> no trae esa metadata) y <code>quality_gate.evaluate</code>
+(<code>_process_pdf</code> no lo llama en ningún punto). La traza de un PDF, entonces,
+tiene exactamente 5 entradas (<code>correct_orientation</code>, <code>deskew</code>,
+<code>correct_perspective</code>, <code>normalize_scale</code>, <code>normalize_contrast</code>), nunca 6,
+y <code>processing_metadata</code> de un PDF nunca tiene clave <code>quality_gate</code>.</p>
+<p>Esta feature <strong>no</strong> introduce un parámetro <code>is_pdf</code> (o similar) en
+<code>prepare()</code> para que se comporte distinto según quién la llama: la
+instrumentación de traza vive una sola vez dentro de <code>prepare()</code> y aplica
+por igual a ambos caminos que la invocan, tal como ya declaraba el spec en
+"Riesgos / supuestos" (evita una superficie de comportamiento condicional
+nueva no pedida por <code>ROADMAP.md</code>).</p>
+<h2 id="paso-nuevo-normalizacion-de-contrasteiluminacion">Paso nuevo: normalización de contraste/iluminación</h2>
+<h3 id="por-que-despues-de-normalize_scale">Por qué después de <code>normalize_scale</code></h3>
+<p><code>prepare()</code> ejecuta <code>normalize_contrast</code> <strong>después</strong> de <code>normalize_scale</code>
+(orientación → deskew → perspectiva opcional → escala → contraste), en
+línea con el orden que el propio criterio 9 del spec describe. Motivo:
+opera sobre la imagen ya en su tamaño final (≤1600px de lado mayor), tanto
+por costo de cómputo (CLAHE sobre una imagen más chica es más rápido) como
+porque es exactamente la imagen que efectivamente ve el motor OCR — no
+tiene sentido reportar contraste sobre una resolución intermedia que luego
+se reescala.</p>
+<h3 id="algoritmo-clahe-sobre-el-canal-l-de-lab">Algoritmo: CLAHE sobre el canal L de LAB</h3>
+<p><code>image_prep.normalize_contrast(image_np: np.ndarray) -&gt; np.ndarray</code>
+(función pública, pura, misma firma que <code>deskew</code>/<code>correct_perspective</code>):</p>
+<ol>
+<li>Convierte a LAB (<code>cv2.COLOR_RGB2LAB</code>), separa el canal <code>L</code>
+   (luminosidad) de los canales de color <code>a</code>/<code>b</code>.</li>
+<li>Aplica <code>cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))</code> sólo sobre
+   <code>L</code> — CLAHE (Contrast Limited Adaptive Histogram Equalization) mejora
+   contraste local por bloques con un límite de amplificación, mucho más
+   conservador que una ecualización de histograma global (que sí puede
+   "inventar" contraste falso o quemar zonas).</li>
+<li>Recompone LAB → RGB con los canales de color originales intactos
+   (<code>normalize_contrast</code> nunca cambia el balance de color, sólo
+   luminosidad/contraste).</li>
+</ol>
+<p>Es <strong>determinístico</strong> por construcción (sin aleatoriedad en ningún paso):
+<code>normalize_contrast(x) == normalize_contrast(x)</code> siempre, verificado por
+<code>test_normalize_contrast_is_deterministic</code>.</p>
+<h3 id="salvaguarda-contra-sobre-procesamiento-criterio-15-del-spec">Salvaguarda contra sobre-procesamiento (criterio 15 del spec)</h3>
+<p>En vez de decidir "aplicar o no" en base a un umbral fijo sobre el
+contraste global de la imagen completa, la implementación usa un patrón
+<strong>intentar-y-verificar</strong>: siempre calcula la versión mejorada, mide una
+métrica proxy de nitidez/legibilidad antes y después (varianza del
+Laplaciano, <code>cv2.Laplacian(gray, cv2.CV_64F).var()</code> — la misma métrica
+que ya usa <code>quality_gate._blur_signal</code>), y sólo <strong>acepta</strong> la mejora si no
+degrada esa métrica más de un margen de seguridad (<code>_CONTRAST_SHARPNESS_SAFETY_MARGIN
+= 0.9</code>, tolera hasta un 10 % de caída). Si la degradaría más, descarta el
+resultado de CLAHE y devuelve la imagen de entrada sin modificar
+(<code>applied: False</code>, con el motivo explícito).</p>
+<p><strong>Por qué no un umbral de "contraste global" (desvío estándar) como único
+criterio</strong>: se calibró inicialmente contra <code>backend/tests/fixtures/gas_sample.jpg</code>
+y se descubrió que esa fixture (fondo blanco dominante con texto disperso,
+como la mayoría de comprobantes reales) tiene un desvío estándar de
+intensidad global <strong>bajo</strong> (<code>~12.3</code> sobre 0-255) <em>aunque el documento está
+perfectamente iluminado</em> — el fondo blanco domina la mayoría de los
+píxeles, así que la dispersión global no es un buen proxy de "qué tan bien
+iluminado está el texto". Un umbral fijo sobre ese valor habría disparado
+CLAHE sistemáticamente sobre documentos ya buenos. La varianza del
+Laplaciano, en cambio, mide nitidez de bordes donde efectivamente hay
+contenido (texto), y funciona igual de bien sobre fondos dominantemente
+blancos que sobre imágenes más densas.</p>
+<p>Sólo se mantiene un chequeo adicional, barato, antes de intentar CLAHE:
+si el desvío estándar global es menor a <code>_CONTRAST_MIN_STD_TO_ATTEMPT =
+1.0</code> (imagen casi perfectamente plana, sin ninguna variación de
+intensidad — por ejemplo, una página de PDF completamente en blanco), no
+se intenta nada: no hay ninguna estructura real que mejorar, e intentarlo
+arriesgaría amplificar ruido de compresión JPEG sobre una superficie
+uniforme e "inventar" textura donde no la hay.</p>
+<p>Calibración empírica del margen de seguridad (<code>0.9</code>), medida sobre
+fixtures de este repo:</p>
+<table>
+<thead>
+<tr>
+<th>Fixture</th>
+<th>Nitidez antes</th>
+<th>Nitidez después de CLAHE</th>
+<th>Variación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gas_sample.jpg</code> (ya bien iluminado)</td>
+<td>1093.7</td>
+<td>1073.5</td>
+<td><strong>-1.8 %</strong> (dentro del margen, se acepta)</td>
+</tr>
+<tr>
+<td><code>gas_sample.jpg</code> oscurecido artificialmente (<code>*0.4 + 60</code>)</td>
+<td>175.9</td>
+<td>232.5</td>
+<td><strong>+32 %</strong> (mejora, se acepta)</td>
+</tr>
+<tr>
+<td>Documento sintético de bajo contraste (fondo 140, texto 120)</td>
+<td>29.7</td>
+<td>81.7</td>
+<td><strong>+175 %</strong> (mejora, se acepta)</td>
+</tr>
+</tbody>
+</table>
+<p>Sobre el fixture ya bien iluminado la variación real es una caída leve
+(-1.8 %), muy por debajo del 10 % tolerado — CLAHE con <code>clipLimit=2.0</code> es
+en la práctica un cambio conservador incluso cuando se aplica sin
+necesidad real; la salvaguarda existe para el caso (verificado por test
+con <code>unittest.mock.patch</code> sobre <code>image_prep._apply_clahe</code>,
+<code>test_normalize_contrast_safety_guard_discards_degrading_enhancement</code>) en
+que una mejora sí degradaría la nitidez de forma medible.</p>
+<h3 id="parametros-reportados-en-la-traza">Parámetros reportados en la traza</h3>
+<pre><code class="language-json">{
+  &quot;step&quot;: &quot;normalize_contrast&quot;,
+  &quot;applied&quot;: true,
+  &quot;method&quot;: &quot;clahe_lab_l_channel&quot;,
+  &quot;reason&quot;: &quot;contraste normalizado (CLAHE sobre canal L de LAB)&quot;,
+  &quot;std_before&quot;: 4.94,
+  &quot;std_after&quot;: 6.02,
+  &quot;sharpness_before&quot;: 175.89,
+  &quot;sharpness_after&quot;: 232.49
+}
+</code></pre>
+<p>Cuando <code>applied: false</code>, el <code>reason</code> distingue explícitamente los tres
+motivos posibles: <code>"imagen casi uniforme..."</code> (caso degenerado, no se
+intentó nada), <code>"mejora habría degradado la nitidez..."</code> (se intentó, la
+salvaguarda la descartó) y <code>"sin cambios efectivos sobre los píxeles"</code>
+(se intentó, pasó la salvaguarda, pero el resultado fue bit-a-bit idéntico
+al original).</p>
+<h2 id="regla-de-dominio-ocr-paso-de-contraste">Regla de dominio OCR (paso de contraste)</h2>
+<ul>
+<li><strong>Campo(s) potencialmente afectados</strong>: todos los campos configurados del
+  template <code>LITORAL_GAS</code>/<code>GAS</code> (<code>provider</code>, <code>comprobante</code>, <code>fecha_emision</code>,
+  <code>vencimiento</code>, <code>cliente</code>, <code>periodo</code>, <code>total</code>, ver
+  <code>backend/app/templates/providers.py</code>), porque <code>normalize_contrast</code> se
+  aplica sobre la imagen completa antes de OCR, no sobre una ROI
+  específica.</li>
+<li><strong>Tipo de documento/servicio probado</strong>: <code>GAS</code>, usando
+  <code>backend/tests/fixtures/gas_sample.jpg</code> (ya sintético, reutilizado de
+  <code>05</code>/<code>06</code>) — no se sube ni deriva ningún comprobante real.</li>
+<li><strong>Salida esperada</strong>: comparado con el pipeline sin el paso de contraste
+  (reconstruido manualmente llamando <code>correct_orientation</code> → <code>deskew</code> →
+  <code>normalize_scale</code>, sin <code>normalize_contrast</code>, replicando el orden previo
+  a esta feature), el pipeline con contraste produce <strong>el mismo texto OCR
+  en las secuencias de dígitos</strong> (<code>\d+</code> extraídos de <code>raw_ocr_text</code>) y la
+  misma forma de <code>validated_fields</code>/<code>rejected_fields</code>/<code>missing_fields</code>.
+  Nota: <code>gas_sample.jpg</code> en particular no incluye el texto "Litoral Gas"
+  necesario para que <code>classify_keywords</code> lo asigne a un proveedor conocido
+  (queda <code>provider_detected: "UNKNOWN"</code> con o sin el paso de contraste,
+  comportamiento <strong>preexistente e inalterado</strong> por esta feature, verificado
+  contra el código sin este cambio) — por eso la comparación relevante
+  para la regla de dominio es sobre el texto/dígitos reconocidos
+  (<code>raw_ocr_text</code>), no sobre <code>validated_fields</code> (que ya estaban vacíos
+  antes de esta feature sobre este fixture puntual, por un motivo
+  independiente y anterior a esta feature).</li>
+<li><strong>Validación semántica aplicada</strong>: <code>backend/app/validators.py</code>, sin
+  cambios de código.</li>
+<li><strong>Falsos positivos evitados</strong>: verificado por
+  <code>test_gas_fixture_contrast_step_preserves_fields_and_digits</code>, que extrae
+  todas las secuencias de dígitos (<code>re.findall(r"\d+", ...)</code>) de
+  <code>raw_ocr_text</code> con y sin el paso de contraste sobre el mismo fixture, y
+  exige que sean <strong>exactamente iguales, en el mismo orden</strong> — el paso de
+  contraste no debe inventar ni deformar ningún dígito (número de cliente,
+  medidor, importe, fechas).</li>
+</ul>
+<h2 id="casos-borde">Casos borde</h2>
+<ul>
+<li><strong><code>quality_gate.verdict == "reject"</code></strong> (camino imagen): corta <strong>antes</strong>
+  de <code>image_prep.prepare()</code>. <code>_quality_rejected_result</code> no incluye la
+  clave <code>preparation_trace</code> en absoluto (ausente, no una lista vacía ni
+  con pasos <code>applied</code> inventados) — verificado por
+  <code>test_quality_reject_result_has_no_preparation_trace</code>.</li>
+<li><strong>PDF con imagen renderizada</strong> (<code>_process_pdf</code>, camino normal): la traza
+  tiene 5 entradas honestas (<code>correct_orientation</code>, <code>deskew</code>,
+  <code>correct_perspective</code>, <code>normalize_scale</code>, <code>normalize_contrast</code>), nunca
+  <code>apply_exif_orientation</code> ni ninguna referencia a <code>quality_gate</code> —
+  verificado por <code>test_pdf_with_rendered_image_trace_excludes_exif_and_quality_gate</code>.</li>
+<li><strong>PDF con texto nativo puro</strong> (<code>_process_pdf_native</code>, ninguna página
+  requiere OCR): nunca se renderiza imagen, <code>image_prep.prepare()</code> nunca
+  se invoca, la clave <code>preparation_trace</code> queda ausente — mismo criterio
+  que el caso <code>reject</code> — verificado por
+  <code>test_pdf_native_text_has_no_preparation_trace</code> sobre un PDF sintético
+  construido a mano (sintaxis PDF cruda con fuente estándar Helvetica, sin
+  depender de una API de autoría de texto que esta versión de <code>pypdfium2</code>
+  no expone).</li>
+<li><strong>Fallo individual de un paso</strong> (por ejemplo, <code>normalize_contrast</code> sobre
+  una imagen degenerada): cada <code>_*_impl</code> está envuelta en su propio
+  <code>try/except</code> y degrada devolviendo la imagen de entrada sin modificar,
+  con <code>applied: False</code> y <code>error: true</code> en la traza — nunca propaga la
+  excepción hacia <code>capture_pipeline</code>/<code>job_queue</code> (el job no cae a
+  <code>failed</code> por un problema exclusivo de un paso de mejora visual). Cubierto
+  por <code>test_normalize_contrast_never_raises_on_degenerate_input</code> (imagen
+  <code>1x1</code> y superficie perfectamente uniforme).</li>
+<li><strong>Perspectiva: "omitido" vs. "intentado sin encontrar cuadrilátero"</strong>:
+  distinguidos explícitamente en la traza mediante la clave <code>requested</code>
+  (<code>False</code> cuando <code>apply_perspective=False</code>, no se llama a la
+  implementación en absoluto; <code>True</code> cuando sí se pidió, sin importar si
+  <code>applied</code> terminó siendo <code>True</code> o <code>False</code>) — verificado por
+  <code>test_trace_perspective_not_requested_is_distinct_from_attempted_not_found</code>
+  y <code>test_trace_perspective_applied_when_requested_and_quad_detected</code>.</li>
+<li><strong>Orientación ya correcta</strong>: la heurística de contenido no rota de más;
+  la traza refleja <code>applied: false</code> con motivo <code>"no fue necesario"</code>, nunca
+  <code>applied: true</code> sobre una transformación nula.</li>
+<li><strong>Idempotencia / reprocesamiento</strong>: reprocesar el mismo archivo original
+  produce la misma traza (mismo contenido, mismo orden) y el mismo
+  conjunto de <code>validated_fields</code>/<code>rejected_fields</code>/<code>missing_fields</code>, sin
+  aleatoriedad — verificado por <code>test_reprocessing_same_original_is_idempotent</code>,
+  análogo a <code>test_evaluate_is_deterministic</code> de <code>06</code>.</li>
+<li><strong>Job cuyo original ya fue purgado por <code>retention.py</code> antes de un
+  <code>retry</code></strong>: sin cambios de comportamiento respecto de antes de esta
+  feature (<code>FileNotFoundError</code> en <code>job_queue.py::_process</code>, no relacionado
+  con <code>image_prep</code>).</li>
+</ul>
+<h2 id="ubicacion-del-codigo">Ubicación del código</h2>
+<ul>
+<li><code>backend/app/image_prep.py</code>: <code>_correct_orientation_impl</code>,
+  <code>_deskew_impl</code>, <code>_correct_perspective_impl</code>, <code>_normalize_scale_impl</code>,
+  <code>_normalize_contrast_impl</code> (metadata + transformación); <code>deskew</code>,
+  <code>correct_perspective</code>, <code>normalize_scale</code>, <code>normalize_contrast</code>,
+  <code>correct_orientation</code> (envoltorios públicos sin cambio de firma);
+  <code>_apply_clahe</code>, <code>_contrast_metric</code>, <code>_sharpness_metric</code> (helpers del
+  paso de contraste); <code>_append_step</code> (helper de traza); <code>prepare(...,
+  trace=None)</code>.</li>
+<li><code>backend/app/capture_pipeline.py::process_document</code>: arma la entrada
+  <code>apply_exif_orientation</code> y pasa <code>trace=</code> a <code>image_prep.prepare()</code> en el
+  camino imagen; adjunta <code>preparation_trace</code> al resultado sólo cuando
+  <code>prepare()</code> efectivamente corrió.</li>
+<li><code>backend/app/capture_pipeline.py::_process_pdf</code>: mismo patrón para el
+  camino PDF (sin entrada de EXIF).</li>
+<li><code>backend/tests/test_preparation_trace.py</code>: toda la cobertura de esta
+  feature (no-destructividad, traza, contraste, idempotencia).</li>
+</ul>
+<h2 id="ver-tambien">Ver también</h2>
+<ul>
+<li><a href="../correccion-orientacion-exif/">docs/tecnica/correccion-orientacion-exif.md</a>:
+  detalle de <code>apply_exif_orientation</code>/<code>correct_orientation</code> (sin cambios
+  de lógica en esta feature, sólo instrumentados con traza).</li>
+<li><a href="../calidad-captura-mobile/">docs/tecnica/calidad-captura-mobile.md</a>:
+  <code>quality_gate.evaluate</code>, veredicto <code>reject</code> (sin cambios de lógica en
+  esta feature).</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,872 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Empaquetado y Despliegue - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#empaquetado-y-despliegue" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Empaquetado y Despliegue
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usuario/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#arquitectura-de-la-imagen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitectura de la imagen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitectura de la imagen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#por-que-se-descarta-alpine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por qué se descarta Alpine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#por-que-se-excluye-easyocrtorch" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Por qué se excluye EasyOCR/torch
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#los-tres-volumenes-persistentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Los tres volúmenes persistentes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#servicesini-montado-no-horneado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        services.ini: montado, no horneado
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline-de-releaseyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline de release.yml
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bind-mount-de-servicesini-inexistente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bind mount de services.ini inexistente
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linuxarm64-no-garantizado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        linux/arm64 no garantizado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restart-con-jobs-en-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restart con jobs en processing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#windows-docker-desktop-vs-linux-docker-engine-como-host" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Windows (Docker Desktop) vs. Linux (Docker Engine) como host
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker-cli-presente-sin-daemon-corriendo-npipe-docker-desktop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker CLI presente sin daemon corriendo (npipe / Docker Desktop)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verificacion-real-de-esta-feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verificación real de esta feature
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="empaquetado-y-despliegue">Empaquetado y Despliegue</h1>
+<p>Empaqueta el backend FastAPI de gi-ocr (que sirve además <code>frontend/</code> por
+<code>StaticFiles</code>, mismo origen) en una imagen Docker reproducible, para
+llevarlo a probar a distintos clientes en un servidor o equipo propio que
+el usuario administra, sin instalar Python/venv/dependencias a mano.</p>
+<p>Decisión de infraestructura fija (dato de entrada del dueño del
+producto, no reabierta por esta feature): destino de despliegue = Docker
+en servidor/equipo propio, sin PaaS gestionado (Railway/Render/Fly.io)
+ni Kubernetes/orquestador. Ver ADR-009 en
+<a href="../arquitectura/#adr-009--empaquetado-docker-y-pipeline-de-release">arquitectura.md</a>.</p>
+<h2 id="arquitectura-de-la-imagen">Arquitectura de la imagen</h2>
+<p><code>Dockerfile</code> en la raíz del repo, base <code>python:3.12-slim</code> (Debian):</p>
+<ol>
+<li>Instala dependencias de sistema mínimas en tiempo de ejecución
+   (<code>libglib2.0-0</code>, <code>libgl1</code>), requeridas por <code>opencv-python-headless</code>
+   para operaciones de imagen sin entorno gráfico. No instala
+   herramientas de compilación: no hace falta porque no se compila nada
+   desde fuente (ver "Por qué se descarta Alpine").</li>
+<li>Instala <code>backend/requirements.txt</code> <strong>excluyendo</strong> la línea <code>easyocr</code>
+   (ver "Por qué se excluye EasyOCR/torch").</li>
+<li>Copia <code>backend/</code> y <code>frontend/</code> (código de aplicación) al <code>WORKDIR
+   /app</code>.</li>
+<li>Crea (<code>mkdir -p</code>) <code>storage_bridge/{inbound,ready,failed}</code>, <code>output/</code>
+   e <code>inbound/</code> dentro de la imagen, para que el contenedor arranque
+   incluso sin volúmenes montados — mismo comportamiento que en
+   desarrollo local, donde <code>storage_bridge_writer.py</code>,
+   <code>job_store.py</code> (<code>JobStore.__init__</code>) e <code>inbound_watcher.py</code>
+   (<code>InboundWatcher.__init__</code>) ya crean esas carpetas con
+   <code>mkdir(parents=True, exist_ok=True)</code> si faltan.</li>
+<li>Expone el puerto <code>8000</code> y arranca con
+   <code>uvicorn backend.app.main:app --host 0.0.0.0 --port 8000</code> — <code>0.0.0.0</code>
+   es obligatorio (no <code>127.0.0.1</code>, que solo serviría dentro del propio
+   contenedor y quedaría inalcanzable desde el mapeo de puerto del host).</li>
+</ol>
+<h3 id="por-que-se-descarta-alpine">Por qué se descarta Alpine</h3>
+<p><code>onnxruntime</code> y <code>opencv-python-headless</code> distribuyen wheels manylinux
+(glibc). Alpine usa musl; instalar esas dependencias ahí forzaría
+compilar desde fuente (o no encontrar wheel compatible), lo que no vale
+la pena para el alcance de esta feature. <code>python:3.12-slim</code> (Debian) usa
+glibc y consume los wheels ya publicados sin compilación.</p>
+<h3 id="por-que-se-excluye-easyocrtorch">Por qué se excluye EasyOCR/torch</h3>
+<p><code>backend/requirements.txt</code> declara <code>easyocr&gt;=1.7.1</code>, que a su vez arrastra
+<code>torch</code> como dependencia transitiva de PyPI (no está listado
+explícitamente en <code>requirements.txt</code>, pero <code>pip</code> lo resuelve igual al
+instalar <code>easyocr</code>). Desde ADR-006 (<code>docs/tecnica/arquitectura.md</code>),
+RapidOCR (PP-OCRv3) + ONNX Runtime es el motor OCR principal y EasyOCR
+queda como fallback interno <strong>opcional, deshabilitado por defecto</strong> —
+nunca se usa en el flujo activo del pipeline. Cargar <code>torch</code> en una
+imagen pensada para distribuirse a servidores/equipos de cliente no se
+justifica: aumenta significativamente el tamaño de la imagen y el tiempo
+de build sin beneficio funcional en el camino activo.</p>
+<p>El <code>Dockerfile</code> filtra la línea <code>easyocr</code> del propio
+<code>backend/requirements.txt</code> en tiempo de build (<code>grep -v -E '^easyocr'</code>),
+en vez de mantener un segundo archivo <code>requirements-docker.txt</code>
+duplicado a sincronizar a mano en cada cambio de dependencias. Esto es
+una decisión de <strong>empaquetado</strong>, no reabre ADR-006: RapidOCR/ONNX sigue
+siendo el único motor instalado y activo, tanto dentro como fuera del
+contenedor. Verificado en build real (ver "Verificación"):
+<code>python -c "import easyocr"</code> falla con <code>ModuleNotFoundError</code> dentro de
+la imagen, y <code>python -c "import rapidocr_onnxruntime"</code> no falla.</p>
+<p>Si en el futuro se necesita EasyOCR disponible como fallback real en
+producción, hace falta una imagen alternativa o un flag de build — fuera
+de esta feature (ver spec, "Riesgos/supuestos").</p>
+<h2 id="los-tres-volumenes-persistentes">Los tres volúmenes persistentes</h2>
+<p>Verificado en el código real (<code>backend/app/main.py</code>, líneas 33-35), el
+runtime del API escribe estado persistente en <strong>tres</strong> rutas distintas,
+no solo <code>storage_bridge/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Directorio (host)</th>
+<th>Ruta dentro del contenedor</th>
+<th>Qué persiste</th>
+<th>Por qué falta sin volumen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>./storage_bridge</code></td>
+<td><code>/app/storage_bridge</code></td>
+<td>Integración por filesystem con el sistema externo/legacy (<code>inbound/</code>, <code>ready/</code>, <code>failed/</code>, ADR-001/ADR-005).</td>
+<td>Se pierden los <code>.DATA</code> generados y los archivos pendientes de consumir.</td>
+</tr>
+<tr>
+<td><code>./output</code></td>
+<td><code>/app/output</code></td>
+<td><code>JobStore</code> (<code>DATA_DIR = BASE_DIR / "output"</code>): historial de jobs (<code>output/jobs/</code>) y documentos confirmados por revisión humana (<code>output/confirmed/</code>).</td>
+<td>Se pierde el historial de jobs y confirmaciones previas del cliente al recrear el contenedor.</td>
+</tr>
+<tr>
+<td><code>./inbound</code></td>
+<td><code>/app/inbound</code></td>
+<td><code>InboundWatcher</code> (<code>INBOUND_DIR = BASE_DIR / "inbound"</code>, <strong>distinto</strong> de <code>storage_bridge/inbound/</code>): carpeta observada para encolar documentos nuevos automáticamente.</td>
+<td>Queda vacía en cada recreación; documentos dejados ahí por el cliente para ser observados no sobreviven.</td>
+</tr>
+</tbody>
+</table>
+<p>Si solo se montara <code>storage_bridge/</code>, un <code>docker compose down &amp;&amp; up</code> (o
+una actualización de imagen) perdería el historial de jobs y dejaría la
+carpeta de watch vacía — una regresión operativa real para el caso de
+uso de "llevarlo a probar a un cliente": el cliente esperaría que sus
+jobs y confirmaciones previas sigan disponibles. Por eso
+<code>docker-compose.yml</code> monta los tres, con rutas relativas al propio
+archivo (<code>./storage_bridge</code>, <code>./output</code>, <code>./inbound</code>) para funcionar
+igual en Windows (Docker Desktop) y Linux (Docker Engine) sin edición
+manual de rutas absolutas.</p>
+<p>Ninguno de los tres falla si la carpeta de host está vacía en un
+checkout nuevo: el contenedor las crea/subcarpeta si faltan, con el
+mismo <code>mkdir(parents=True, exist_ok=True)</code> que ya usan
+<code>storage_bridge_writer.py</code>, <code>inbound_watcher.py</code> y <code>job_store.py</code> en
+desarrollo local.</p>
+<h2 id="servicesini-montado-no-horneado"><code>services.ini</code>: montado, no horneado</h2>
+<p><code>backend/config/services.ini</code> (ADR-007, configuración de extracción por
+servicio en texto plano) se monta como <strong>bind mount de archivo
+individual</strong> (<code>./backend/config/services.ini:/app/backend/config/services.ini</code>
+en <code>docker-compose.yml</code>), no se hornea fijo dentro de la imagen.</p>
+<p>Motivo: el caso de uso real es "probar el sistema en distintos
+clientes", cada uno con su propia configuración de campos/regex por
+servicio. Hornear <code>services.ini</code> en la imagen obligaría a reconstruirla
+por cada cliente para cambiar un campo o una zona OCR. Montarlo como
+archivo externo permite editar la configuración en el host y reiniciar
+el contenedor (sin reconstruir la imagen) para que el cambio tome
+efecto.</p>
+<p>La ruta de montaje dentro del contenedor (<code>/app/backend/config/services.ini</code>)
+coincide exactamente con la que resuelve
+<code>backend/app/services_config.py</code> en tiempo de ejecución:
+<code>SERVICES_INI = CONFIG_DIR / "services.ini"</code>, donde
+<code>CONFIG_DIR = Path(__file__).resolve().parents[1] / "config"</code> — resuelto
+por ruta relativa al paquete instalado (<code>/app/backend/app/services_config.py</code>
+→ <code>parents[1]</code> = <code>/app/backend</code> → <code>/app/backend/config</code>), <strong>no</strong> por
+variable de entorno. El <code>Dockerfile</code> fija <code>WORKDIR /app</code> y copia
+<code>backend/</code> completo (incluyendo <code>backend/config/services.ini</code> versionado
+en el repo) antes de que el bind mount lo reemplace en runtime, así que
+la ruta siempre existe con contenido real como fuente del mount, incluso
+antes de que el usuario decida sobrescribirla con su propia copia (ver
+"Troubleshooting").</p>
+<p><strong>Importante:</strong> el bind mount del host siempre gana sobre lo horneado en
+la imagen. Si el <code>services.ini</code> versionado en el repo cambia entre
+releases pero un cliente tiene su propio archivo montado con
+configuración custom, actualizar la imagen (<code>docker pull</code> + recrear el
+contenedor) <strong>no</strong> actualiza la configuración de ese cliente — el
+archivo del host sigue siendo la fuente de verdad. Si se necesita
+propagar un cambio de <code>services.ini</code> por defecto a un cliente ya
+desplegado, hay que copiar el archivo actualizado a mano a la ruta
+montada en su host.</p>
+<h2 id="pipeline-de-releaseyml">Pipeline de <code>release.yml</code></h2>
+<p><code>.github/workflows/release.yml</code>:</p>
+<ul>
+<li>Trigger: <code>on: push: tags: ['v*']</code> — <strong>nunca</strong> en cada commit ni en
+  push/PR a <code>develop</code>/<code>main</code> (eso lo cubre <code>ci.yml</code>, sin overlap). El
+  humano tagea manualmente después de mergear a <code>main</code>
+  (<code>git tag vX.Y.Z &amp;&amp; git push origin vX.Y.Z</code>, ver <code>AGENTS.md</code>, sección
+  Versionado) — los agentes nunca crean tags.</li>
+<li>Valida explícitamente que el tag pusheado matchea el patrón semver
+  <code>^v[0-9]+\.[0-9]+\.[0-9]+$</code> antes de construir o publicar nada; si no
+  matchea, el job falla con <code>exit 1</code> y un mensaje claro
+  (<code>::error::Tag '&lt;tag&gt;' no matchea el patrón semver vX.Y.Z...</code>) — evita
+  publicar una imagen con un tag ambiguo (ver "Casos borde" del spec).</li>
+<li>Login en <code>ghcr.io</code> vía <code>docker/login-action</code>, usando
+  <code>${{ secrets.GITHUB_TOKEN }}</code> (token efímero de Actions, sin secret
+  adicional a configurar por el humano) con permiso <code>packages: write</code>
+  declarado en el bloque <code>permissions:</code> del workflow.</li>
+<li>Build + push con <code>docker/build-push-action</code>, usando el mismo
+  <code>Dockerfile</code> de esta feature, contra
+  <code>ghcr.io/&lt;owner&gt;/&lt;repo&gt;</code> (nombre de imagen en minúsculas, requerido por
+  GHCR — <code>github.repository</code> se normaliza con <code>tr '[:upper:]' '[:lower:]'</code>
+  porque GHCR no acepta mayúsculas en el path de la imagen aunque el
+  nombre del repo de GitHub las tenga). Publica dos tags: el tag de git
+  exacto (<code>vX.Y.Z</code>) y <code>latest</code>.</li>
+</ul>
+<p>La visibilidad pública/privada del paquete en GHCR es configuración
+manual humana fuera de este circuito, análoga al setup manual de GitHub
+Pages ya documentado en <code>AGENTS.md</code> — por defecto el paquete hereda la
+visibilidad (privada) del repositorio; si una máquina cliente necesita
+<code>docker pull</code> sin autenticarse contra GitHub, alguien debe hacer el
+paquete público a mano en GitHub (Settings del paquete en GHCR).</p>
+<p>Este workflow no valida que el archivo <code>VERSION</code> del repo coincida con
+el tag de git pusheado — una posible desincronización entre ambos queda
+como riesgo menor documentado, no bloqueante (ver spec,
+"Riesgos/supuestos").</p>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="bind-mount-de-servicesini-inexistente">Bind mount de <code>services.ini</code> inexistente</h3>
+<p>Si <code>backend/config/services.ini</code> no existe en el host al primer
+<code>docker compose up</code> (por ejemplo, se borró a mano o se apunta a una ruta
+distinta sin copiar el archivo), Docker <strong>crea un directorio vacío</strong> en
+esa ruta dentro del contenedor en vez de fallar el mount. El backend
+rompe al arrancar: <code>services_config.py._load_parser()</code> llama a
+<code>cfg.read(SERVICES_INI, ...)</code> sobre lo que Docker le presenta como un
+directorio, no un archivo — <code>IsADirectoryError</code>/error de lectura.</p>
+<p>Mitigación: el repo versiona <code>backend/config/services.ini</code> (no está en
+<code>.gitignore</code>), así que en un checkout normal del repo el archivo siempre
+existe antes del primer <code>docker compose up</code>. Si se eliminó o el usuario
+apunta el volumen a una ruta fuera del checkout, hay que <strong>crear/copiar
+el archivo antes de levantar el contenedor por primera vez</strong> — nunca
+dejar que Docker cree el directorio vacío. Si ya ocurrió: <code>docker compose
+down</code>, borrar el directorio vacío creado por Docker en la ruta de host
+(o dentro del volumen anónimo si aplica), asegurar el archivo real, y
+<code>docker compose up</code> de nuevo.</p>
+<h3 id="linuxarm64-no-garantizado"><code>linux/arm64</code> no garantizado</h3>
+<p><code>rapidocr-onnxruntime==1.2.3</code> y <code>onnxruntime==1.28.0</code> están fijados por
+versión exacta en <code>backend/requirements.txt</code> (comentario explícito sobre
+incompatibilidad de API interna en versiones más nuevas: versiones
+posteriores de <code>rapidocr-onnxruntime</code> cambian atributos internos
+(<code>text_detector</code>/<code>text_recognizer</code>) de los que depende
+<code>backend/app/ocr_engine.py</code> para el two-pass ROI-focalizada). No está
+garantizado que existan wheels manylinux para <code>linux/arm64</code> en esas
+versiones exactas (Apple Silicon vía Docker Desktop, servidores ARM). El
+build se garantiza solo para <code>linux/amd64</code> en esta ronda; si el <code>pip
+install</code> falla en un host ARM por falta de wheel, la opción es correr el
+contenedor bajo emulación <code>amd64</code> (más lento) o esperar una futura
+revisión de esta feature que evalúe versiones de <code>rapidocr-onnxruntime</code>/
+<code>onnxruntime</code> con soporte ARM real, sin romper el two-pass ROI (ver
+ADR-006).</p>
+<h3 id="restart-con-jobs-en-processing">Restart con jobs en <code>processing</code></h3>
+<p>El estado de <code>JobQueue</code> vive en memoria de proceso, no persiste en
+<code>output/jobs/</code> de forma continua durante el procesamiento. Si el
+contenedor se recrea (<code>docker compose down &amp;&amp; up</code>, actualización de
+imagen) mientras hay jobs en estado <code>processing</code>, ese job puede quedar
+con estado desactualizado sin reanudarse solo. Limitación conocida, no
+resuelta en esta feature (ver spec, "Casos borde" y "Explícitamente NO
+incluye") — el usuario debe reintentar la carga de esos documentos
+manualmente tras un restart.</p>
+<h3 id="windows-docker-desktop-vs-linux-docker-engine-como-host">Windows (Docker Desktop) vs. Linux (Docker Engine) como host</h3>
+<p>Las rutas absolutas de host difieren entre plataformas. <code>docker-compose.yml</code>
+usa exclusivamente rutas relativas al propio archivo (<code>./storage_bridge</code>,
+<code>./output</code>, <code>./inbound</code>, <code>./backend/config/services.ini</code>), así que
+<code>docker compose up</code> funciona igual en ambos sistemas operativos sin
+edición manual de rutas.</p>
+<h3 id="docker-cli-presente-sin-daemon-corriendo-npipe-docker-desktop">Docker CLI presente sin daemon corriendo (<code>npipe</code> / Docker Desktop)</h3>
+<p>En Windows, el CLI <code>docker</code> puede estar instalado (<code>docker --version</code>
+responde) sin que el servicio <code>com.docker.service</code> (Docker Desktop
+Engine) esté corriendo. Cualquier comando que hable con el daemon
+(<code>docker build</code>, <code>docker run</code>, <code>docker info</code>, <code>docker ps</code>) falla con:</p>
+<pre><code>ERROR: failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine:
+check if the path is correct and if the daemon is running
+</code></pre>
+<p>Solución: abrir Docker Desktop (o <code>Start-Service com.docker.service</code> con
+permisos de administrador) y esperar a que el ícono de la bandeja indique
+"Engine running" antes de reintentar. Ver "Verificación real de esta
+feature" para el detalle de qué se pudo y no se pudo correr durante el
+desarrollo.</p>
+<h2 id="verificacion-real-de-esta-feature">Verificación real de esta feature</h2>
+<p>El <code>Dockerfile</code>, <code>.dockerignore</code> y <code>docker-compose.yml</code> de esta feature
+<strong>no pudieron construirse ni ejecutarse realmente</strong> durante el desarrollo:
+el entorno de ejecución del <code>builder-agent</code> tenía el CLI <code>docker</code>
+instalado pero el servicio <code>com.docker.service</code> (Docker Desktop Engine)
+detenido, sin permisos para iniciarlo (<code>Start-Service</code> falló por falta de
+privilegios). Evidencia exacta del intento, el error real obtenido y el
+resultado de <code>pytest -v</code> (sin depender de Docker) queda documentada en
+<code>runs/03-empaquetado-despliegue/decision.md</code> — no se afirma acá ni ahí
+que el build funcionó, porque no se corrió de verdad. Queda pendiente que
+QA o el humano confirmen el build/<code>docker compose up</code> en un entorno con
+el daemon de Docker disponible.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

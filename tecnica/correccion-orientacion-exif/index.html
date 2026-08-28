@@ -1,0 +1,877 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Corrección de orientación EXIF - gi-ocr</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#correccion-de-orientacion-exif" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="gi-ocr" class="md-header__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gi-ocr
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Corrección de orientación EXIF
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_1">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Inicio
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Técnica
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../usuario/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Usuario
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="gi-ocr" class="md-nav__button md-logo" aria-label="gi-ocr" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    gi-ocr
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inicio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Técnica
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usuario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Usuario
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#proposito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Propósito
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#algoritmo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Algoritmo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Algoritmo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lectura-del-tag-exif-orientation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lectura del tag EXIF Orientation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#punto-de-integracion-en-el-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Punto de integración en el pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relacion-con-image_prepcorrect_orientation-heuristica-de-contenido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relación con image_prep.correct_orientation (heurística de contenido)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#orden-final-en-image_prepprepare" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orden final en image_prep.prepare()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formatos-de-imagen-soportados-por-el-endpoint-de-subida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Formatos de imagen soportados por el endpoint de subida
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisiones-de-diseno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisiones de diseño
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fuera-de-alcance-explicitamente-no-cubierto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fuera de alcance (explícitamente no cubierto)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-borde-cubiertos-y-donde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Casos borde cubiertos (y dónde)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ubicacion-del-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ubicación del código
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="correccion-de-orientacion-exif">Corrección de orientación EXIF</h1>
+<h2 id="proposito">Propósito</h2>
+<p>Antes de esta feature, <code>capture_pipeline.process_document</code> abría la imagen
+subida con <code>Image.open(path).convert("RGB")</code> y la convertía directo a
+<code>np.ndarray</code>, <strong>sin</strong> interpretar el tag EXIF <code>Orientation</code>. Una foto de
+celular guardada por la cámara "derecha" para el usuario pero con
+<code>Orientation != 1</code> (muy común: casi todas las cámaras de celular escriben
+el tag en vez de rotar físicamente los píxeles, para no perder tiempo de
+captura) llegaba a OCR efectivamente rotada o espejada, degradando la
+detección de campos.</p>
+<p>Esta feature agrega un paso previo, específico y aislado, que interpreta
+ese tag y corrige los píxeles antes de que la imagen entre al pipeline de
+preparación (<code>image_prep.prepare</code>) y a OCR (<code>ocr_engine</code>).</p>
+<h2 id="algoritmo">Algoritmo</h2>
+<h3 id="lectura-del-tag-exif-orientation">Lectura del tag EXIF <code>Orientation</code></h3>
+<p><code>backend/app/image_prep.py::apply_exif_orientation(image: Image.Image) -&gt;
+Tuple[Image.Image, bool]</code> usa <code>PIL.ImageOps.exif_transpose</code>, la utilidad
+estándar de Pillow para este problema, en vez de reimplementar a mano la
+tabla de 8 valores. <code>exif_transpose</code>:</p>
+<ol>
+<li>Lee el tag EXIF <code>Orientation</code> (id <code>0x0112</code> / <code>274</code>) desde
+   <code>image.getexif()</code>.</li>
+<li>Si el valor es uno de los 8 estándar (1–8), devuelve una nueva imagen
+   con la transformación de píxeles correspondiente ya aplicada y <strong>borra</strong>
+   el tag <code>Orientation</code> de la imagen resultante (para que no se vuelva a
+   aplicar dos veces si algo más adelante mira el EXIF).</li>
+<li>Si no hay EXIF, no hay tag <code>Orientation</code>, o el valor no es interpretable,
+   <code>exif_transpose</code> no modifica nada y devuelve la imagen tal cual (o
+   <code>None</code> en casos límite de Pillow, contemplado explícitamente).</li>
+</ol>
+<p>Tabla de transformaciones por valor de <code>Orientation</code> (según especificación
+EXIF/TIFF, aplicada internamente por <code>exif_transpose</code>):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Orientation</th>
+<th>Significado</th>
+<th>Transformación aplicada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td>Ya "de pie", sin corrección necesaria</td>
+<td>ninguna</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td>Espejada horizontalmente</td>
+<td><code>FLIP_LEFT_RIGHT</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td>Rotada 180°</td>
+<td><code>ROTATE_180</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td>Espejada verticalmente</td>
+<td><code>FLIP_TOP_BOTTOM</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td>Espejada + rotada 90° (transpose)</td>
+<td><code>TRANSPOSE</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td>Rotada 90° (la cámara se sostuvo de lado)</td>
+<td><code>ROTATE_90</code> (real: -90° visual)</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td>Espejada + rotada 270° (transverse)</td>
+<td><code>TRANSVERSE</code></td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td>Rotada 270°</td>
+<td><code>ROTATE_270</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>apply_exif_orientation</code> además:</p>
+<ul>
+<li>Lee el valor crudo del tag <strong>antes</strong> de llamar a <code>exif_transpose</code>
+  (guardado en <code>orientation_tag</code>), exclusivamente para poder reportar si
+  hubo o no corrección efectiva.</li>
+<li>Devuelve <code>(imagen_corregida, se_aplico_correccion)</code>. <code>se_aplico_correccion</code>
+  es <code>True</code> únicamente si el tag estaba presente, era un entero (no <code>bool</code>,
+  que en Python es subclase de <code>int</code>) y estaba en el rango <code>2..8</code> (es decir,
+  si <code>exif_transpose</code> efectivamente transformó píxeles). Con
+  <code>Orientation == 1</code> no se considera "aplicada" porque no hubo
+  transformación real, aunque el tag estuviera presente y fuera válido.</li>
+<li>Degrada con gracia ante EXIF corrupto: cualquier excepción al leer
+  <code>getexif()</code> o al llamar <code>exif_transpose</code> se captura y se trata como "sin
+  corrección EXIF disponible", devolviendo la imagen original sin
+  modificar. Esto cubre valores fuera de rango (<code>0</code>, <code>9</code>, <code>-1</code>, <code>100</code>,
+  etc.) y valores no numéricos (p. ej. un tag <code>Orientation</code> con un string),
+  que Pillow o el propio código descartan sin lanzar excepción hacia el
+  llamador.</li>
+</ul>
+<h3 id="punto-de-integracion-en-el-pipeline">Punto de integración en el pipeline</h3>
+<p><code>backend/app/capture_pipeline.py::process_document</code>, en el camino de
+imagen (no PDF):</p>
+<pre><code class="language-python">img = Image.open(path)
+img, exif_applied = image_prep.apply_exif_orientation(img)
+img = img.convert(&quot;RGB&quot;)
+arr = np.array(img)
+prepared = image_prep.prepare(arr, exif_orientation_applied=exif_applied)
+return process_image(prepared, src)
+</code></pre>
+<p>Puntos clave de este orden:</p>
+<ul>
+<li><code>apply_exif_orientation</code> se llama <strong>antes</strong> de <code>.convert("RGB")</code>, porque
+  necesita la imagen PIL original con su metadata EXIF intacta
+  (<code>convert("RGB")</code> no destruye el EXIF por sí solo, pero conceptualmente
+  el paso de corrección de orientación debe ocurrir sobre la imagen tal
+  como llegó, antes de cualquier otra transformación).</li>
+<li>El resultado (<code>exif_applied: bool</code>) viaja como parámetro explícito
+  <code>exif_orientation_applied</code> hacia <code>image_prep.prepare()</code>, que es el único
+  punto de entrada de preparación de imagen antes de OCR. <code>prepare()</code> en sí
+  mismo ya no ve ninguna metadata EXIF (recibe <code>np.ndarray</code>), por eso el
+  booleano se calcula aguas arriba y se pasa explícitamente.</li>
+<li>El camino PDF (<code>_process_pdf</code> / <code>pdf_util</code>) no se toca: los PDFs se
+  renderizan a imagen con <code>pypdfium2</code> y no traen tag EXIF de cámara en el
+  mismo sentido (ver "Fuera de alcance").</li>
+</ul>
+<h3 id="relacion-con-image_prepcorrect_orientation-heuristica-de-contenido">Relación con <code>image_prep.correct_orientation</code> (heurística de contenido)</h3>
+<p><code>image_prep.correct_orientation()</code> es una heurística preexistente basada en
+varianza de gradiente Sobel horizontal/vertical: compara cuánto "borde"
+horizontal vs. vertical tiene la imagen y, si la relación es fuerte,
+asume que está rotada 90°/270° y la rota. Limitaciones conocidas y ya
+existentes antes de esta feature:</p>
+<ul>
+<li>Solo cubre 90°/270° (no 180°, no espejado).</li>
+<li>Es una heurística de contenido, no de metadata: puede equivocarse con
+  documentos de layout atípico.</li>
+</ul>
+<p>Esta feature <strong>subordina</strong> (no elimina) esa heurística: agrega un
+parámetro <code>skip: bool = False</code> a <code>correct_orientation(image_np, skip=False)</code>.
+Cuando <code>skip=True</code>, la función devuelve la imagen tal cual (solo aplica
+<code>to_rgb</code>), sin ejecutar la heurística de gradiente. <code>image_prep.prepare()</code>
+recibe <code>exif_orientation_applied: bool = False</code> y llama internamente a
+<code>correct_orientation(image_np, skip=exif_orientation_applied)</code>.</p>
+<p>Justificación de la decisión (documentada también en
+<code>runs/05-correccion-orientacion-exif/decision.md</code>): si la corrección EXIF
+ya dejó la imagen "de pie" de forma confiable (metadata explícita de la
+cámara), volver a pasarla por una heurística de contenido que puede
+rotarla de nuevo sería, en el mejor caso, redundante y, en el peor, una
+doble corrección que la desorienta otra vez. Cuando no hubo corrección EXIF
+utilizable (<code>exif_orientation_applied=False</code>, el default), el comportamiento
+es exactamente el mismo que antes de esta feature — sin regresión.</p>
+<h3 id="orden-final-en-image_prepprepare">Orden final en <code>image_prep.prepare()</code></h3>
+<p>Sin cambios de orden respecto a antes, solo el nuevo parámetro:</p>
+<pre><code>correct_orientation(skip=exif_orientation_applied) -&gt; deskew -&gt; (perspectiva opcional) -&gt; normalize_scale
+</code></pre>
+<p><code>deskew</code> sigue operando sobre la imagen ya en la orientación correcta
+(gracias a EXIF o a la heurística, según el caso), sin cambios de
+comportamiento.</p>
+<h2 id="formatos-de-imagen-soportados-por-el-endpoint-de-subida">Formatos de imagen soportados por el endpoint de subida</h2>
+<p>La lista real de extensiones aceptadas vive en <code>backend/app/main.py</code>
+(línea ~38), <strong>no</strong> en <code>validators.py</code>:</p>
+<pre><code class="language-python">ALLOWED_EXTS = {&quot;.jpg&quot;, &quot;.jpeg&quot;, &quot;.png&quot;, &quot;.tif&quot;, &quot;.tiff&quot;, &quot;.pdf&quot;}
+</code></pre>
+<p>Soporte de tag EXIF <code>Orientation</code> por formato, verificado directamente con
+Pillow 12.2 (versión usada en este repo, ver <code>backend/requirements.txt</code>):</p>
+<ul>
+<li><strong>JPEG (<code>.jpg</code>/<code>.jpeg</code>)</strong>: soporte estándar y es, en la práctica, el
+  formato relevante para esta feature — es el que producen las cámaras de
+  celular, casi siempre con el tag <code>Orientation</code> presente (las cámaras
+  escriben el tag en vez de rotar físicamente los píxeles, por velocidad
+  de captura).</li>
+<li><strong>TIFF (<code>.tif</code>/<code>.tiff</code>)</strong>: soporta el tag <code>Orientation</code> igual que JPEG.
+  El tag <code>Orientation</code> (<code>0x0112</code>) es en realidad un tag baseline de TIFF
+  6.0 del cual EXIF hereda su numeración; Pillow expone ambos casos por
+  <code>Image.getexif()</code> de forma equivalente, y <code>ImageOps.exif_transpose</code>
+  funciona igual sobre TIFF que sobre JPEG (verificado con un round-trip
+  <code>Image.new(...).save(..., format="TIFF", exif=exif)</code> seguido de
+  <code>exif_transpose</code>).</li>
+<li><strong>PNG (<code>.png</code>)</strong>: el spec PNG moderno admite un chunk <code>eXIf</code> opcional
+  (soportado por Pillow desde hace varias versiones; en Pillow 12.2,
+  <code>Image.getexif()</code> también lo lee si está presente), por lo que
+  técnicamente <code>apply_exif_orientation</code> no ignora ni rechaza PNG. Sin
+  embargo, en la práctica <strong>no es un caso relevante para esta feature</strong>:
+  las cámaras de celular no producen PNG para fotos (usan JPEG), y las
+  fuentes típicas de PNG en este flujo (capturas de pantalla, imágenes
+  editadas/exportadas) casi nunca llevan el chunk <code>eXIf</code> con
+  <code>Orientation</code>. El comportamiento es correcto por construcción: si un PNG
+  trajera ese chunk, se corregiría igual que un JPEG; si no lo trae (caso
+  normal), <code>apply_exif_orientation</code> no hace nada, igual que antes de esta
+  feature.</li>
+<li><strong>PDF (<code>.pdf</code>)</strong>: fuera de alcance de esta feature (ver más abajo). El
+  camino PDF no pasa por <code>apply_exif_orientation</code>.</li>
+</ul>
+<h2 id="decisiones-de-diseno">Decisiones de diseño</h2>
+<ul>
+<li><strong>Usar <code>PIL.ImageOps.exif_transpose</code> en vez de reimplementar la tabla de
+  8 valores a mano</strong>: es la utilidad estándar y ya probada de una
+  dependencia existente (Pillow), reduce superficie de bugs propios en un
+  problema ya resuelto por la librería.</li>
+<li><strong>Punto de integración en <code>capture_pipeline.process_document</code>, no dentro
+  de <code>image_prep.prepare()</code></strong>: <code>prepare()</code> recibe <code>np.ndarray</code>, que ya no
+  tiene metadata EXIF asociada. La corrección debe ocurrir sobre la imagen
+  PIL original, antes de la conversión a array, así que vive en el único
+  lugar del pipeline donde todavía existe el objeto <code>Image.Image</code> con su
+  EXIF intacto.</li>
+<li><strong>Booleano explícito (<code>exif_orientation_applied</code>) en vez de reinspeccionar
+  metadata más abajo</strong>: como el array <code>np.ndarray</code> no lleva EXIF, la única
+  forma de que <code>image_prep.prepare()</code>/<code>correct_orientation()</code> sepan que ya
+  hubo una corrección confiable aguas arriba es que se les diga
+  explícitamente. Se prefirió un parámetro explícito y booleano antes que
+  una variable global o un efecto colateral implícito.</li>
+<li><strong>Subordinar, no eliminar, la heurística de contenido</strong>: sigue siendo la
+  única red de contención para imágenes sin EXIF utilizable (por ejemplo,
+  imágenes editadas que perdieron su metadata, o escaneadas desde un
+  scanner de mesa que no escribe <code>Orientation</code>). Eliminarla habría
+  reintroducido una regresión para ese caso.</li>
+<li><strong><code>applied = True</code> solo si <code>Orientation</code> estaba en <code>2..8</code>, no en
+  <code>1..8</code></strong>: con <code>Orientation == 1</code> no hay transformación real de píxeles
+  (la imagen ya estaba "de pie"), así que no tiene sentido subordinar la
+  heurística de contenido en ese caso — de hecho, no importa, porque la
+  imagen ya está correcta, pero se documenta la distinción para que el
+  booleano refleje fielmente "hubo una transformación de píxeles" y no
+  simplemente "había un tag presente".</li>
+<li><strong>No tocar <code>backend/app/t3_2_orchestrator.py</code></strong>: es código legado T3.x,
+  no está en el camino de producción activo (<code>job_queue.py</code> → <code>main.py</code> /
+  <code>inbound_watcher.py</code> usan <code>capture_pipeline.process_document</code>).</li>
+</ul>
+<h2 id="fuera-de-alcance-explicitamente-no-cubierto">Fuera de alcance (explícitamente no cubierto)</h2>
+<ul>
+<li><strong>PDFs renderizados</strong> (<code>backend/app/pdf_util.py</code>, <code>_process_pdf</code>): los
+  PDFs se renderizan a imagen con <code>pypdfium2</code>, no llegan con un tag EXIF de
+  cámara de celular en el mismo sentido que una foto. El camino PDF sigue
+  llamando a <code>image_prep.prepare()</code> directamente, sin
+  <code>apply_exif_orientation</code> ni el parámetro <code>exif_orientation_applied</code>
+  (usa el default <code>False</code>, comportamiento sin cambios respecto a antes de
+  esta feature).</li>
+<li><strong>Deskew, corrección de perspectiva, normalización de escala/contraste</strong>:
+  sin cambios de comportamiento, salvo el nuevo punto de integración de
+  orientación que corre antes en la secuencia.</li>
+<li><strong>Trazabilidad formal de transformaciones de imagen</strong> (registro de qué
+  transformaciones se aplicaron, versiones intermedias, preservación
+  garantizada del original): responsabilidad de la feature futura
+  <code>07-preprocesamiento-documental-no-destructivo</code>, todavía no iniciada.</li>
+<li><strong>Control de calidad de captura</strong> (blur, baja resolución, mala
+  iluminación): es <code>06-calidad-captura-mobile</code>, no esta feature.</li>
+</ul>
+<h2 id="casos-borde-cubiertos-y-donde">Casos borde cubiertos (y dónde)</h2>
+<p>Todos cubiertos por test automatizado en
+<code>backend/tests/test_exif_orientation.py</code>:</p>
+<ul>
+<li>Imagen sin EXIF en absoluto (<code>test_no_exif_at_all</code>).</li>
+<li>Imagen con EXIF presente pero sin el tag <code>Orientation</code>
+  (<code>test_exif_present_but_no_orientation_tag</code>).</li>
+<li><code>Orientation == 1</code> explícito, no debe alterar nada
+  (<code>test_apply_exif_orientation_all_8_values[1]</code>, <code>applied is False</code>).</li>
+<li>Los 8 valores válidos 1–8, incluyendo espejados (2, 4, 5, 7)
+  (<code>test_apply_exif_orientation_all_8_values</code>, parametrizado).</li>
+<li><code>Orientation</code> fuera de rango (<code>0</code>, <code>9</code>, <code>-1</code>, <code>100</code>): degrada con gracia,
+  sin excepción (<code>test_orientation_out_of_range_degrades_gracefully</code>).</li>
+<li><code>Orientation</code> no numérico (EXIF corrupto): degrada con gracia
+  (<code>test_orientation_non_numeric_degrades_gracefully</code>).</li>
+<li>Subordinación de la heurística de contenido cuando ya se aplicó EXIF
+  (<code>test_correct_orientation_skip_true_bypasses_heuristic</code>,
+  <code>test_prepare_subordinates_heuristic_when_exif_applied</code>).</li>
+<li>Sin regresión de la heurística cuando no hay corrección EXIF
+  (<code>test_correct_orientation_no_regression_without_exif</code>).</li>
+<li>Integración end-to-end con <code>capture_pipeline.process_document</code> sobre un
+  comprobante GAS sintético con <code>Orientation=6</code>/<code>8</code>, verificando
+  <code>raw_ocr_text</code> no vacío y con el identificador de cliente legible
+  (<code>test_process_document_recovers_text_from_rotated_exif_image</code>).</li>
+<li>PDF renderizado: no aplica esta corrección (ver "Fuera de alcance"); no
+  requiere test adicional porque el camino de código no cambia (usa el
+  default <code>exif_orientation_applied=False</code> de <code>prepare()</code>, igual que
+  antes de esta feature).</li>
+</ul>
+<h2 id="ubicacion-del-codigo">Ubicación del código</h2>
+<ul>
+<li><code>backend/app/image_prep.py</code>: <code>apply_exif_orientation</code>, cambios en
+  <code>correct_orientation</code> (parámetro <code>skip</code>) y <code>prepare</code> (parámetro
+  <code>exif_orientation_applied</code>).</li>
+<li><code>backend/app/capture_pipeline.py</code>: <code>process_document</code>, punto de
+  integración.</li>
+<li><code>backend/tests/test_exif_orientation.py</code>: cobertura de tests.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.instant", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
