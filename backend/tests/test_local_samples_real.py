@@ -6,6 +6,7 @@ el contrato se lee desde expected.local.json.
 """
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -15,8 +16,11 @@ REAL = Path(__file__).resolve().parent / "fixtures" / "_local_samples" / "real"
 CONTRACT = REAL / "expected.local.json"
 
 pytestmark = pytest.mark.skipif(
-    not (REAL / "GAS.jpeg").exists() or not (REAL / "cevt.jpeg").exists() or not CONTRACT.exists(),
-    reason="Muestras privadas locales no disponibles (gitignored).",
+    os.getenv("RUN_LOCAL_SAMPLES") != "1"
+    or not (REAL / "GAS.jpeg").exists()
+    or not (REAL / "cevt.jpeg").exists()
+    or not CONTRACT.exists(),
+    reason="Muestras privadas locales desactivadas; usar RUN_LOCAL_SAMPLES=1 para ejecutarlas.",
 )
 
 

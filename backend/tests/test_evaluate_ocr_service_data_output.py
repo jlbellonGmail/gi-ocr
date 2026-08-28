@@ -399,9 +399,10 @@ def test_generic_service_document_writes_data_to_bridge_ready(tmp_path, monkeypa
     assert data_path.name.endswith(".DATA")
     content = data_path.read_text(encoding="utf-8")
     lines = content.strip().splitlines()
-    assert len(lines) == 2
-    assert lines[0] == "document_type;amount;provider"
-    assert lines[1] == "INVOICE;500.00;Test Provider"
+    assert len(lines) == 3
+    assert lines[0] == "VERSION=2"
+    assert lines[1] == "document_type;amount;provider"
+    assert lines[2] == "INVOICE;500.00;Test Provider"
     assert not list(inbound_dir.glob("*.tmp"))
 
 

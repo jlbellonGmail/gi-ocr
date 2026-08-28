@@ -160,7 +160,7 @@ def test_write_atomic_data_file_does_not_overwrite_existing_ready_file(tmp_path)
             failed_dir=failed_dir,
         )
 
-    assert existing_file.read_text(encoding="utf-8") == "existing\ncontent\n"
+    assert existing_file.read_text(encoding="utf-8") == f"VERSION={CONTRACT_VERSION}\nexisting\ncontent\n"
 
 
 def test_build_data_content_includes_version_line():
@@ -235,14 +235,14 @@ def test_write_atomic_data_file_with_retry_backoff(tmp_path, monkeypatch):
     failed_dir = tmp_path / "storage_bridge" / "failed"
     timestamp = datetime(2026, 6, 23, 15, 30, 45)
 
-    call_count = 0
+    ready_attempts = 0
     original_replace = os.replace
 
     def failing_replace(src, dst):
-        nonlocal call_count
-        call_count += 1
+        nonlocal ready_attempts
         destination = Path(dst)
-        if destination.parent == ready_dir and call_count <= 3:
+        if destination.parent == ready_dir:
+            ready_attempts += 1
             raise PermissionError("simulated permission error")
         original_replace(src, dst)
 
@@ -263,7 +263,7 @@ def test_write_atomic_data_file_with_retry_backoff(tmp_path, monkeypatch):
         )
 
     # 4 intentos totales (1 inicial + 3 reintentos)
-    assert call_count == 4
+    assert ready_attempts == 4
 
     # Error registrado en failed/
     error_files = list(failed_dir.glob("*_error.json"))

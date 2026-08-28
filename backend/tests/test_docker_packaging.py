@@ -42,7 +42,8 @@ def _read(path: Path) -> str:
 def test_dockerfile_exists_and_uses_slim_debian_base():
     content = _read(DOCKERFILE)
     assert "FROM python:3.12-slim" in content, (
-        "Dockerfile debe basarse en python:3.12-slim (Debian), no Alpine (ver spec, criterio 1 y Riesgos/supuestos)."
+        "Dockerfile debe basarse en python:3.12-slim (Debian), no Alpine "
+        "(ver spec, criterio 1 y Riesgos/supuestos)."
     )
 
 
@@ -71,24 +72,24 @@ def test_dockerfile_ensures_runtime_state_directories():
 def test_dockerfile_exposes_8000_and_binds_all_interfaces():
     content = _read(DOCKERFILE)
     assert "EXPOSE 8000" in content
-    assert '"--host", "0.0.0.0"' in content, "El CMD debe arrancar con --host 0.0.0.0, no 127.0.0.1 (criterio 2)."
+    assert '"--host", "0.0.0.0"' in content, (
+        "El CMD debe arrancar con --host 0.0.0.0, no 127.0.0.1 (criterio 2)."
+    )
     assert '"--port", "8000"' in content
 
 
-def test_dockerfile_excludes_easyocr_from_installed_requirements():
+def test_dockerfile_installs_canonical_requirements():
     content = _read(DOCKERFILE)
-    # Verificacion real: el pipeline de instalacion filtra easyocr del
-    # requirements.txt antes de pip install (criterio 3, ADR-006 sin reabrir).
-    assert "grep -v -E '^easyocr'" in content
-    assert "requirements-docker.txt" in content
+    assert "COPY backend/requirements.txt /tmp/requirements.txt" in content
+    assert "pip install --no-cache-dir -r /tmp/requirements.txt" in content
+    assert "requirements-docker.txt" not in content
 
 
-def test_requirements_txt_still_declares_easyocr_for_local_dev():
-    # La exclusion es solo de la imagen Docker (filtrado en build time), no
-    # del repo: el flujo local (.venv) sigue pudiendo instalar easyocr como
-    # fallback opcional (ADR-006, sin reabrir).
-    requirements = _read(REPO_ROOT / "backend" / "requirements.txt")
-    assert "easyocr" in requirements.lower()
+def test_requirements_txt_declares_current_runtime():
+    requirements = _read(REPO_ROOT / "backend" / "requirements.txt").lower()
+    assert "rapidocr-onnxruntime==1.2.3" in requirements
+    assert "onnxruntime==1.28.0" in requirements
+    assert "prometheus-client==0.26.0" in requirements
 
 
 # ---------------------------------------------------------------------------
@@ -118,15 +119,13 @@ def test_requirements_txt_still_declares_easyocr_for_local_dev():
 def test_dockerignore_excludes_sensitive_and_unnecessary_paths(excluded_entry):
     content = _read(DOCKERIGNORE)
     assert excluded_entry in content, (
-        f"'{excluded_entry}' debe estar excluido del contexto de build via .dockerignore (criterio 4)."
+        f"'{excluded_entry}' debe estar excluido del contexto de build via "
+        ".dockerignore (criterio 4)."
     )
 
 
 def test_dockerignore_preserves_storage_bridge_placeholders():
     content = _read(DOCKERIGNORE)
-    # No debe filtrarse comprobantes reales, pero si debe preservarse la
-    # estructura de carpetas via .gitkeep/README.md (mismo criterio que
-    # .gitignore).
     assert "!storage_bridge/inbound/.gitkeep" in content
     assert "!storage_bridge/ready/.gitkeep" in content
     assert "!storage_bridge/failed/.gitkeep" in content
@@ -163,13 +162,10 @@ def test_compose_services_ini_mount_path_matches_services_config_resolution():
     Caso borde critico: la ruta interna del bind mount de services.ini debe
     coincidir EXACTAMENTE con la ruta que resuelve
     backend/app/services_config.py en runtime dentro de la imagen, donde
-    WORKDIR=/app (ver Dockerfile). Si no coincide, el bind mount no tiene
-    efecto y el contenedor lee un services.ini distinto al editado.
+    WORKDIR=/app.
     """
     from backend.app import services_config
 
-    # SERVICES_INI se resuelve como ruta relativa al paquete instalado
-    # (parents[1] de services_config.py = backend/, luego /config/services.ini).
     relative_to_backend_app = services_config.SERVICES_INI.relative_to(
         Path(services_config.__file__).resolve().parents[2]
     )
@@ -177,8 +173,13 @@ def test_compose_services_ini_mount_path_matches_services_config_resolution():
 
     compose = _load_compose()
     service = compose["services"]["gi-ocr"]
-    mount_entry = next(v for v in service["volumes"] if v.endswith(":/app/backend/config/services.ini"))
+    mount_entry = next(
+        v
+        for v in service["volumes"]
+        if v.endswith(":/app/backend/config/services.ini")
+    )
     container_side = mount_entry.split(":", 1)[1]
+
     assert container_side == resolved_in_image == "/app/backend/config/services.ini"
 
 
@@ -191,11 +192,11 @@ def test_compose_exposes_port_8000():
 def test_compose_uses_host_relative_paths_only():
     """
     Caso borde: rutas relativas al propio docker-compose.yml, no rutas
-    absolutas de host, para funcionar igual en Windows (Docker Desktop) y
-    Linux (Docker Engine) sin edicion manual.
+    absolutas de host, para funcionar igual en Windows y Linux.
     """
     compose = _load_compose()
     service = compose["services"]["gi-ocr"]
+
     for volume in service["volumes"]:
         host_side = volume.split(":", 1)[0]
         assert host_side.startswith("./"), (
@@ -216,11 +217,13 @@ def test_release_workflow_is_valid_yaml():
 
 def test_release_workflow_triggers_only_on_semver_tag_push():
     parsed = yaml.safe_load(_read(RELEASE_WORKFLOW))
+
     # PyYAML interpreta la clave "on:" como booleano True en YAML 1.1.
     trigger = parsed.get("on", parsed.get(True))
+
     assert trigger == {"push": {"tags": ["v*"]}}, (
-        "release.yml debe dispararse UNICAMENTE por push de tags v* (no "
-        "por push a ramas), distinto del trigger de ci.yml."
+        "release.yml debe dispararse UNICAMENTE por push de tags v* "
+        "(no por push a ramas), distinto del trigger de ci.yml."
     )
 
 
@@ -228,6 +231,7 @@ def test_release_workflow_does_not_trigger_on_branch_push():
     parsed = yaml.safe_load(_read(RELEASE_WORKFLOW))
     trigger = parsed.get("on", parsed.get(True))
     push_trigger = trigger.get("push", {})
+
     assert "branches" not in push_trigger
 
 
@@ -256,16 +260,15 @@ def test_release_workflow_builds_from_same_dockerfile():
 def test_release_and_ci_workflows_have_distinct_triggers():
     release_trigger = yaml.safe_load(_read(RELEASE_WORKFLOW))
     ci_trigger = yaml.safe_load(_read(CI_WORKFLOW))
+
     release_on = release_trigger.get("on", release_trigger.get(True))
     ci_on = ci_trigger.get("on", ci_trigger.get(True))
+
     assert release_on != ci_on
 
 
 # ---------------------------------------------------------------------------
-# Verificacion opcional con Docker Engine real (se salta si no esta
-# disponible en el entorno de CI, mismo patron de skip que
-# 01-captura-ocr-local-agil / 02-mejora-precision-ocr para muestras
-# privadas locales).
+# Verificacion opcional con Docker Engine real
 # ---------------------------------------------------------------------------
 
 
@@ -273,10 +276,9 @@ def _docker_available() -> bool:
     return shutil.which("docker") is not None
 
 
-@pytest.mark.skipif(not _docker_available(), reason="Docker no disponible en este entorno de CI")
+@pytest.mark.skipif(
+    not _docker_available(),
+    reason="Docker no disponible en este entorno de CI",
+)
 def test_docker_binary_is_on_path_when_available():
-    # Verificacion minima no invasiva: no dispara build/run reales (correrian
-    # varios minutos y requieren estado de red), pero confirma que si
-    # Docker esta instalado, el binario responde. El build/run/compose
-    # real se verifico manualmente por el qa-agent (ver test-report-1.md).
     assert shutil.which("docker") is not None

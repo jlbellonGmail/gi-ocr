@@ -58,7 +58,7 @@ def confirm_review(
         field = c.get("field")
         state = c.get("state", "unresolved")
         final_value = c.get("final_value")
-        reason = c.get("reason", "").strip()
+        reason = (c.get("reason") or "").strip()
         if not field:
             continue
         # Excluir campos internos no editables

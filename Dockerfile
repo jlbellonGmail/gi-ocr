@@ -17,15 +17,10 @@ RUN apt-get update \
         libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Instala dependencias Python EXCLUYENDO easyocr (y, transitivamente,
-# torch, que easyocr arrastra como dependencia). RapidOCR/ONNX Runtime
-# sigue siendo el unico motor OCR instalado y activo (ADR-006, sin
-# reabrir). Ver docs/tecnica/empaquetado-despliegue.md, seccion
-# "Por que se excluye EasyOCR/torch".
+# Instala dependencias Python del backend.
 COPY backend/requirements.txt /tmp/requirements.txt
-RUN grep -v -E '^easyocr' /tmp/requirements.txt > /tmp/requirements-docker.txt \
-    && pip install --no-cache-dir -r /tmp/requirements-docker.txt \
-    && rm -f /tmp/requirements.txt /tmp/requirements-docker.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt \
+    && rm -f /tmp/requirements.txt
 
 # Codigo de la aplicacion.
 COPY backend/ backend/
