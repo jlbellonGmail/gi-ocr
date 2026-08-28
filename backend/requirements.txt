@@ -1,33 +1,13 @@
-fastapi==0.141.1
-uvicorn==0.52.4
-python-multipart==0.0.32
+fastapi>=0.115.0
+uvicorn>=0.30.1
+python-multipart>=0.0.9
 
-pydantic==2.13.4
-pydantic-settings==2.15.0
+pydantic>=2.10.0
+pydantic-settings>=2.3.3
 
-Pillow==12.3.0
-numpy==2.5.2
-opencv-python-headless==5.0.0.93
+Pillow>=10.2.0
+numpy>=1.26.0
+opencv-python-headless>=4.9.0.80
+easyocr>=1.7.1
 
-# Motor OCR local principal: RapidOCR (PP-OCRv3) + ONNX Runtime.
-# motor OCR anterior fue reemplazado y ya no forma parte de las dependencias del proyecto.
-# Version FIJADA (no >=): backend/app/ocr_engine.py depende de atributos internos del
-# objeto RapidOCR (text_detector/text_recognizer, ver two-pass ROI). rapidocr-onnxruntime
-# 1.4.4 cambio esa forma interna y rompe ocr_engine.py con AttributeError.
-# 1.2.3 es la version con la que se escribio, probo y midio el rendimiento declarado
-# en docs/tecnica/captura-ocr-local-agil.md.
-rapidocr-onnxruntime==1.2.3
-onnxruntime==1.28.0
-
-# PDF: extraccion de texto nativo + render.
-# Licencias: BSD-3-Clause / Apache-2.0.
-pypdfium2==5.13.0
-
-# Tests.
-pytest==9.1.1
-
-# TestClient de FastAPI requiere httpx para tests del endpoint web tipado (T4).
-httpx==0.28.1
-
-# Metricas de observabilidad Prometheus.
-prometheus-client==0.26.0
+pytest>=8.0.0

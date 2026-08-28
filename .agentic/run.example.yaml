@@ -1,9 +1,0 @@
-# Copiar como runs/<NN>-<slug>/run.yaml antes de iniciar analyst-agent.
-# Este archivo solo resuelve modelo/variante/fallback; no es el
-# manifiesto completo de ejecucion del punto 2.
-execution:
-  model: default
-  variant: high
-  fallback:
-    - go
-    - zen

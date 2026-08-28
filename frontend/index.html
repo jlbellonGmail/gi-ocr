@@ -3,89 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Captura OCR Local</title>
-  <link rel="stylesheet" href="/src/style.css" />
+  <title>Smart Capture</title>
+  <style>
+    body {font-family: Arial, sans-serif; display:flex; flex-direction:column; align-items:center; padding:20px; background:#f5f5f5;}
+    #status-message {margin-top:10px; padding:8px; border:1px solid #ccc; width:100%; max-width:400px; text-align:center;}
+    #service-section {margin-top:20px; display:none; border:1px solid #ddd; padding:10px; width:100%; max-width:400px;}
+    .btn {margin:5px; padding:5px 10px;}
+    #log-container {margin-top:20px; width:100%; max-width:600px;}
+    .terminal {
+      background:#1e1e1e;
+      color:#d4d4d4;
+      border-radius:8px;
+      padding:16px;
+      font-family:'Consolas','Monaco','Courier New',monospace;
+      font-size:13px;
+      line-height:1.5;
+      max-height:300px;
+      overflow-y:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .terminal .line {margin:4px 0;}
+    .terminal .key {color:#9cdcfe;}
+    .terminal .value {color:#ce9178;}
+    .terminal .section {color:#4ec9b0; font-weight:bold;}
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <span class="logo">OCR</span>
-      <div>
-        <h1>Captura de Comprobantes</h1>
-        <p class="sub">Procesamiento local · sin nube · sin costo por página</p>
-      </div>
-    </div>
-    <div class="topstats">
-      <span id="stat-queued" class="badge">0 en cola</span>
-      <span id="stat-ready" class="badge ok">0 listos</span>
-      <span id="stat-failed" class="badge bad">0 fallidos</span>
-      <span id="stat-quality" class="badge warn">0 requieren nueva foto</span>
-      <span id="operator-badge" class="badge"></span>
-    </div>
-  </header>
-
-  <!-- Modal configuración operador (Feature 11) -->
-  <div id="operator-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <h3>Configuración de Operador</h3>
-      <p>Ingresá tu identificación y rol para continuar. Requerido para auditoría y permisos.</p>
-      <form id="operator-form">
-        <div class="form-group">
-          <label for="operator-id">ID Operador</label>
-          <input type="text" id="operator-id" placeholder="ej: operador1" required />
-        </div>
-        <div class="form-group">
-          <label for="operator-role">Rol</label>
-          <select id="operator-role" required>
-            <option value="">Seleccionar...</option>
-            <option value="operator">Operador</option>
-            <option value="reviewer">Revisor</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn ok">Guardar</button>
-          <button type="button" class="btn ghost" id="operator-cancel">Cancelar</button>
-        </div>
-      </form>
-    </div>
+  <h1>Captura de Comprobante</h1>
+  <input type="file" accept="image/*" capture="environment" id="camara_nativa" />
+  <div id="status-message"></div>
+  <button id="toggle-services" class="btn">Gestionar Servicios</button>
+  <div id="service-section">
+    <h2>Servicios</h2>
+    <ul id="service-list"></ul>
+    <input type="text" id="new-service-name" placeholder="Nombre del servicio" />
+    <button id="add-service" class="btn">Agregar</button>
   </div>
-
-  <main class="layout">
-    <section class="card upload">
-      <h2>Cargar documentos</h2>
-      <div id="dropzone" class="dropzone">
-        <input type="file" id="file-input" multiple accept="image/*,application/pdf" hidden />
-        <input type="file" id="cam-input" capture="environment" accept="image/*" hidden />
-        <p>Arrastrá y soltá imágenes o PDF<br/>o usá los botones</p>
-        <div class="btnrow">
-          <button class="btn primary" id="pick-btn">Seleccionar archivos</button>
-          <button class="btn" id="cam-btn">Cámara</button>
-          <button class="btn" id="dir-btn">Seleccionar carpeta</button>
-        </div>
-        <input type="file" id="dir-input" webkitdirectory multiple hidden />
-      </div>
-      <div id="upload-msg" class="msg"></div>
-    </section>
-
-    <section class="card queue-card">
-      <div class="cardhead">
-        <h2>Cola de procesamiento</h2>
-        <button class="btn ghost" id="refresh-btn">Actualizar</button>
-      </div>
-      <div id="queue" class="queue"></div>
-    </section>
-  </main>
-
-  <section class="card detail" id="detail">
-    <div class="empty">Seleccioná un documento de la cola para ver su detalle.</div>
-  </section>
-
-  <footer class="foot">
-    <span id="conn-status">conectando…</span> ·
-    <a href="#" id="export-link">Exportar lote (JSON)</a>
-  </footer>
-
+  <div id="log-container" style="display:block;">
+    <div class="section">📋 Log de Procesamiento</div>
+    <div id="process-log" class="terminal"></div>
+  </div>
   <script src="/src/app.js"></script>
 </body>
 </html>

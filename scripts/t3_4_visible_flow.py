@@ -14,13 +14,12 @@ Uso:
 
 Si no se especifica fixture_path, usa el fixture por defecto de GAS.
 """
-
 from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
+from datetime import datetime
 
 # Add project root to path for imports
 _ROOT = Path(__file__).resolve().parent.parent
@@ -28,18 +27,25 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 # Import T3.2 orchestrator
+from backend.app.t3_2_orchestrator import orquestar_documento_controlado
+
 # Import T3.3 field reporting processor
 from backend.app.field_reporting_processor import (
+    generate_field_report,
     classify_fields_from_t32_output,
+    differentiate_field_states
 )
-from backend.app.t3_2_orchestrator import orquestar_documento_controlado
+
 
 # Default fixture path
 DEFAULT_FIXTURE = "backend/tests/fixtures/gas_sample.jpg"
 
 
 def create_final_json_output(
-    fixture_path: str, t32_output: dict, field_report: dict, document_type: str = "invoice"
+    fixture_path: str,
+    t32_output: dict,
+    field_report: dict,
+    document_type: str = "invoice"
 ) -> dict:
     """
     Build the final JSON output integrating T3.2 and T3.3 outputs.
@@ -68,7 +74,7 @@ def create_final_json_output(
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "pipeline_version": "T3.2+T3.3",
             "fixture_path": fixture_path,
-        },
+        }
     }
 
 
@@ -93,12 +99,15 @@ def run_t34_visible_flow(fixture_path: str = DEFAULT_FIXTURE) -> dict:
         t32_result=t32_result,
         document_type="invoice",
         source_document_reference=fixture_path,
-        validation_rules=["format_validation", "semantic_check"],
+        validation_rules=["format_validation", "semantic_check"]
     )
 
     # Step 3: Build final JSON output
     final_output = create_final_json_output(
-        fixture_path=fixture_path, t32_output=t32_result, field_report=field_report, document_type="invoice"
+        fixture_path=fixture_path,
+        t32_output=t32_result,
+        field_report=field_report,
+        document_type="invoice"
     )
 
     return final_output
@@ -112,7 +121,7 @@ def main() -> int:
     # Validate fixture exists
     if not Path(fixture_path).exists():
         print(f"Error: Fixture not found: {fixture_path}", file=sys.stderr)
-        print("Usage: python scripts/t3_4_visible_flow.py [fixture_path]", file=sys.stderr)
+        print(f"Usage: python scripts/t3_4_visible_flow.py [fixture_path]", file=sys.stderr)
         return 1
 
     # Run the visible flow

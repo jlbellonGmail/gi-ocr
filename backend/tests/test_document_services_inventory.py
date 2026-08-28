@@ -1,7 +1,9 @@
 """Tests for the document services inventory T2.4."""
-
 import json
 from pathlib import Path
+
+import pytest
+
 
 INVENTORY_PATH = Path(__file__).resolve().parents[1] / "config" / "document_services.json"
 
@@ -70,7 +72,7 @@ def test_inventory_data_evaluator_contract_t23():
     data = json.loads(content)
 
     # Load services from services.ini
-    from backend.app.services_config import get_service_fields, list_services
+    from backend.app.services_config import list_services, get_service_fields
 
     inventory_ids = {s["id"] for s in data}
     config_ids = set(list_services())
@@ -85,5 +87,6 @@ def test_inventory_data_evaluator_contract_t23():
         inventory_fields = set(service.get("expected_fields", []))
         config_fields = set(get_service_fields(service_id))
         assert inventory_fields == config_fields, (
-            f"Service {service_id}: inventory fields {inventory_fields} don't match config fields {config_fields}"
+            f"Service {service_id}: inventory fields {inventory_fields} "
+            f"don't match config fields {config_fields}"
         )

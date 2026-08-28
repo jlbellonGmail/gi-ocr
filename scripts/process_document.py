@@ -17,9 +17,9 @@ _ROOT = Path(__file__).resolve().parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from backend.app.document_result_exporter import save_json_result
-from backend.app.field_reporting_processor import classify_fields_from_t32_output
 from backend.app.t3_2_orchestrator import orquestar_documento_controlado
+from backend.app.field_reporting_processor import classify_fields_from_t32_output
+from backend.app.document_result_exporter import save_json_result
 
 
 def run_pipeline(input_path: str) -> dict:
@@ -40,7 +40,7 @@ def run_pipeline(input_path: str) -> dict:
         t32_result=t32_result,
         document_type="invoice",
         source_document_reference=input_path,
-        validation_rules=["format_validation", "semantic_check"],
+        validation_rules=["format_validation", "semantic_check"]
     )
 
     # Step 3: Build final JSON output (same structure as T3.4)
@@ -59,7 +59,7 @@ def run_pipeline(input_path: str) -> dict:
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "pipeline_version": "T3.2+T3.3",
             "fixture_path": input_path,
-        },
+        }
     }
 
     return final_output
@@ -97,10 +97,18 @@ def main() -> int:
 Ejemplos:
   python scripts/process_document.py --input fixtures/gas_sample.jpg --output resultado.json
   python scripts/process_document.py --input /ruta/documento.png --output /ruta/salida.json
-        """,
+        """
     )
-    parser.add_argument("--input", required=True, help="Ruta al archivo de documento a procesar (imagen/PDF)")
-    parser.add_argument("--output", required=True, help="Ruta del archivo JSON de salida")
+    parser.add_argument(
+        "--input",
+        required=True,
+        help="Ruta al archivo de documento a procesar (imagen/PDF)"
+    )
+    parser.add_argument(
+        "--output",
+        required=True,
+        help="Ruta del archivo JSON de salida"
+    )
 
     args = parser.parse_args()
 

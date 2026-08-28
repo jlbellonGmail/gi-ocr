@@ -1,11 +1,10 @@
 """
 Tests para validar el formato exacto de archivos .DATA generados.
 """
-
+import pytest
+from backend.app.plain_text_writer import write_data_file
 from datetime import datetime
 from pathlib import Path
-
-from backend.app.plain_text_writer import write_data_file
 
 
 def test_data_file_format():
@@ -62,9 +61,7 @@ def test_data_file_emptiness_empty_value():
 
     assert len(lines) == 2, "Solo se deben tener dos líneas en el archivo .DATA"
     assert lines[0] == ";".join(fields), "Encabezado debería ser separado por ';'"
-    assert lines[1] == ";".join("" if v is None else str(v) for f, v in values.items()), (
-        "Datos vacíos deben generar separadores entre ellos"
-    )
+    assert lines[1] == ";".join("" if v is None else str(v) for f, v in values.items()), "Datos vacíos deben generar separadores entre ellos"
 
 
 def test_data_file_no_json_meta():
@@ -85,6 +82,6 @@ def test_data_file_no_json_meta():
     # Lines should not contain metadata like JSON, timestamps in content, etc.
     for line in lines:
         assert not line.startswith("{"), "No debe contener salida JSON"
-        assert "json" not in line.lower(), "No debe contener referencia a JSON"
+        assert not "json" in line.lower(), "No debe contener referencia a JSON"
         assert "[GAS]" not in line, "No debe contener seccion de configuración"
         assert "[CEVT]" not in line, "No debe contener seccion de configuración"

@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+
 DOCUMENT_SERVICES_PATH = Path(__file__).resolve().parents[1] / "config" / "document_services.json"
 
 
@@ -45,7 +46,9 @@ def get_document_service(service_id, path=DOCUMENT_SERVICES_PATH):
         if service.get("id") == normalized_service_id:
             return service
 
-    raise UnsupportedDocumentServiceError(f"Document service '{normalized_service_id}' is not supported")
+    raise UnsupportedDocumentServiceError(
+        f"Document service '{normalized_service_id}' is not supported"
+    )
 
 
 def is_data_evaluator_enabled(service_id, path=DOCUMENT_SERVICES_PATH):

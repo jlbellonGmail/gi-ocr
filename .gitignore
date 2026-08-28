@@ -50,15 +50,3 @@ _ocr_reports/
 backend/output/
 output/
 .backups/
-
-# MkDocs build output
-site/
-
-# opencode local runtime state (wiring stays versioned via .opencode/.gitignore)
-.opencode/node_modules/
-
-# Captura local: inbound folder, synthetic benchmarks, E2E evidence
-/inbound/
-_bench/
-e2e_evidence/
-.playwright/

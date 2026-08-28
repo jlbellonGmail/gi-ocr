@@ -1,8 +1,9 @@
 """Tests for the GAS field extractor."""
-
 from __future__ import annotations
 
 import asyncio
+
+import pytest
 
 from backend.app.extraction_engine import extract_service_fields
 from backend.app.gas_extractor import extract_gas_fields
