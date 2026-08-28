@@ -1,0 +1,32 @@
+{
+  "fixtures_version": "1.0.0",
+  "provider": "cevt",
+  "document_type": "factura",
+  "document_id": "factura_02",
+  "fields": {
+    "medidor_numero": {
+      "value": "9198",
+      "confidence": 0.9
+    },
+    "periodo": {
+      "value": "10/2025",
+      "confidence": 0.93
+    },
+    "vencimiento": {
+      "value": "22/06/2025",
+      "confidence": 0.92
+    },
+    "codigo_pago_electronico": {
+      "value": "518801",
+      "confidence": 0.89
+    },
+    "total_a_pagar": {
+      "value": 37375.99,
+      "confidence": 0.93
+    }
+  },
+  "validation": {
+    "semantic_checks_passed": true,
+    "warnings": []
+  }
+}

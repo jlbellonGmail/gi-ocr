@@ -2,12 +2,26 @@
 Procesador de reportes para T3.3 - Field Reporting.
 
 Genera reportes estructurados con campos aceptados, rechazados y no encontrados.
+
+Feature 09-confianza-y-enrutamiento-hitl: agrega confidence_summary al reporte.
 """
 
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, TypedDict
+
+
+class FieldConfidence(TypedDict, total=False):
+    ocr_score: float
+    extraction_score: float
+    final_score: float
+    validation_passed: bool
+    validation_reason: Optional[str]
+    decision: str
+    thresholds: Dict[str, float]
+    sensitive: bool
+    block_on_validation_fail: bool
 
 
 def generate_field_report(
@@ -19,6 +33,7 @@ def generate_field_report(
     document_type: str,
     source_document_reference: str,
     validation_rules: Optional[List[str]] = None,
+    field_confidence: Optional[Dict[str, FieldConfidence]] = None,
 ) -> Dict[str, Any]:
     """Genera un reporte estructurado de clasificación de campos.
 
@@ -31,21 +46,21 @@ def generate_field_report(
         document_type: Tipo de documento genérico
         source_document_reference: Referencia al documento de entrada
         validation_rules: Lista de reglas de validación aplicadas
+        field_confidence: Confianza y decisión por campo (feature 09-confianza-y-enrutamiento-hitl)
 
     Returns:
-        Dict con reporte estructurado conforme a spec T3.3
+        Dict con reporte estructurado conforme a spec T3.3 + confidence_summary
     """
     accepted_field_ids = list(validated_fields.keys())
     rejected_field_ids = list(rejected_fields.keys())
     missing_field_ids = list(missing_fields.keys())
 
-    return {
+    report = {
         "document_type": document_type,
         "source_document_reference": source_document_reference,
         "accepted_fields": accepted_field_ids,
         "rejected_fields": [
-            {"field": field, "reason": info.get("reason", "unknown")}
-            for field, info in rejected_fields.items()
+            {"field": field, "reason": info.get("reason", "unknown")} for field, info in rejected_fields.items()
         ],
         "missing_fields": missing_field_ids,
         "summary_counts": {
@@ -61,6 +76,30 @@ def generate_field_report(
             "timestamp": datetime.utcnow().isoformat() + "Z",
         },
     }
+
+    # Feature 09-confianza-y-enrutamiento-hitl: confidence_summary
+    if field_confidence:
+        confidence_summary: Dict[str, Any] = {
+            "auto_accepted": 0,
+            "needs_review": 0,
+            "blocked": 0,
+            "missing": 0,
+            "by_field": {},
+        }
+        for field, conf in field_confidence.items():
+            decision = conf.get("decision", "unknown")
+            if decision in ("auto_accepted", "needs_review", "blocked", "missing"):
+                confidence_summary[decision] += 1
+            confidence_summary["by_field"][field] = {
+                "decision": decision,
+                "final_score": conf.get("final_score", 0.0),
+                "ocr_score": conf.get("ocr_score", 0.0),
+                "extraction_score": conf.get("extraction_score", 0.0),
+                "validation_passed": conf.get("validation_passed", False),
+            }
+        report["confidence_summary"] = confidence_summary
+
+    return report
 
 
 def classify_fields_from_t32_output(

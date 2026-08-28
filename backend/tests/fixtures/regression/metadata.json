@@ -1,0 +1,427 @@
+{
+  "fixtures_version": "1.0.0",
+  "generated_at": "2026-08-25T14:06:00.590510Z",
+  "generator": "scripts/generate_regression_fixtures.py",
+  "images": [
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.08,
+      "rotation_deg": 1,
+      "dpi": 200
+    },
+    {
+      "path": "luz/factura_01.png",
+      "provider": "luz",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "luz/factura_02.png",
+      "provider": "luz",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -2,
+      "dpi": 200
+    },
+    {
+      "path": "agua/factura_01.png",
+      "provider": "agua",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 2,
+      "dpi": 300
+    },
+    {
+      "path": "agua/factura_02.png",
+      "provider": "agua",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": -2,
+      "dpi": 200
+    },
+    {
+      "path": "telefono/factura_01.png",
+      "provider": "telefono",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.08,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "telefono/factura_02.png",
+      "provider": "telefono",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "factura_a/factura_a_01.png",
+      "provider": "factura_a",
+      "document_type": "factura_a",
+      "document_id": "factura_a_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": 1,
+      "dpi": 200
+    },
+    {
+      "path": "factura_a/factura_a_02.png",
+      "provider": "factura_a",
+      "document_type": "factura_a",
+      "document_id": "factura_a_02",
+      "variant": "standard",
+      "noise_level": 0.08,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "factura_b/factura_b_01.png",
+      "provider": "factura_b",
+      "document_type": "factura_b",
+      "document_id": "factura_b_01",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": 2,
+      "dpi": 200
+    },
+    {
+      "path": "factura_b/factura_b_02.png",
+      "provider": "factura_b",
+      "document_type": "factura_b",
+      "document_id": "factura_b_02",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 200
+    },
+    {
+      "path": "ticket/ticket_01.png",
+      "provider": "ticket",
+      "document_type": "ticket",
+      "document_id": "ticket_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 200
+    },
+    {
+      "path": "ticket/ticket_02.png",
+      "provider": "ticket",
+      "document_type": "ticket",
+      "document_id": "ticket_02",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": -2,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 200
+    },
+    {
+      "path": "cevt/factura_01.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_02.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": -2,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_01.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_02.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -2,
+      "dpi": 200
+    },
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_01.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_02.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -2,
+      "dpi": 200
+    },
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_01.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_02.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -2,
+      "dpi": 200
+    },
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_01.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_02.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -2,
+      "dpi": 200
+    },
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_01.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_02.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -2,
+      "dpi": 200
+    },
+    {
+      "path": "gas/factura_01.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.02,
+      "rotation_deg": 0,
+      "dpi": 400
+    },
+    {
+      "path": "gas/factura_02.png",
+      "provider": "gas",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": -1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_01.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_01",
+      "variant": "standard",
+      "noise_level": 0.05,
+      "rotation_deg": 1,
+      "dpi": 300
+    },
+    {
+      "path": "cevt/factura_02.png",
+      "provider": "cevt",
+      "document_type": "factura",
+      "document_id": "factura_02",
+      "variant": "standard",
+      "noise_level": 0.1,
+      "rotation_deg": -2,
+      "dpi": 200
+    }
+  ]
+}

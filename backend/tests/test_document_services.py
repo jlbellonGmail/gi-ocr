@@ -1,16 +1,14 @@
 import json
-import tempfile
-import pytest
-from pathlib import Path
 
+import pytest
 from backend.app.document_services import (
     DisabledDataEvaluatorServiceError,
     UnsupportedDocumentServiceError,
-    validate_data_evaluator_service,
     get_document_service,
     is_data_evaluator_enabled,
     load_document_services,
     normalize_service_id,
+    validate_data_evaluator_service,
 )
 
 
@@ -21,7 +19,7 @@ def test_normalize_service_id():
 
     with pytest.raises(UnsupportedDocumentServiceError):
         normalize_service_id("    ")
-    
+
     with pytest.raises(UnsupportedDocumentServiceError):
         normalize_service_id("")
 
@@ -29,7 +27,7 @@ def test_normalize_service_id():
 def test_load_document_services():
     services = load_document_services()
     assert isinstance(services, list)
-    
+
     gas_exists = any(s.get("id") == "GAS" for s in services)
     assert gas_exists, "GAS service should exist in the inventory"
 
@@ -58,17 +56,10 @@ def test_is_data_evaluator_enabled_for_gas():
 
 def test_validate_data_evaluator_service_rejects_disabled_service(tmp_path):
     inventory_path = tmp_path / "document_services.json"
-    inventory_data = [
-        {
-            "id": "GAS",
-            "name": "Gas",
-            "data_evaluator_enabled": False,
-            "expected_fields": []
-        }
-    ]
+    inventory_data = [{"id": "GAS", "name": "Gas", "data_evaluator_enabled": False, "expected_fields": []}]
     inventory_path.write_text(json.dumps(inventory_data), encoding="utf-8")
-    
+
     with pytest.raises(DisabledDataEvaluatorServiceError) as exc_info:
         validate_data_evaluator_service("GAS", path=str(inventory_path))
-    
+
     assert "disabled" in str(exc_info.value)

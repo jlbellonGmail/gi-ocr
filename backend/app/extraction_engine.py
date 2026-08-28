@@ -4,18 +4,16 @@ Motor de extracción OCR configurable.
 Este motor lee la configuración desde services.ini y aplica extracción
 genérica basada en zonas OCR y/o patrones regex configurables.
 """
+
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
-from .ocr import extract_text_from_zone, preprocess_image
+from .ocr import extract_text_from_zone
 from .services_config import (
-    get_service_fields,
-    get_service_patterns,
-    get_service_zones,
     get_service_config,
 )
 
@@ -56,6 +54,7 @@ async def extract_service_fields(
     fields = config["fields"]
     zones = config["zones"]
     patterns = config["patterns"]
+    field_regex = config.get("field_regex", {})
 
     # Normalizar texto completo
     normalized_text = _normalize_text(ocr_text)
@@ -74,15 +73,28 @@ async def extract_service_fields(
         # 1. Si hay zona para este campo, usar texto de zona
         if field in zone_texts:
             zone_text = zone_texts[field]
-            value = _extract_with_patterns(field, zone_text, patterns)
+            value = _extract_with_field_regex(field, zone_text, field_regex)
+            if value is None:
+                value = _extract_with_patterns(field, zone_text, patterns)
             if value is None:
                 value = _extract_generic(field, zone_text)
 
-        # 2. Si no hay zona o falló, intentar con patrones sobre texto completo
+        # 2. Camino real (ver Field.<nombre>.Regex en services.ini): si el
+        #    campo declara una regex propia, usarla sobre el texto completo
+        #    antes de caer en cualquier fallback genérico.
+        if value is None and field in field_regex:
+            value = _extract_with_field_regex(field, normalized_text, field_regex)
+
+        # 3. Si no declara Regex (config no validada) o no matcheó, intentar
+        #    con Patterns de sección en minúscula (mecanismo legado, hoy
+        #    siempre vacío en services.ini real — ver
+        #    docs/tecnica/administracion-servicios-documentos.md).
         if value is None and field in patterns:
             value = _extract_with_patterns(field, normalized_text, patterns)
 
-        # 3. Fallback: lógica genérica sobre texto completo
+        # 4. Fallback final: lógica genérica por palabra clave, alcanzado
+        #    sólo si el campo no declara Regex o la regex declarada no
+        #    matcheó nada en el texto real.
         if value is None:
             value = _extract_generic(field, normalized_text)
 
@@ -136,6 +148,34 @@ def _extract_with_patterns(
     if match:
         return _clean_value(match.group(1) if match.lastindex else match.group(0))
     return None
+
+
+def _extract_with_field_regex(
+    field: str,
+    text: str,
+    field_regex: Dict[str, str],
+) -> Optional[str]:
+    """Extrae valor usando la regex declarativa Field.<nombre>.Regex de
+    services.ini (namespace real conectado a extracción, distinto de
+    get_service_patterns()/_extract_with_patterns, que leen la clave de
+    sección en minúscula 'patterns=', un mecanismo legado sin uso real).
+
+    Requiere al menos un grupo de captura para devolver un valor distinto
+    de None (el esquema validado por
+    services_config.validate_services_schema ya lo garantiza; si un
+    services.ini editado a mano sin revalidar declara una regex sin grupo,
+    se descarta como no matcheada en vez de devolver el texto de anclaje).
+    """
+    if field not in field_regex:
+        return None
+    pattern = field_regex[field]
+    try:
+        match = re.search(pattern, text, flags=re.IGNORECASE)
+    except re.error:
+        return None
+    if not match or not match.lastindex:
+        return None
+    return _clean_value(match.group(1))
 
 
 def _extract_generic(field: str, text: str) -> Optional[str]:

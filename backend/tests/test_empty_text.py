@@ -1,8 +1,9 @@
 """
 Tests para manejo de texto vacío en extracción.
 """
+
 import pytest
-from backend.app.extraction_engine import extract_service_fields, _normalize_text, _extract_generic
+from backend.app.extraction_engine import _extract_generic, _normalize_text, extract_service_fields
 
 
 class TestEmptyTextHandling:
@@ -43,7 +44,7 @@ class TestDeterministicMissingFields:
     @pytest.mark.anyio
     async def test_missing_fields_list_complete(self):
         """missing_fields debe contener campos sin valor cuando el texto no tiene datos."""
-        result = await extract_service_fields("GAS", "texto sin datos")
+        _result = await extract_service_fields("GAS", "texto sin datos")
         # Note: _extract_generic returns text snippet when no regex match
         # So we test with completely empty text instead
         result_empty = await extract_service_fields("GAS", "")

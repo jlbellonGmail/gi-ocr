@@ -1,16 +1,17 @@
 """
 Test for GAS receipt OCR baseline.
 """
-import time
-import numpy as np
-from PIL import Image
-import pytest
 
+import time
+
+import numpy as np
+import pytest
 from backend.app.ocr import (
-    extract_text_from_image,
     extract_fields_from_zones,
+    extract_text_from_image,
     parse_zones_from_config,
 )
+from PIL import Image
 
 
 class TestGasOcrBaseline:

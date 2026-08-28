@@ -4,18 +4,18 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
+
 import numpy as np
-
+from backend.app import gas_extractor, ocr
 from PIL import Image
-
-from backend.app import ocr
-from backend.app import gas_extractor
 
 
 def orquestar_documento_controlado(gas_image_path: str | Path) -> dict:
     """Process a control fixture image and return structured OCR output.
 
-    The returned dictionary contains the raw OCR text, candidate fields as extracted by ``gas_extractor`` and a simple validation stage that flags missing fields.
+    The returned dictionary contains the raw OCR text, candidate fields as
+    extracted by ``gas_extractor`` and a simple validation stage that flags
+    missing fields.
     """
     # Load image
     img_path = Path(gas_image_path)
@@ -31,7 +31,6 @@ def orquestar_documento_controlado(gas_image_path: str | Path) -> dict:
     # Extract GAS specific fields
     extraction = gas_extractor.extract_gas_fields(ocr_text)
     fields = extraction["fields"]
-    detected = extraction["detected_fields"]
     missing = extraction["missing_fields"]
 
     result = {
@@ -44,5 +43,6 @@ def orquestar_documento_controlado(gas_image_path: str | Path) -> dict:
         "fixture_source": str(img_path),
     }
     return result
+
 
 __all__ = ["orquestar_documento_controlado"]

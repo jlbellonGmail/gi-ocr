@@ -41,14 +41,15 @@ def assert_json_absent_in_paths(paths: list[Path]) -> None:
         content = p.read_text(encoding="utf-8")
         # Check for actual JSON usage patterns, not just the word
         import re
+
         # Look for JSON function calls, json module imports, or json.dump/loads
         json_patterns = [
-            r'import\s+json',
-            r'from\s+json\s+import',
-            r'\.json\(\)',
-            r'json\.dump',
-            r'json\.loads',
-            r'json\.load',
+            r"import\s+json",
+            r"from\s+json\s+import",
+            r"\.json\(\)",
+            r"json\.dump",
+            r"json\.loads",
+            r"json\.load",
         ]
         for pattern in json_patterns:
             if re.search(pattern, content, re.IGNORECASE):
@@ -93,12 +94,15 @@ def validate_services_ini() -> None:
 def validate_governance() -> None:
     """Valida que los archivos de gobernanza contengan reglas obligatorias."""
     # GOVERNANCE.md
-    assert_file_content_contains(GOVERNANCE_MD, [
-        "No usar JSON como configuración persistente de OCR",
-        "La configuración OCR debe mantenerse en texto plano mediante backend/config/services.ini",
-        "La salida legacy debe generarse en archivos .DATA con nombre SERVICIO_YYYYMMDD_HHMMSS.DATA",
-        "Separador obligatorio: punto y coma (`;`)"
-    ])
+    assert_file_content_contains(
+        GOVERNANCE_MD,
+        [
+            "No usar JSON como configuración persistente de OCR",
+            "La configuración OCR debe mantenerse en texto plano mediante backend/config/services.ini",
+            "La salida legacy debe generarse en archivos .DATA con nombre SERVICIO_YYYYMMDD_HHMMSS.DATA",
+            "Separador obligatorio: punto y coma (`;`)",
+        ],
+    )
 
     # decisions.md (ADR-007)
     assert_file_content_contains(DECISIONS_MD, ["ADR-007", "Modelo configurable de extracción de texto plano"])

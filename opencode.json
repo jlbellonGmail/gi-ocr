@@ -1,0 +1,61 @@
+{
+    "$schema":  "https://opencode.ai/config.json",
+    "instructions":  [
+                         "AGENTS.md",
+                         ".claude/rules/*.md"
+                     ],
+    "model":  "claude-sonnet-4-5",
+    "agent":  {
+                  "analyst-agent":  {
+                                        "description":  "Analiza un pedido de feature y produce una spec técnica clara y accionable. Read-only. Se usa siempre en sesión nueva, como subagente.",
+                                        "mode":  "subagent",
+                                        "model":  "claude-sonnet-4-5",
+                                        "prompt":  "{file:./.agentic/roles/analyst-agent.md}",
+                                        "reasoningEffort":  "high",
+                                        "permission":  {
+                                                           "edit":  "deny",
+                                                           "bash":  "deny",
+                                                           "webfetch":  "deny"
+                                                       }
+                                    },
+                  "builder-agent":  {
+                                        "description":  "Implementa la feature a partir de un spec.md aprobado. Write, corre siempre dentro de su propio git worktree, como subagente.",
+                                        "mode":  "subagent",
+                                        "model":  "claude-sonnet-4-5",
+                                        "prompt":  "{file:./.agentic/roles/builder-agent.md}",
+                                        "reasoningEffort":  "high",
+                                        "permission":  {
+                                                           "edit":  "allow",
+                                                           "bash":  "allow"
+                                                       }
+                                    },
+                  "qa-agent":  {
+                                   "description":  "Testea la implementación del builder-agent contra el spec aprobado. Write (solo tests), mismo worktree, como subagente.",
+                                   "mode":  "subagent",
+                                   "model":  "claude-sonnet-4-5",
+                                   "prompt":  "{file:./.agentic/roles/qa-agent.md}",
+                                   "reasoningEffort":  "medium",
+                                   "permission":  {
+                                                      "edit":  "allow",
+                                                      "bash":  "allow"
+                                                  }
+                               },
+                  "reviewer-agent":  {
+                                         "description":  "Audita un spec.md producido por analyst-agent antes de que pase a implementación. Read-only. Se usa siempre en sesión nueva, como subagente.",
+                                         "mode":  "subagent",
+                                         "model":  "claude-sonnet-4-5",
+                                         "prompt":  "{file:./.agentic/roles/reviewer-agent.md}",
+                                         "reasoningEffort":  "high",
+                                         "permission":  {
+                                                            "edit":  "deny",
+                                                            "bash":  "deny",
+                                                            "webfetch":  "deny"
+                                                        }
+                                     }
+              },
+    "mcp":  {
+                "servers":  {
+
+                            }
+            }
+}
