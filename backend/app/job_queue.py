@@ -10,12 +10,15 @@ from __future__ import annotations
 
 import asyncio
 import threading
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from .capture_pipeline import process_document
 from .job_store import JobStore, new_job_id, sanitize_name
+from .logging_config import get_logger, log_job_event
+from .metrics import inc_jobs_total, set_queue_size
 from .quality_gate import REJECTED_JOB_STATUS
 from .redaction import redact_exception
 
@@ -28,13 +31,14 @@ class JobQueue:
     def __init__(self, store: JobStore, workers: int = 2):
         self.store = store
         self.workers = workers
-        self._queue: Optional["asyncio.Queue[str]"] = None  # created on first start
+        self._queue: Optional["asyncio.Queue[str]"] = None
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._thread: Optional[threading.Thread] = None
         self._stop = False
         self._subscribers: List[asyncio.Queue] = []
         self._lock = threading.Lock()
         self._ready = threading.Event()
+        self._logger = get_logger("job_queue")
 
     # --- loop interno en thread dedicado ---
     def start(self) -> None:
@@ -54,6 +58,7 @@ class JobQueue:
         self._thread = threading.Thread(target=runner, daemon=True)
         self._thread.start()
         self._ready.wait(timeout=10)
+        self._logger.info("job_queue_started", workers=self.workers)
 
     def stop(self) -> None:
         self._stop = True
@@ -85,8 +90,11 @@ class JobQueue:
             "operator_role": operator_role,
         }
         self.store.put(job)
+        inc_jobs_total("queued")
+        set_queue_size(self._queue.qsize() if self._queue else 0)
         if self._loop and self._queue:
             self._loop.call_soon_threadsafe(self._queue.put_nowait, job_id)
+        self._logger.info("job_enqueued", job_id=job_id, source=source)
         return job_id
 
     def retry(self, job_id: str) -> bool:
@@ -99,8 +107,11 @@ class JobQueue:
         job["error"] = None
         job["updated_at"] = _now()
         self.store.put(job)
+        inc_jobs_total("queued")
+        set_queue_size(self._queue.qsize() if self._queue else 0)
         if self._loop and self._queue:
             self._loop.call_soon_threadsafe(self._queue.put_nowait, job_id)
+        self._logger.info("job_retry", job_id=job_id)
         return True
 
     def status_list(self) -> List[Dict[str, Any]]:
@@ -133,12 +144,16 @@ class JobQueue:
         job = self.store.get(job_id)
         if not job:
             return
+        start_time = time.perf_counter()
         with self._lock:
             job["status"] = "processing"
             job["attempts"] = int(job.get("attempts", 0)) + 1
             job["updated_at"] = _now()
             self.store.put(job)
+        inc_jobs_total("processing")
+        set_queue_size(self._queue.qsize() if self._queue else 0)
         self._notify({"job_id": job_id, "status": "processing"})
+        log_job_event(self._logger, "job_processing_started", job_id, "processing")
         try:
             file_path = job["file_path"]
             if not Path(file_path).exists():
@@ -147,24 +162,18 @@ class JobQueue:
             result = await loop.run_in_executor(
                 None, process_document, file_path, file_path, job.get("operator_id"), job.get("operator_role")
             )
+            duration_ms = (time.perf_counter() - start_time) * 1000
             quality = (result.get("processing_metadata") or {}).get("quality_gate") or {}
             if quality.get("verdict") == "reject":
-                # Veredicto `reject` del control de calidad: no hubo OCR, no
-                # hay resultado que confirmar. Igual que el camino `failed`,
-                # no se llama `save_original` (así `store.original_exists`
-                # sigue devolviendo False y `confirm_job`/`download_*` siguen
-                # respondiendo 404, ver criterio 18 de
-                # runs/06-calidad-captura-mobile/spec.md). El job queda
-                # reintentable (`retry`, criterio 19): `JobQueue.retry` solo
-                # bloquea `ready`/`confirmed`, así que este estado nuevo
-                # sigue siendo reintentable sin cambios adicionales.
                 with self._lock:
                     job["status"] = REJECTED_JOB_STATUS
                     job["result"] = result
                     job["error"] = None
                     job["updated_at"] = _now()
                     self.store.put(job)
+                inc_jobs_total("rejected")
                 self._notify({"job_id": job_id, "status": REJECTED_JOB_STATUS})
+                log_job_event(self._logger, "job_quality_rejected", job_id, "quality_gate", duration_ms=duration_ms)
             else:
                 with self._lock:
                     job["status"] = "ready"
@@ -172,18 +181,18 @@ class JobQueue:
                     job["updated_at"] = _now()
                     self.store.put(job)
                 self.store.save_original(job_id, result)
+                inc_jobs_total("ready")
                 self._notify({"job_id": job_id, "status": "ready"})
+                log_job_event(self._logger, "job_completed", job_id, "processing", duration_ms=duration_ms)
         except Exception as e:
-            # Redacción: evitar filtrar el nombre de archivo original del
-            # cliente o rutas absolutas del filesystem del servidor en un
-            # mensaje de excepción crudo (ver backend/app/redaction.py).
             safe_error = redact_exception(e)
             with self._lock:
                 job["status"] = "failed"
                 job["error"] = safe_error
                 job["updated_at"] = _now()
                 self.store.put(job)
+            inc_jobs_total("failed")
             self._notify({"job_id": job_id, "status": "failed", "error": safe_error})
-
-
-__all__ = ["JobQueue"]
+            log_job_event(self._logger, "job_failed", job_id, "processing", error=safe_error)
+        finally:
+            set_queue_size(self._queue.qsize() if self._queue else 0)

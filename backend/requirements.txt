@@ -5,6 +5,10 @@ python-multipart==0.0.32
 pydantic==2.13.4
 pydantic-settings==2.15.0
 
+# Observabilidad (feature 13-observabilidad-operacion)
+prometheus-client==0.26.0
+structlog==26.1.0
+
 Pillow==12.3.0
 numpy==2.5.2
 opencv-python-headless==5.0.0.93

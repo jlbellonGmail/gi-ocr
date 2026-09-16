@@ -2,11 +2,13 @@
 
 Backend único (sin Node.js). Sirve API REST + SSE + frontend estático.
 Endpoints de jobs (multi-entrada), confirmación, descarga, export, watcher inbound.
+Observabilidad: logs estructurados, métricas Prometheus, health/readiness, correlation ID.
 """
 
 from __future__ import annotations
 
 import os
+import shutil
 
 os.environ.setdefault("GI_OCR_ORT_THREADS", "3")
 
@@ -15,7 +17,7 @@ import json
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Request, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -23,12 +25,22 @@ from pydantic import BaseModel
 
 from . import ocr_engine
 from .authz import Role, get_operator_identity, require_job_owner_or_reviewer, require_role
+from .correlation import CorrelationIdMiddleware
 from .document_services import normalize_service_id
 from .exif_privacy import anonymize_upload_bytes
 from .fs_permissions import secure_dir, secure_file
 from .inbound_watcher import InboundWatcher
 from .job_queue import JobQueue
 from .job_store import JOB_ID_RE, JobStore, sanitize_name
+from .logging_config import configure_logging, get_logger
+from .metrics import (
+    metrics_response,
+    set_disk_usage,
+    set_health_status,
+    set_ocr_engine_loaded,
+    set_readiness_status,
+    set_storage_bridge_files,
+)
 from .review_service import confirm_review
 from .services_config import (
     ServiceNotFoundError,
@@ -54,17 +66,25 @@ MAX_BYTES = 30 * 1024 * 1024  # 30 MB, valor por defecto (ver upload_validation.
 
 store = JobStore(DATA_DIR)
 queue = JobQueue(store, workers=2)
-queue.start()
 
 
 def _on_new_inbound(p: Path) -> None:
+    """Callback del inbound watcher: encola un nuevo archivo recibido."""
     queue.enqueue(str(p), p.name, source="inbound", operator_id="system", operator_role="admin")
 
 
+# Global watcher (inicializado a nivel de módulo para que funcione con o
+# sin disparo de lifespan — el TestClient de Starlette no fiablemente
+# dispara los eventos de vida).
 watcher = InboundWatcher(INBOUND_DIR, on_new=_on_new_inbound)
-watcher.start()
+
+queue.start()
 
 app = FastAPI(title="Captura OCR Local Ágil", version="2.0.0")
+
+# Correlation ID middleware (debe ser el primero para propagar a todo)
+app.add_middleware(CorrelationIdMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -129,8 +149,75 @@ def _save_upload(upload: UploadFile) -> Path:
 
 @app.on_event("startup")
 async def _startup() -> None:
-    # Cargar modelos OCR una sola vez (arranque en frío medible aparte en benchmark)
+    # Configurar logging estructurado
+    configure_logging()
+    logger = get_logger("main")
+
+    # Cargar modelos OCR una sola vez
     ocr_engine.warmup()
+    set_ocr_engine_loaded(True)
+    logger.info("ocr_engine_warmed_up")
+
+    # La cola y el watcher ya están inicializados a nivel de módulo (ver
+    # `_on_new_inbound`, `queue.start()` y `watcher` más abajo), así que el
+    # startup solo registra su estado. Esto hace que la app funcione tanto
+    # con como sin disparo de lifespan (TestClient de Starlette).
+    logger.info("job_queue_started", workers=queue.workers)
+    logger.info("inbound_watcher_started", inbound_dir=str(INBOUND_DIR))
+
+    # Métricas iniciales
+    set_health_status(True)
+    set_readiness_status(True)
+    _update_storage_bridge_metrics()
+    _update_disk_usage_metrics()
+
+
+@app.on_event("shutdown")
+async def _shutdown() -> None:
+    logger = get_logger("main")
+    logger.info("shutdown_initiated")
+    queue.stop()
+    if watcher is not None:
+        watcher.stop()
+    set_health_status(False)
+    set_readiness_status(False)
+
+
+def _check_disk_space(min_free_bytes: int = 100 * 1024 * 1024) -> bool:
+    """Verifica espacio libre en disco (default 100MB)."""
+    try:
+        usage = shutil.disk_usage(DATA_DIR)
+        return usage.free >= min_free_bytes
+    except Exception:
+        return False
+
+
+def _update_storage_bridge_metrics() -> None:
+    """Actualiza métricas de storage bridge."""
+    try:
+        ready_dir = BASE_DIR / "storage_bridge" / "ready"
+        failed_dir = BASE_DIR / "storage_bridge" / "failed"
+        ready_count = len(list(ready_dir.glob("*.DATA"))) if ready_dir.exists() else 0
+        failed_count = len(list(failed_dir.glob("*_error.json"))) if failed_dir.exists() else 0
+        set_storage_bridge_files("ready", ready_count)
+        set_storage_bridge_files("failed", failed_count)
+    except Exception:
+        pass
+
+
+def _update_disk_usage_metrics() -> None:
+    """Actualiza métricas de uso de disco."""
+    try:
+        for name, path in [
+            ("storage_bridge", BASE_DIR / "storage_bridge"),
+            ("output", DATA_DIR),
+            ("uploads", DATA_DIR / "uploads"),
+        ]:
+            if path.exists():
+                usage = shutil.disk_usage(path)
+                set_disk_usage(name, usage.used)
+    except Exception:
+        pass
 
 
 @app.get("/api/v1")
@@ -140,12 +227,55 @@ async def root():
 
 @app.get("/api/v1/health")
 async def health():
+    """Health check: proceso vivo + engine OCR cargado."""
+    engine_loaded = ocr_engine.get_engine() is not None
+    healthy = engine_loaded
+    set_health_status(healthy)
     return {
-        "status": "ok",
-        "engine_loaded": ocr_engine.get_engine() is not None,
+        "status": "ok" if healthy else "degraded",
+        "engine_loaded": engine_loaded,
         "queue_workers": queue.workers,
         "inbound": watcher.status(),
     }
+
+
+@app.get("/api/v1/ready")
+async def readiness():
+    """Readiness check: listo para recibir tráfico."""
+    engine_loaded = ocr_engine.get_engine() is not None
+    disk_ok = _check_disk_space()
+    # Cola saturada: más de 10 jobs por worker encolados
+    queue_size = queue._queue.qsize() if queue._queue else 0
+    queue_saturated = queue_size > queue.workers * 10
+    ready = engine_loaded and disk_ok and not queue_saturated
+    set_readiness_status(ready)
+    if not ready:
+        return Response(
+            content=json.dumps(
+                {
+                    "status": "not_ready",
+                    "engine_loaded": engine_loaded,
+                    "disk_ok": disk_ok,
+                    "queue_saturated": queue_saturated,
+                    "queue_size": queue_size,
+                }
+            ),
+            status_code=503,
+            media_type="application/json",
+        )
+    return {
+        "status": "ready",
+        "engine_loaded": engine_loaded,
+        "disk_ok": disk_ok,
+        "queue_size": queue_size,
+    }
+
+
+@app.get("/metrics")
+async def metrics():
+    """Endpoint Prometheus /metrics."""
+    body, content_type = metrics_response()
+    return Response(content=body, media_type=content_type)
 
 
 @app.get("/api/v1/services")
