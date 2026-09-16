@@ -1,6 +1,6 @@
 name: Post-HITL merge gate
 
-# Dos disparadores:
+# Tres disparadores:
 # - pull_request_review (submitted): el HITL real, cuando el humano
 #   aprueba (o revisa) la PR.
 # - pull_request (synchronize): Builder pushea commits nuevos a una PR que
@@ -13,33 +13,70 @@ name: Post-HITL merge gate
 #   'gh pr view' en vivo y lanza error claro si reviewDecision no es
 #   APPROVED -- eso es deseado y no bloquea el job, solo hace que termine
 #   sin mergear ni comentar como si fuera un segundo HITL.
+# - workflow_dispatch: autorización single-maintainer explícita, con inputs
+#   completos y validaciones independientes dentro del script confiable.
 on:
   pull_request_review:
     types: [submitted]
   pull_request:
     types: [synchronize]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Número exacto de la PR"
+        required: true
+        type: string
+      expected_branch:
+        description: "Branch exacta esperada"
+        required: true
+        type: string
+      expected_base:
+        description: "Base exacta esperada"
+        required: true
+        type: string
+      expected_head_sha:
+        description: "SHA completo revisado"
+        required: true
+        type: string
+      hitl_intent:
+        description: "Intención HITL"
+        required: true
+        type: choice
+        options: [MERGE]
+      confirmation:
+        description: "Confirmación explícita"
+        required: true
+        type: choice
+        options: [I_CONFIRM_HITL_MERGE]
 
 permissions:
   contents: write
   pull-requests: write
+  actions: read
   checks: read
 
 concurrency:
-  group: post-hitl-merge-${{ github.event.pull_request.number }}
+  group: post-hitl-merge-${{ github.event.pull_request.number || inputs.pr_number || github.run_id }}
   cancel-in-progress: false
 
 jobs:
   complete-approved-pr:
     if: |
       (github.event_name == 'pull_request_review' && github.event.review.state == 'approved' && github.event.pull_request.base.ref == 'develop') ||
-      (github.event_name == 'pull_request' && github.event.action == 'synchronize' && github.event.pull_request.base.ref == 'develop')
+      (github.event_name == 'pull_request' && github.event.action == 'synchronize' && github.event.pull_request.base.ref == 'develop') ||
+      (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     steps:
       - name: Derivar slug de feature
         id: feature
         shell: bash
+        env:
+          EXPECTED_BRANCH_INPUT: ${{ inputs.expected_branch }}
         run: |
-          head_ref='${{ github.event.pull_request.head.ref }}'
+          head_ref="${{ github.event.pull_request.head.ref }}"
+          if [[ "$GITHUB_EVENT_NAME" == 'workflow_dispatch' ]]; then
+            head_ref="$EXPECTED_BRANCH_INPUT"
+          fi
           if [[ "$head_ref" =~ ^feature/([0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*)$ ]]; then
             echo "slug=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
             echo "branch=$head_ref" >> "$GITHUB_OUTPUT"
@@ -61,10 +98,29 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
+          HITL_MODE: ${{ github.event_name == 'workflow_dispatch' && 'SingleMaintainer' || 'Review' }}
+          HITL_EVENT_NAME: ${{ github.event_name }}
+          HITL_ACTOR: ${{ github.actor }}
+          HITL_AUTHORIZED_ACTORS: ${{ vars.SINGLE_MAINTAINER_HITL_ACTORS }}
+          HITL_PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number || 0 }}
+          HITL_EXPECTED_BRANCH: ${{ inputs.expected_branch }}
+          HITL_EXPECTED_BASE: ${{ inputs.expected_base }}
+          HITL_EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
+          HITL_INTENT: ${{ inputs.hitl_intent }}
+          HITL_CONFIRMATION: ${{ inputs.confirmation }}
         run: |
-          ./scripts/complete-approved-pr.ps1 `
-            -Slug '${{ steps.feature.outputs.slug }}' `
-            -Branch '${{ steps.feature.outputs.branch }}' `
-            -PrNumber ${{ github.event.pull_request.number }} `
+            ./scripts/complete-approved-pr.ps1 `
+            -Slug "${{ steps.feature.outputs.slug }}" `
+            -Branch "${{ steps.feature.outputs.branch }}" `
+            -PrNumber $env:HITL_PR_NUMBER `
+            -Mode $env:HITL_MODE `
+            -EventName $env:HITL_EVENT_NAME `
+            -Actor $env:HITL_ACTOR `
+            -AuthorizedActors $env:HITL_AUTHORIZED_ACTORS `
+            -ExpectedBranch $env:HITL_EXPECTED_BRANCH `
+            -ExpectedBase $env:HITL_EXPECTED_BASE `
+            -ExpectedHeadSha $env:HITL_EXPECTED_HEAD_SHA `
+            -HitlIntent $env:HITL_INTENT `
+            -Confirmation $env:HITL_CONFIRMATION `
             -SkipLocalCleanup `
             -CommentOnFailure

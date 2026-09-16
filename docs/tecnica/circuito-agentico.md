@@ -92,3 +92,31 @@ lo sigue haciendo `post-merge-close-feature.yml` mediante
 `scripts/close-feature.ps1`; la limpieza local queda en manos de
 `scripts/reconcile-local-feature.ps1`, lanzado en segundo plano por
 `scripts/start-local-reconciler.ps1`, que observa `origin/develop`.
+
+## HITL single-maintainer
+
+El camino multi-maintainer conserva la aprobación GitHub y
+`reviewDecision == APPROVED`. Cuando el autor de la PR es también el único
+mantenedor, GitHub no permite aprobar la propia PR; el camino alternativo se
+activa exclusivamente mediante `workflow_dispatch`, nunca por `push` o
+`synchronize`.
+
+Antes de activarlo debe verificarse la default branch real con
+`gh repo view --json defaultBranchRef`. La activación inicial es un bootstrap
+único: CI verde, revisión humana, SHA exacto y merge manual protegido por
+`--match-head-commit <SHA>` cuando la política real lo permita, con evidencia
+en `runs/14-hitl-single-maintainer/`. Si la topología no permite que el
+workflow exista en la default branch, la activación se detiene.
+
+El dispatch exige PR, branch, base y SHA completo, intención `MERGE` y la
+confirmación exacta `I_CONFIRM_HITL_MERGE`. El actor debe coincidir
+exactamente con un login de `vars.SINGLE_MAINTAINER_HITL_ACTORS`; configuración
+ausente, vacía o sin coincidencia falla cerrado. La allowlist inicial de
+checks sólo contiene `CI/test` y `CI/quality`, asociados exactamente al SHA
+ingresado. El propio `Post-HITL merge gate` queda excluido y no puede
+esperarse a sí mismo. Todo se revalida inmediatamente antes del merge.
+
+Logs y job summary registran actor, fuente de autorización, timestamp UTC,
+PR, refs, SHA, checks, intención y resultado sin secretos ni contenido OCR.
+No se crea `human-authorization.md` por defecto porque un commit adicional
+cambiaría el SHA revisado.

@@ -218,6 +218,18 @@ merge solo puede quedar pendiente `[ ]` o `READY_FOR_PR` `[-]`.
 - El humano no abre la PR ni hace checkpoints previos: solo decide
   `MERGE` o `NO MERGE` con la PR y sus evidencias a la vista.
 
+En repositorios single-maintainer, cuando GitHub impide que el autor apruebe
+su propia PR, la única alternativa válida es el camino explícito
+`workflow_dispatch` definido por la unidad `14-hitl-single-maintainer`. Ese
+camino no reemplaza `reviewDecision == APPROVED` para multi-maintainer y no
+puede activarse por `push` o `synchronize`. Requiere actor autorizado por la
+variable de repositorio `vars.SINGLE_MAINTAINER_HITL_ACTORS`, PR/base/branch
+exactos, SHA completo ingresado, checks `CI/test` y `CI/quality` exitosos para
+ese SHA, intención `MERGE` y confirmación exacta. El workflow debe revalidar
+todo inmediatamente antes del merge y usar una precondición de SHA. La
+configuración ausente o inválida falla cerrado. El bootstrap es único y debe
+verificar la default branch real con `gh repo view --json defaultBranchRef`.
+
 ## Versionado (tags)
 
 - Cada release a `main` se marca con un tag `vX.Y.Z` (SemVer:
