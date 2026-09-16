@@ -159,7 +159,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
       JSON confirmado: encoding, separador, orden de campos, nombres de
       archivo, idempotencia, duplicados, reintentos, estados `ready/failed`
       y reconciliacion con el sistema externo.
-- [-] 13-observabilidad-operacion — Agregar logs estructurados, metricas y
+- [x] 13-observabilidad-operacion — Agregar logs estructurados, metricas y
       trazabilidad por job/documento: tiempos OCR, estado de cola, errores
       por etapa, campos aceptados/rechazados/no encontrados,
       health/readiness y runbook operativo.
@@ -243,6 +243,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
