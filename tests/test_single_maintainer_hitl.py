@@ -94,6 +94,13 @@ def test_hitl_summary_contains_auditable_metadata_without_branch_file():
         assert value in content
 
 
+def test_single_maintainer_report_serializes_check_array_as_text():
+    content = SCRIPT.read_text(encoding="utf-8")
+    assert "function Get-GateReportDetails" in content
+    assert 'if ($ModeName -eq "SingleMaintainer")' in content
+    assert "-Details (Get-GateReportDetails -ModeName $Mode -Checks $checks)" in content
+
+
 def test_stale_head_is_revalidated_immediately_before_merge():
     content = SCRIPT.read_text(encoding="utf-8")
     assert content.count("Get-PrSnapshot -GitHubCliPath $ghPath -PrRef $prRef") >= 2

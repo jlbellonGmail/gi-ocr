@@ -439,6 +439,24 @@ function Write-HitlSummary {
     }
 }
 
+function Get-GateReportDetails {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $ModeName,
+
+        [Parameter(Mandatory = $true)]
+        [object] $Checks
+    )
+
+    if ($ModeName -eq "SingleMaintainer") {
+        return (($Checks | ForEach-Object {
+            "Check $($_.Id): status=$($_.Status), conclusion=$($_.Conclusion), head_sha=$($_.HeadSha), run=$($_.RunId)"
+        }) -join [Environment]::NewLine)
+    }
+
+    return [string]$Checks.Details
+}
+
 if ([string]::IsNullOrWhiteSpace($Branch)) {
     $Branch = "feature/$Slug"
 }
@@ -533,7 +551,7 @@ $successReport = Write-GateReport `
         "PR $prRef aprobada por HITL, checks post-aprobacion verdes y merge ejecutado.",
         "El cierre remoto de ROADMAP queda a cargo de post-merge-close-feature.yml."
     ) `
-    -Details $checks.Details
+    -Details (Get-GateReportDetails -ModeName $Mode -Checks $checks)
 
 Write-Host "==> PR mergeada. Evidencia: $successReport"
 
