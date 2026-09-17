@@ -23,7 +23,7 @@ ejemplos.
 - [auditoria-permisos-operador](auditoria-permisos-operador.md)
 - [contrato-integracion-legacy-v2](contrato-integracion-legacy-v2.md)
 - [Observabilidad Operacion](observabilidad-operacion.md)
-- [Adopción Template v2.0.0](adopcion-template-v2.md)
+- [Adoptar Template v2.0.0 en GI-OCR](adopcion-template-v2.md)
 - [Template v2: adopcion-proyecto-existente](adopcion-proyecto-existente.md)
 - [Template v2: agentic-evals](agentic-evals.md)
 - [Template v2: arquitectura-roles](arquitectura-roles.md)
