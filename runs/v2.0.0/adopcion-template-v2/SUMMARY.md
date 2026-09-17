@@ -4,8 +4,8 @@ Estado: adoptado y validado
 Tipo: Maintenance
 Template: v2.0.0
 Fuente: f5d4b6cc029c34c0d0c05831bfd28134276fa167
-PR: #29 (adopción), #32 (reconciliación de cierre)
-Merge: #29 158aeeafa55b36cdc59e29af27ce47b29fe80179; #32 213f266aa74318ac359a8cdb4a276dd7bba57bfa
+PR: #29 (adopción), #32 y #34 (reconciliación de cierre)
+Merge: #29 158aeeafa55b36cdc59e29af27ce47b29fe80179; #32 213f266aa74318ac359a8cdb4a276dd7bba57bfa; #34 8dc33fc19e14ceff8c78c9473392f81e2c1a54ce
 
 ## Alcance
 

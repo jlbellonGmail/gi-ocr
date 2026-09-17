@@ -1,11 +1,11 @@
 # Estado operativo
 
 Versión: v2.0.0 (adopción incremental en GI-OCR)
-Estado general: features 13 y 14 cerradas; adopción transversal en curso.
+Estado general: features 13 y 14 cerradas; Template v2.0.0 adoptado y operativo.
 La arquitectura OCR y sus contratos de producto permanecen preservados.
 
-Próximo paso exacto: ejecutar `scripts/check-status.ps1`, validar integridad
-v2 y cerrar la adopción mediante PR contra `develop`.
+Próximo paso exacto: iniciar una nueva feature del ROADMAP mediante el
+circuito v2, sin modificar la arquitectura OCR preservada.
 
 <!-- STATUS:AUTO:BEGIN -->
 
