@@ -530,8 +530,11 @@ function Get-ToolchainDiagnostics {
         $venvPythonWindows = Join-Path $venvDir "Scripts/python.exe"
         $venvPythonPosix = Join-Path $venvDir "bin/python"
         $venvPython = if (Test-Path -LiteralPath $venvPythonWindows -PathType Leaf) { $venvPythonWindows } else { $venvPythonPosix }
+        $externalPython = if ($env:GI_OCR_PYTHON -and (Test-Path -LiteralPath $env:GI_OCR_PYTHON -PathType Leaf)) { [IO.Path]::GetFullPath($env:GI_OCR_PYTHON) } else { $null }
+        $usingExternalPython = -not [string]::IsNullOrWhiteSpace($externalPython)
+        if ($usingExternalPython) { $venvPython = $externalPython }
 
-        if (-not (Test-Path -LiteralPath $venvDir -PathType Container)) {
+        if (-not $usingExternalPython -and -not (Test-Path -LiteralPath $venvDir -PathType Container)) {
             Add-ToolResult ".venv" "BLOCKING" ".venv no existe en $repoRoot." "Crea el entorno virtual: python -m venv .venv && .venv/Scripts/pip install -r backend/requirements.txt"
         }
         elseif (-not (Test-Path -LiteralPath $venvPython -PathType Leaf)) {
