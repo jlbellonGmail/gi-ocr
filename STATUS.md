@@ -1,28 +1,28 @@
 # Estado operativo
 
 Versión: v2.0.0 (adopción incremental en GI-OCR)
-Estado general: features 13 y 14 cerradas; adopción transversal en curso.
+Estado general: features 13 y 14 cerradas; Template v2.0.0 adoptado y operativo.
 La arquitectura OCR y sus contratos de producto permanecen preservados.
 
-Próximo paso exacto: ejecutar `scripts/check-status.ps1`, validar integridad
-v2 y cerrar la adopción mediante PR contra `develop`.
+Próximo paso exacto: iniciar una nueva feature del ROADMAP mediante el
+circuito v2, sin modificar la arquitectura OCR preservada.
 
 <!-- STATUS:AUTO:BEGIN -->
 
 ## Estado verificado automáticamente
 
-- Actualizado: 2026-09-17T00:57:04Z
+- Actualizado: 2026-09-17T01:14:00Z
 - Versión: v2.0.0
-- Rama: feature/28-adopcion-template-v2
-- HEAD: 1665c77bd33633a26d3e33149d3caf2ad75f8d27
+- Rama: develop
+- HEAD: 85929000a05568b4df39aebe79ef93b992f81eaf
 - Remoto: https://github.com/jlbellonGmail/gi-ocr.git
 - Working tree: dirty
 - Worktrees: 3
 - Worktrees Git: 3
-- Unidades activas: = [feature/28-adopcion-template-v2]
+- Unidades activas: ninguna
 - PR activa: UNKNOWN / sin PR abierta
-- CI: UNKNOWN / sin CI verificable
-- CI vigente: UNKNOWN / sin CI verificable
+- CI:  @ 85929000a05568b4df39aebe79ef93b992f81eaf
+- CI vigente:  @ 85929000a05568b4df39aebe79ef93b992f81eaf
 - Última release: UNKNOWN / no disponible
 
 <!-- STATUS:AUTO:END -->
