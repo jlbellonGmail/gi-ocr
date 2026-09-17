@@ -66,7 +66,9 @@ function Add-GeneratedFile {
     )
 
     $normalized = $RelativePath -replace '\\', '/'
-    $Generated[$normalized] = $Content
+    $deterministicContent = $Content -replace "`r`n", "`n" -replace "`r", "`n"
+    if (-not $deterministicContent.EndsWith("`n")) { $deterministicContent += "`n" }
+    $Generated[$normalized] = $deterministicContent
 }
 
 function Write-Or-CheckFile {
