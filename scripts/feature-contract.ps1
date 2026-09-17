@@ -261,6 +261,29 @@ function Get-FeatureContractStatus {
     $info = Get-FeatureInfo -Slug $Slug -Title $Title
     $problems = New-Object System.Collections.Generic.List[string]
 
+    $adaptiveManifest = Join-Path $info.RunDir 'sdd.json'
+    if (Test-Path -LiteralPath $adaptiveManifest -PathType Leaf) {
+        try {
+            $adaptive = Get-Content -LiteralPath $adaptiveManifest -Raw -Encoding UTF8 | ConvertFrom-Json
+            $depth = [string]$adaptive.depth
+            if ($depth -notin @('LIGHT','STANDARD','FULL')) { [void]$problems.Add('sdd.json depth debe ser LIGHT, STANDARD o FULL.') }
+            $summaryPath = Join-Path $info.RunDir 'SUMMARY.md'
+            if (-not (Test-Path -LiteralPath $summaryPath -PathType Leaf) -or [string]::IsNullOrWhiteSpace((Get-Content $summaryPath -Raw))) { [void]$problems.Add('Falta SUMMARY.md para evidencia adaptativa.') }
+            $review = Get-FirstExistingArtifact -Directory $info.RunDir -Pattern 'code-review-*.md'
+            if ($null -eq $review) { [void]$problems.Add('Falta code-review-N.md para evidencia adaptativa.') }
+            if ($depth -in @('STANDARD','FULL')) {
+                foreach ($path in @("$($info.RunDir)/spec.md", "$($info.RunDir)/plan.md", "$($info.RunDir)/test-report-1.md", $info.TechnicalDoc, $info.UserDoc)) { try { Assert-NonEmptyFile $path } catch { [void]$problems.Add($_.Exception.Message) } }
+            }
+            if ($depth -eq 'FULL') {
+                foreach ($path in @("$($info.RunDir)/tasks.md", "$($info.RunDir)/decision.md", "$($info.RunDir)/audit-1.md")) { try { Assert-NonEmptyFile $path } catch { [void]$problems.Add($_.Exception.Message) } }
+            }
+            if ($depth -in @('STANDARD','FULL')) {
+                foreach ($index in @($info.TechnicalIndex,$info.UserIndex)) { if (-not (Test-Path $index -PathType Leaf) -or (Get-Content $index -Raw) -notmatch [regex]::Escape((Split-Path -Leaf $info.TechnicalDoc))) { [void]$problems.Add("Falta enlace de documentación en $index") } }
+            }
+            return [pscustomobject]@{ Slug=$Slug; Info=$info; Problems=$problems.ToArray(); IsComplete=($problems.Count -eq 0) }
+        } catch { [void]$problems.Add("sdd.json invalido: $($_.Exception.Message)"); return [pscustomobject]@{ Slug=$Slug; Info=$info; Problems=$problems.ToArray(); IsComplete=$false } }
+    }
+
     foreach ($requiredPath in @(
         $info.Decision,
         "$($info.RunDir)/spec.md",

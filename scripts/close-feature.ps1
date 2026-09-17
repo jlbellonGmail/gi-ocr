@@ -1,10 +1,14 @@
 param(
-    [Parameter(Mandatory = $true)]
-    [string] $Slug,
+    [string] $Slug = "",
 
     [int] $PrNumber = 0,
 
     [string] $Branch = "",
+
+    [ValidateSet("Feature", "Milestone", "Maintenance")]
+    [string] $Mode = "Feature",
+
+    [string] $Version = "",
 
     [string] $WorktreeDir = "",
 
@@ -224,6 +228,19 @@ function Remove-LocalFeatureArtifacts {
 if ([string]::IsNullOrWhiteSpace($Branch)) {
     $Branch = "feature/$Slug"
 }
+
+if ($Mode -eq "Maintenance") {
+    . (Join-Path $PSScriptRoot "workunit-lib.ps1")
+    $scope = Resolve-MaintenanceScope -Branch $Branch -RoadmapPath "ROADMAP.md"
+    if ($scope.Scope -eq "auxiliary") {
+        Write-Host "maintenance_scope: auxiliary"
+        Write-Host "close_roadmap: skipped"
+        Write-Host "==> Maintenance auxiliar: no modifica ROADMAP.md ($($scope.Reason))."
+        exit 0
+    }
+    if ([string]::IsNullOrWhiteSpace($Slug)) { $Slug = $scope.CanonicalSlug }
+}
+if ([string]::IsNullOrWhiteSpace($Slug)) { throw "Debe informarse Slug para una unidad cerrable." }
 
 $baseBranch = "develop"
 $ghPath = Get-GitHubCliPath

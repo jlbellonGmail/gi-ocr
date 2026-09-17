@@ -417,6 +417,26 @@ vacío, Codex debe referenciar esas reglas desde `.agentic/roles/*.md`
   `storage_bridge/{inbound,ready,failed}/`.
 
 ## Setup manual (una sola vez, no automatizable)
+## Gobierno Template v2.0.0
+`CONSTITUTION.md` contiene los principios permanentes de Template v2.0.0 y
+este archivo continúa siendo la instrucción operativa canónica de GI-OCR.
+Todo cambio nuevo comienza con una unidad de trabajo, una evaluación ASSESS
+determinística y SDD adaptativo (`LIGHT`, `STANDARD` o `FULL`) según riesgo.
+Los roles Planner, Builder y Reviewer viven en `.agentic/roles/`; los
+proveedores y modelos son configuración reemplazable, nunca arquitectura OCR.
+`STATUS.md` es el punto de reentrada; `.audit/` conserva reglas y evidencia
+sin secretos ni contenido OCR. Las utilidades v2 de work units, convergencia,
+integridad, estado, lifecycle y release coexisten con el circuito histórico
+y sus scripts existentes, preservando runs/ y contratos de producto.
+El camino multi-maintainer conserva `reviewDecision == APPROVED`. El camino
+single-maintainer sólo se activa por `workflow_dispatch`, con actor exacto
+en `vars.SINGLE_MAINTAINER_HITL_ACTORS`, PR/base/branch/SHA explícitos,
+`CI/test` y `CI/quality` exitosos para ese SHA, intención/confirmación exactas,
+doble validación y `--match-head-commit`; CI, labels, comentarios, commits o
+`synchronize` no autorizan por sí solos.
+MCP permanece vacío por ausencia de caso de uso externo. Las Skills sólo se
+agregan cuando exista una capacidad reutilizable real del dominio OCR; su
+fuente canónica es `.agents/skills/`.
 
 - **GitHub Pages** (Settings → Pages → Source): elegir "GitHub Actions".
   Necesario para que `docs.yml` pueda publicar el sitio MkDocs.

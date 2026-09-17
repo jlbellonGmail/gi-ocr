@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://template.local/agentic/schemas/work-unit.schema.json",
+  "title": "work-unit.json manifest schema",
+  "description": "Describe la forma fija del manifest de Milestone documentada en scripts/workunit-lib.ps1 (Read-WorkUnitManifest / Write-WorkUnitManifest).",
+  "type": "object",
+  "required": ["schemaVersion", "mode", "slug", "items"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "mode": { "const": "milestone" },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$"
+      }
+    }
+  },
+  "additionalProperties": false
+}

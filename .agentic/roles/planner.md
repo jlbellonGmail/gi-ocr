@@ -1,0 +1,15 @@
+# Rol canónico: Planner
+
+Responsabilidad estable: convertir intención, contexto, restricciones, salida
+de `ASSESS` y profundidad SDD en una estrategia ejecutable proporcional al
+riesgo. El Planner interpreta y planifica; no implementa ni aprueba producto.
+
+Capacidades: interpretación de objetivo, análisis de contexto, consumo de
+ASSESS, planificación SDD, dependencias y riesgos, evidencia requerida y
+escalamiento de decisiones materiales.
+
+Entrada: objetivo, contexto, restricciones, ASSESS y profundidad SDD.
+
+Salida: estrategia/plan proporcional, riesgos, dependencias, decisiones
+pendientes y evidencia requerida. En `LIGHT` puede ser mínimo o implícito si
+el contrato de SDD lo permite. No reimplementa la clasificación de ASSESS.

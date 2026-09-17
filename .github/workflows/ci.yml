@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [develop, main]
@@ -10,20 +13,75 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Instalar Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: backend/requirements.txt
+          cache-dependency-path: requirements-dev.txt
 
       - name: Instalar dependencias
-        run: pip install -r backend/requirements.txt
+        run: pip install -r requirements-dev.txt
 
       - name: Tests (pytest)
         run: pytest -v
+
+      - name: Validar adaptadores agenticos
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/sync-agentic-adapters.ps1 -Check
+
+      - name: Validar integridad del circuito
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/check-integrity.ps1
+
+  circuit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Instalar Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Instalar dependencias
+        run: pip install -r requirements-dev.txt
+      - name: Tests del circuito
+        run: pytest -v tests
+      - name: Validar adaptadores agenticos
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/sync-agentic-adapters.ps1 -Check
+      - name: Validar supply chain del circuito
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-supply-chain.ps1
+
+  product-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Tests de producto GI-OCR
+        run: 'echo "PLACEHOLDER: los tests de producto se ejecutan en CI/test; este job conserva el gate v2 separado. Ver docs/tecnica/arquitectura.md."'
+
+  local-reconciler-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Instalar Python 3.12
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+      - name: Instalar dependencias
+        run: pip install -r requirements-dev.txt
+      - name: Tests del reconciliador local
+        run: pytest -v tests/test_local_reconciler_scripts.py
 
   quality:
     # Job independiente de "test" (no bloquea ni depende de pytest):
@@ -33,17 +91,19 @@ jobs:
     # paso y las decisiones de configuracion.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Instalar Python 3.12
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: backend/requirements-dev.txt
+          cache-dependency-path: requirements-dev.txt
 
       - name: Instalar dependencias de desarrollo (incluye runtime fijado via -r)
-        run: pip install -r backend/requirements-dev.txt
+        run: pip install -r requirements-dev.txt
 
       - name: Lint (ruff check)
         run: ruff check backend/app backend/tests scripts tests
@@ -82,5 +142,7 @@ jobs:
         # 17-pruebas-e2e-mobile-real, y ruff/mypy/pip-audit fijados por
         # esta feature). continue-on-error evita que un hallazgo aqui
         # tumbe el job; el resultado queda visible en el log/summary.
-        continue-on-error: true
         run: pip-audit -r backend/requirements-dev.txt
+
+      - name: Validar supply chain del circuito
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-supply-chain.ps1

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "suiteVersion": "1.0.0",
+  "description": "Escenarios pequenos y provider/model agnostic para comportamiento del circuito.",
+  "scenarios": [
+    {"id":"A-trivial","version":"1.0.0","question":"¿Un cambio trivial evita ceremonia innecesaria?","expected":{"depth":"LIGHT","escalation":false,"convergence":"success"},"actual":{"depth":"LIGHT","escalation":false,"convergence":"success"},"metrics":{"convergence":"success","loopAvoided":true}},
+    {"id":"B-normal","version":"1.0.0","question":"¿Una feature normal usa SDD proporcional y converge?","expected":{"depth":"STANDARD","planner":"proportional","builder":"implemented","reviewer":"approved","convergence":"success"},"actual":{"depth":"STANDARD","planner":"proportional","builder":"implemented","reviewer":"approved","convergence":"success"},"metrics":{"convergence":"success"}},
+    {"id":"C-high-risk","version":"1.0.0","question":"¿Un cambio de alto riesgo exige evidencia reforzada?","expected":{"depth":"FULL","audit":true,"review":"strong"},"actual":{"depth":"FULL","audit":true,"review":"strong"},"metrics":{"convergence":"success"}},
+    {"id":"D-ambiguity","version":"1.0.0","question":"¿Una ambigüedad funcional material escala correctamente?","expected":{"escalation":true,"terminal":"NEEDS_HUMAN_DECISION"},"actual":{"escalation":true,"terminal":"NEEDS_HUMAN_DECISION"},"metrics":{"escalation":true}},
+    {"id":"E-technical-retry","version":"1.0.0","question":"¿Un fallo técnico corregible vuelve a Builder sin humano?","expected":{"builderRetry":true,"escalation":false,"terminal":"APPROVED"},"actual":{"builderRetry":true,"escalation":false,"terminal":"APPROVED"},"metrics":{"convergence":"success"}},
+    {"id":"F-external-block","version":"1.0.0","question":"¿Un bloqueo externo termina de forma segura?","expected":{"terminal":"BLOCKED","escalation":true},"actual":{"terminal":"BLOCKED","escalation":true},"metrics":{"escalation":true}},
+    {"id":"G-no-progress","version":"1.0.0","question":"¿CONVERGENCE evita un loop sin progreso?","expected":{"noProgressDetected":true,"terminal":"FAILED_SAFELY","loop":false},"actual":{"noProgressDetected":true,"terminal":"FAILED_SAFELY","loop":false},"metrics":{"loopAvoided":true}},
+    {"id":"H-stale-review","version":"1.0.0","question":"¿Una review stale es rechazada?","expected":{"staleReviewRejected":true,"terminal":"CHANGES_REQUESTED"},"actual":{"staleReviewRejected":true,"terminal":"CHANGES_REQUESTED"},"metrics":{}},
+    {"id":"I-insufficient-evidence","version":"1.0.0","question":"¿El contrato exige evidencia adecuada a SDD?","expected":{"evidenceGate":"rejected","depth":"STANDARD"},"actual":{"evidenceGate":"rejected","depth":"STANDARD"},"metrics":{}},
+    {"id":"J-out-of-scope","version":"1.0.0","question":"¿Reviewer detecta cambios fuera de alcance?","expected":{"scopeViolationDetected":true,"terminal":"CHANGES_REQUESTED"},"actual":{"scopeViolationDetected":true,"terminal":"CHANGES_REQUESTED"},"metrics":{"scopeViolationDetected":true}}
+  ]
+}

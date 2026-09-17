@@ -1,169 +1,36 @@
 {
   "$schema": "./schemas/models.schema.json",
-  "lastReviewed": "2026-08-21",
-  "executionDeclaration": {
-    "fileName": "run.yaml",
-    "location": "runs/<NN>-<slug>/run.yaml",
-    "scope": "Seleccion minima previa a spec.md: modelo, variante y fallback. No es el manifiesto completo del punto 2."
-  },
-  "validVariants": [
-    "default",
-    "none",
-    "minimal",
-    "low",
-    "medium",
-    "high",
-    "xhigh",
-    "max"
-  ],
-  "fallbackAliases": {
-    "go": "opencode-go",
-    "zen": "opencode",
-    "openrouter-free": "openrouter"
-  },
+  "lastReviewed": "2026-09-13",
+  "executionDeclaration": {"fileName": "run.yaml", "location": "runs/<NN>-<slug>/run.yaml", "scope": "Seleccion minima previa a spec.md: modelo, variante y fallback."},
+  "validVariants": ["default", "none", "minimal", "low", "medium", "high", "xhigh", "max"],
+  "fallbackAliases": {"go": "opencode-go", "zen": "opencode", "openrouter-free": "openrouter"},
   "providers": {
-    "anthropic": {
-      "credentialEnv": [
-        "ANTHROPIC_API_KEY",
-        "AGENTIC_ANTHROPIC_READY"
-      ],
-      "credentialHelp": "Modelo directo Anthropic, ya en uso hoy por opencode.json de este repo. ANTHROPIC_API_KEY puede usarse en automatizacion; AGENTIC_ANTHROPIC_READY=1 sirve para entornos ya conectados sin exponer tokens.",
-      "models": [
-        "claude-sonnet-4-5"
-      ]
+    "opencode-go": {"credentialEnv": ["AGENTIC_OPENCODE_GO_READY"], "credentialHelp": "Conectar OpenCode Go fuera del repo.", "models": ["gpt-5.6-luna", "kimi-k2.7-code", "mimo-v2.5-pro"]},
+    "opencode": {"credentialEnv": ["AGENTIC_OPENCODE_ZEN_READY"], "credentialHelp": "Conectar OpenCode Zen fuera del repo.", "models": ["gpt-5.6-luna", "gpt-5.5", "gpt-5.3-codex", "gpt-5.1-codex", "kimi-k2.7-code", "mimo-v2.5-pro", "mimo-v2.5-free", "hy3-free"]},
+    "openrouter": {"credentialEnv": ["OPENROUTER_API_KEY", "AGENTIC_OPENROUTER_READY"], "credentialHelp": "Configurar OpenRouter fuera del repo.", "requiresExplicitFallback": true, "models": ["qwen/qwen3-coder:free", "moonshotai/kimi-k2:free"]}
+  },
+  "roleAliases": {"analyst-agent": "planner", "builder-agent": "builder", "reviewer-agent": "reviewer", "qa-agent": "reviewer", "code-reviewer-agent": "reviewer"},
+  "routing": {
+    "defaultSdd": "STANDARD",
+    "depthWeights": {
+      "LIGHT": {"quality": 1, "cost": 3, "latency": 2},
+      "STANDARD": {"quality": 2, "cost": 1, "latency": 1},
+      "FULL": {"quality": 4, "cost": 0, "latency": 0}
     },
-    "opencode-go": {
-      "credentialEnv": [
-        "AGENTIC_OPENCODE_GO_READY"
-      ],
-      "credentialHelp": "Conectar OpenCode Go con /connect. Para ejecuciones automatizadas, exportar AGENTIC_OPENCODE_GO_READY=1 sin guardar secretos en el repo.",
-      "models": [
-        "gpt-5.6-luna",
-        "kimi-k2.7-code",
-        "mimo-v2.5-pro"
-      ]
+    "roleCapabilities": {
+      "planner": ["reasoning", "context", "planning"],
+      "builder": ["coding", "tools", "debugging"],
+      "reviewer": ["reasoning", "review", "independence"]
     },
-    "opencode": {
-      "credentialEnv": [
-        "AGENTIC_OPENCODE_ZEN_READY"
-      ],
-      "credentialHelp": "Conectar OpenCode Zen con /connect. Para ejecuciones automatizadas, exportar AGENTIC_OPENCODE_ZEN_READY=1 sin guardar secretos en el repo.",
-      "models": [
-        "gpt-5.6-luna",
-        "gpt-5.5",
-        "gpt-5.3-codex",
-        "gpt-5.1-codex",
-        "kimi-k2.7-code",
-        "mimo-v2.5-pro",
-        "mimo-v2.5-free",
-        "hy3-free"
-      ]
-    },
-    "openrouter": {
-      "credentialEnv": [
-        "OPENROUTER_API_KEY",
-        "AGENTIC_OPENROUTER_READY"
-      ],
-      "credentialHelp": "Configurar OpenRouter fuera del repo. OPENROUTER_API_KEY puede usarse en automatizacion; AGENTIC_OPENROUTER_READY=1 sirve para entornos ya conectados sin exponer tokens.",
-      "requiresExplicitFallback": true,
-      "models": [
-        "qwen/qwen3-coder:free",
-        "moonshotai/kimi-k2:free"
-      ]
-    }
+    "implementations": [
+      {"alias":"balanced", "provider":"opencode-go", "model":"kimi-k2.7-code", "capabilities":["reasoning","context","planning","coding","tools","debugging","review","independence"], "quality":3, "cost":2, "latency":2, "context":128000, "availabilityEnv":["AGENTIC_OPENCODE_GO_READY"], "securityProfiles":["LIGHT","STANDARD","FULL"]},
+      {"alias":"quality", "provider":"opencode", "model":"gpt-5.5", "capabilities":["reasoning","context","planning","coding","tools","debugging","review","independence"], "quality":5, "cost":4, "latency":3, "context":200000, "availabilityEnv":["AGENTIC_OPENCODE_ZEN_READY"], "securityProfiles":["LIGHT","STANDARD","FULL"]},
+      {"alias":"efficient", "provider":"opencode", "model":"mimo-v2.5-free", "capabilities":["reasoning","context","planning","coding","tools","review"], "quality":2, "cost":0, "latency":1, "context":64000, "availabilityEnv":["AGENTIC_OPENCODE_ZEN_READY"], "securityProfiles":["LIGHT","STANDARD"]}
+    ]
   },
   "roles": {
-    "analyst-agent": {
-      "default": {
-        "model": "anthropic/claude-sonnet-4-5",
-        "variant": "high"
-      },
-      "fallback": [
-        {
-          "label": "go",
-          "model": "opencode-go/kimi-k2.7-code",
-          "variant": "high"
-        },
-        {
-          "label": "zen",
-          "model": "opencode/kimi-k2.7-code",
-          "variant": "high"
-        },
-        {
-          "label": "openrouter-free",
-          "model": "openrouter/qwen/qwen3-coder:free",
-          "variant": "high"
-        }
-      ]
-    },
-    "reviewer-agent": {
-      "default": {
-        "model": "anthropic/claude-sonnet-4-5",
-        "variant": "high"
-      },
-      "fallback": [
-        {
-          "label": "go",
-          "model": "opencode-go/kimi-k2.7-code",
-          "variant": "high"
-        },
-        {
-          "label": "zen",
-          "model": "opencode/kimi-k2.7-code",
-          "variant": "high"
-        },
-        {
-          "label": "openrouter-free",
-          "model": "openrouter/qwen/qwen3-coder:free",
-          "variant": "high"
-        }
-      ]
-    },
-    "builder-agent": {
-      "default": {
-        "model": "anthropic/claude-sonnet-4-5",
-        "variant": "high"
-      },
-      "fallback": [
-        {
-          "label": "go",
-          "model": "opencode-go/kimi-k2.7-code",
-          "variant": "high"
-        },
-        {
-          "label": "zen",
-          "model": "opencode/kimi-k2.7-code",
-          "variant": "high"
-        },
-        {
-          "label": "openrouter-free",
-          "model": "openrouter/qwen/qwen3-coder:free",
-          "variant": "high"
-        }
-      ]
-    },
-    "qa-agent": {
-      "default": {
-        "model": "anthropic/claude-sonnet-4-5",
-        "variant": "medium"
-      },
-      "fallback": [
-        {
-          "label": "go",
-          "model": "opencode-go/mimo-v2.5-pro",
-          "variant": "medium"
-        },
-        {
-          "label": "zen",
-          "model": "opencode/mimo-v2.5-pro",
-          "variant": "medium"
-        },
-        {
-          "label": "openrouter-free",
-          "model": "openrouter/moonshotai/kimi-k2:free",
-          "variant": "medium"
-        }
-      ]
-    }
+    "planner": {"default": {"model": "opencode-go/kimi-k2.7-code", "variant": "high"}, "fallback": [{"label": "go", "model": "opencode-go/kimi-k2.7-code", "variant": "high"}, {"label": "zen", "model": "opencode/kimi-k2.7-code", "variant": "high"}, {"label": "openrouter-free", "model": "openrouter/qwen/qwen3-coder:free", "variant": "high"}]},
+    "builder": {"default": {"model": "opencode-go/kimi-k2.7-code", "variant": "high"}, "fallback": [{"label": "go", "model": "opencode-go/kimi-k2.7-code", "variant": "high"}, {"label": "zen", "model": "opencode/kimi-k2.7-code", "variant": "high"}, {"label": "openrouter-free", "model": "openrouter/qwen/qwen3-coder:free", "variant": "high"}]},
+    "reviewer": {"default": {"model": "opencode-go/kimi-k2.7-code", "variant": "high"}, "fallback": [{"label": "go", "model": "opencode-go/kimi-k2.7-code", "variant": "high"}, {"label": "zen", "model": "opencode/kimi-k2.7-code", "variant": "high"}, {"label": "openrouter-free", "model": "openrouter/qwen/qwen3-coder:free", "variant": "high"}]}
   }
 }
