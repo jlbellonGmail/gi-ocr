@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://template.local/agentic/schemas/models.schema.json",
+  "title": "models.json schema",
+  "description": "Describe la forma real de .agentic/models.json: router minimo de modelos OpenCode, allowlists, variantes validas, proveedores y fallbacks por rol.",
+  "type": "object",
+  "required": ["validVariants", "fallbackAliases", "providers", "roles"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "lastReviewed": { "type": "string" },
+    "executionDeclaration": { "type": "object" },
+    "validVariants": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "fallbackAliases": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string" }
+    },
+    "providers": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["credentialEnv", "models"],
+        "properties": {
+          "credentialEnv": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "credentialHelp": { "type": "string" },
+          "requiresExplicitFallback": { "type": "boolean" },
+          "models": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "roles": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": ["default", "fallback"],
+        "properties": {
+          "default": {
+            "type": "object",
+            "required": ["model", "variant"],
+            "properties": {
+              "model": { "type": "string", "minLength": 1 },
+              "variant": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "fallback": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["label", "model", "variant"],
+              "properties": {
+                "label": { "type": "string", "minLength": 1 },
+                "model": { "type": "string", "minLength": 1 },
+                "variant": { "type": "string", "minLength": 1 }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,278 @@
+name: Guard develop branch
+
+# Enforcement tecnico equivalente a branch protection nativa de GitHub
+# para `develop`, mientras ese control no este disponible en el plan
+# actual del repositorio (privado, ver AGENTS.md seccion "Setup manual"
+# -> "Limitacion conocida verificada en este repositorio").
+#
+# GitHub deniega branch protection/rulesets nativos con 403 en este
+# repo/plan. Este workflow es la mitigacion tecnica: reacciona a
+# cualquier push directo a `develop` que no provenga de una PR mergeada
+# contra `develop`, lo revierte automaticamente y deja evidencia
+# auditable (run fallido + issue). No previene el push en si (eso
+# requeriria branch protection nativa, no disponible), pero sí revierte
+# el estado no permitido de forma automatica, segura y auditable — ver
+# `docs/tecnica/arquitectura.md`, decision "Enforcement tecnico de
+# `develop` sin branch protection nativa".
+#
+# IMPORTANTE (seguridad de concurrencia): este workflow puede correr al
+# mismo tiempo que un merge legitimo de PR aterriza en `develop`. Ningun
+# paso de remediacion usa `--force` a secas: el push correctivo del caso
+# "push directo normal" es un push sin force (git ya lo rechaza si el
+# remoto avanzo mientras tanto), y la restauracion del caso "force-push"
+# usa `--force-with-lease` atado explicitamente al `after` original del
+# evento, mas una verificacion previa del HEAD remoto. Si `develop`
+# avanzo de forma legitima mientras el workflow corria, la remediacion
+# se aborta sin sobrescribir nada y el estado queda registrado como
+# `concurrent-update` en el issue de incidente, que se crea siempre que
+# se detecto una violacion, incluso si el paso de remediacion fallo o
+# quedo en un estado no resuelto (`always()`).
+#
+# Sigue siendo un mecanismo REACTIVO, no preventivo: el push directo
+# ocurre igual, y este workflow actua despues, con una ventana breve en
+# la que `develop` puede quedar momentaneamente en el estado no
+# permitido. No es equivalente a branch protection nativa — ver
+# `AGENTS.md` y `docs/tecnica/arquitectura.md` para el detalle completo
+# y sus limites conocidos.
+#
+# Los push realizados por el propio GITHUB_TOKEN de este repositorio
+# (por ejemplo, el cierre automatico de ROADMAP.md en
+# post-merge-close-feature.yml) no disparan este workflow: GitHub no
+# genera un nuevo evento de workflow para pushes autenticados con
+# GITHUB_TOKEN. El chequeo `github.actor != 'github-actions[bot]'` es
+# una capa defensiva adicional, no la unica proteccion contra loops.
+
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: guard-develop-branch
+  cancel-in-progress: false
+
+jobs:
+  guard-develop:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout develop (historial completo)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: develop
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Detectar violacion (push directo sin PR mergeada asociada)
+        id: guard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+          FORCED: ${{ github.event.forced }}
+        run: |
+          set -euo pipefail
+
+          # Default seguro: si el resto del paso falla de forma
+          # inesperada antes de terminar de clasificar el push, no debe
+          # quedar ninguna remediacion/incidente disparada sobre una
+          # violacion sin confirmar.
+          echo "violation=none" >> "$GITHUB_OUTPUT"
+
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "Referencia 'develop' recien creada; guard no aplica." | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          if [ "$FORCED" = "true" ]; then
+            echo "violation=force-push" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          offending=""
+          for sha in $(jq -r '.commits[].id' "$GITHUB_EVENT_PATH"); do
+            merged_to_develop=$(gh api "repos/${{ github.repository }}/commits/$sha/pulls" --jq \
+              '[.[] | select(.base.ref == "develop" and .merged_at != null)] | length')
+            if [ "$merged_to_develop" = "0" ]; then
+              offending="$sha $offending"
+            fi
+          done
+
+          offending_trimmed=$(echo "$offending" | xargs)
+          if [ -n "$offending_trimmed" ]; then
+            echo "violation=direct-push" >> "$GITHUB_OUTPUT"
+            echo "offending=$offending_trimmed" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Configurar git
+        if: always() && steps.guard.outputs.violation != 'none'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Revertir commits sin PR mergeada asociada
+        if: always() && steps.guard.outputs.violation == 'direct-push'
+        id: revert
+        env:
+          OFFENDING: ${{ steps.guard.outputs.offending }}
+        run: |
+          set -uo pipefail
+          # Sin '-e': cada fallo esperable (conflicto de revert, push
+          # rechazado por carrera) se captura explicitamente como output
+          # en vez de abortar el paso antes de reportar estado — el
+          # incidente auditable debe poder crearse siempre.
+
+          # Trabajar siempre sobre el HEAD remoto mas reciente, no sobre
+          # el que tenia el checkout inicial del job.
+          if ! git fetch origin develop; then
+            echo "status=fetch-failed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git checkout -B develop origin/develop
+
+          revert_failed=""
+          for sha in $OFFENDING; do
+            parents=$(git cat-file -p "$sha" | grep -c '^parent ' || true)
+            if [ "$parents" -gt 1 ]; then
+              revert_args="-m 1"
+            else
+              revert_args=""
+            fi
+            if ! git revert $revert_args --no-edit "$sha"; then
+              revert_failed="$sha"
+              break
+            fi
+          done
+
+          if [ -n "$revert_failed" ]; then
+            git revert --abort || true
+            echo "status=conflict" >> "$GITHUB_OUTPUT"
+            echo "conflict_sha=$revert_failed" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Push normal, SIN --force: si 'develop' avanzo con un push
+          # legitimo entre el fetch de arriba y este push, git lo
+          # rechaza solo (non-fast-forward) y no sobrescribimos nada.
+          if git push origin HEAD:develop; then
+            echo "status=reverted" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=concurrent-update" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Restaurar develop tras push forzado
+        if: always() && steps.guard.outputs.violation == 'force-push'
+        id: restore
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
+        run: |
+          set -uo pipefail
+          # Igual que en el revert: nunca abortar antes de reportar un
+          # 'status' de output, para que el incidente siempre se registre.
+
+          if ! git fetch origin "$BEFORE"; then
+            echo "status=unreachable" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Confirmar que 'develop' sigue exactamente donde este push
+          # forzado lo dejo (AFTER) antes de intentar restaurar. Si ya
+          # avanzo (un merge legitimo aterrizo despues del force-push),
+          # no tocamos nada: seria sobrescribir un cambio real.
+          remote_head=$(git ls-remote origin refs/heads/develop | cut -f1)
+          if [ "$remote_head" != "$AFTER" ]; then
+            echo "status=concurrent-update" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # --force-with-lease atado explicitamente a AFTER: el push solo
+          # se aplica si el remoto sigue exactamente en AFTER en el
+          # momento del push (chequeo atomico del lado del servidor,
+          # cierra la ventana de carrera entre el ls-remote de arriba y
+          # este push). Nunca --force a secas.
+          if git push origin "$BEFORE:refs/heads/develop" --force-with-lease="develop:$AFTER"; then
+            echo "status=restored" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=concurrent-update" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Registrar incidente auditable
+        if: always() && steps.guard.outputs.violation != 'none'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VIOLATION: ${{ steps.guard.outputs.violation }}
+          OFFENDING: ${{ steps.guard.outputs.offending }}
+          REVERT_STATUS: ${{ steps.revert.outputs.status }}
+          RESTORE_STATUS: ${{ steps.restore.outputs.status }}
+          ACTOR: ${{ github.actor }}
+          AFTER_SHA: ${{ github.event.after }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -uo pipefail
+          # 'always()' en el 'if:' de este paso es deliberado: el
+          # incidente debe quedar registrado incluso si el paso de
+          # revert/restore fallo de forma inesperada (no solo en sus
+          # estados esperados 'conflict'/'concurrent-update'/etc.).
+
+          {
+            echo "Push directo detectado en 'develop' sin PR mergeada asociada."
+            echo ""
+            echo "- Tipo de violacion: $VIOLATION"
+            echo "- Actor del push: $ACTOR"
+            echo "- Commit anterior (before): $BEFORE_SHA"
+            echo "- Commit nuevo (after): $AFTER_SHA"
+            if [ "$VIOLATION" = "direct-push" ]; then
+              echo "- Commits sin PR mergeada asociada: $OFFENDING"
+              echo "- Resultado de la remediacion automatica: ${REVERT_STATUS:-sin-reportar}"
+              case "$REVERT_STATUS" in
+                conflict)
+                  echo ""
+                  echo "**ATENCION**: el revert automatico entro en conflicto y no se aplico. 'develop' sigue en el estado no permitido. Requiere intervencion manual inmediata."
+                  ;;
+                concurrent-update)
+                  echo ""
+                  echo "**Carrera detectada**: 'develop' avanzo con un push legitimo mientras se preparaba o aplicaba el revert; para no sobrescribirlo, el push correctivo se aborto sin forzar nada. Requiere revision manual: puede que el commit ofensivo ya haya quedado obsoleto, o puede que siga haciendo falta revertirlo sobre el HEAD actual."
+                  ;;
+                fetch-failed)
+                  echo ""
+                  echo "**ATENCION**: no se pudo obtener el estado remoto de 'develop' para preparar el revert. Requiere intervencion manual inmediata."
+                  ;;
+                "" | "sin-reportar")
+                  echo ""
+                  echo "**ATENCION**: el paso de remediacion automatica no completo su ejecucion (fallo inesperado antes de reportar estado). Requiere intervencion manual inmediata."
+                  ;;
+              esac
+            else
+              echo "- Resultado de la restauracion automatica: ${RESTORE_STATUS:-sin-reportar}"
+              case "$RESTORE_STATUS" in
+                unreachable)
+                  echo ""
+                  echo "**ATENCION**: el commit previo al push forzado ya no es accesible (probablemente recolectado por git gc). 'develop' sigue en el estado no permitido. Requiere intervencion manual inmediata."
+                  ;;
+                concurrent-update)
+                  echo ""
+                  echo "**Carrera detectada**: 'develop' recibio un push legitimo despues del push forzado detectado y antes de que la restauracion pudiera aplicarse (o el lease la rechazo por el mismo motivo); para no sobrescribirlo, la restauracion se aborto sin forzar nada. Requiere revision manual del estado actual de 'develop'."
+                  ;;
+                "" | "sin-reportar")
+                  echo ""
+                  echo "**ATENCION**: el paso de restauracion automatica no completo su ejecucion (fallo inesperado antes de reportar estado). Requiere intervencion manual inmediata."
+                  ;;
+              esac
+            fi
+            echo ""
+            echo "Este incidente fue detectado y gestionado por .github/workflows/guard-develop-branch.yml. Ver AGENTS.md, seccion \"Setup manual\", y docs/tecnica/arquitectura.md, decision \"Enforcement tecnico de develop sin branch protection nativa\". Este mecanismo es reactivo (revierte/restaura despues del hecho, con una ventana breve donde 'develop' puede quedar momentaneamente en un estado no permitido) y no equivale a branch protection preventiva nativa."
+          } > /tmp/incident-body.md
+
+          gh issue create \
+            --title "Push directo a develop detectado ($VIOLATION) — $(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --body-file /tmp/incident-body.md
+
+      - name: Marcar el run como fallido (violacion detectada)
+        if: always() && steps.guard.outputs.violation != 'none'
+        run: |
+          echo "Push directo a develop detectado. Ver el issue creado y el resumen de este run para el detalle de la remediacion automatica." >&2
+          exit 1

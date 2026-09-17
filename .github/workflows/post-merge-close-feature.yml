@@ -33,7 +33,7 @@ jobs:
 
       - name: Checkout trusted develop
         if: steps.feature.outputs.skip != 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: develop
           fetch-depth: 0
@@ -57,3 +57,19 @@ jobs:
             -Branch '${{ steps.feature.outputs.branch }}' `
             -PrNumber ${{ github.event.pull_request.number }} `
             -SkipLocalCleanup
+
+      - name: Sincronizar STATUS en develop
+        if: steps.feature.outputs.skip != 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./scripts/update-status.ps1
+          git add STATUS.md
+          git diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git commit -m "chore: sincronizar STATUS post-merge"
+            git push origin develop
+          } else {
+            Write-Host "STATUS.md ya estaba sincronizado; no se crea commit vacio."
+          }

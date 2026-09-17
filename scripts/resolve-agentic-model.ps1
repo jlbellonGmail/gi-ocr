@@ -318,14 +318,18 @@ try {
     $root = Get-RepositoryRoot
     $models = Read-JsonFile (Join-Path $root ".agentic/models.json")
 
-    $roleProperty = $models.roles.PSObject.Properties[$Role]
+    $canonicalRole = $Role
+    if ($models.roleAliases -and $models.roleAliases.PSObject.Properties[$Role]) {
+        $canonicalRole = [string]$models.roleAliases.PSObject.Properties[$Role].Value
+    }
+    $roleProperty = $models.roles.PSObject.Properties[$canonicalRole]
     if ($null -eq $roleProperty) {
         throw "Rol desconocido: $Role"
     }
     $roleConfig = $roleProperty.Value
 
     if ([string]::IsNullOrWhiteSpace($Stage)) {
-        $Stage = $Role
+        $Stage = $canonicalRole
     }
 
     if ([string]::IsNullOrWhiteSpace($RunFile) -and -not [string]::IsNullOrWhiteSpace($Feature)) {

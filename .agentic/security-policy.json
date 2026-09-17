@@ -1,0 +1,36 @@
+{
+  "$schema": "./schemas/security-policy.schema.json",
+  "schemaVersion": 1,
+  "defaultDecision": "deny",
+  "capabilities": [
+    "READ",
+    "MODIFY_LOCAL",
+    "EXECUTE",
+    "NETWORK_READ",
+    "EXTERNAL_WRITE",
+    "GIT_WRITE",
+    "REMOTE_WRITE",
+    "MERGE",
+    "DESTRUCTIVE",
+    "SECRET_ACCESS"
+  ],
+  "profiles": {
+    "LIGHT": { "autonomous": ["READ", "MODIFY_LOCAL", "EXECUTE"], "gated": ["NETWORK_READ", "GIT_WRITE", "REMOTE_WRITE", "MERGE", "EXTERNAL_WRITE", "DESTRUCTIVE", "SECRET_ACCESS"] },
+    "STANDARD": { "autonomous": ["READ", "MODIFY_LOCAL", "EXECUTE", "NETWORK_READ", "GIT_WRITE"], "gated": ["REMOTE_WRITE", "MERGE", "EXTERNAL_WRITE", "DESTRUCTIVE", "SECRET_ACCESS"] },
+    "FULL": { "autonomous": ["READ", "MODIFY_LOCAL", "EXECUTE", "NETWORK_READ", "GIT_WRITE"], "gated": ["REMOTE_WRITE", "MERGE", "EXTERNAL_WRITE", "DESTRUCTIVE", "SECRET_ACCESS"] }
+  },
+  "rules": {
+    "MERGE": "human_decision_on_current_pr_and_head",
+    "REMOTE_WRITE": "scoped_branch_and_current_head",
+    "EXTERNAL_WRITE": "explicit_action_scope_and_evidence",
+    "DESTRUCTIVE": "reversible_alternative_or_material_decision",
+    "SECRET_ACCESS": "approved_secret_store_only_never_logged"
+  },
+  "mcp": {
+    "readOnly": "NETWORK_READ",
+    "writeOrAction": "EXTERNAL_WRITE",
+    "credentials": "SECRET_ACCESS",
+    "default": "deny",
+    "evidence": "record server, operation, scope and outcome without secret values"
+  }
+}

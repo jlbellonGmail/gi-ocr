@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://template.invalid/schemas/mcp.schema.json",
+  "title": "Declarative external capability catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "servers"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "servers": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/server" }
+    }
+  },
+  "$defs": {
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "capability", "mode", "risk", "permissions", "optional", "load"],
+      "properties": {
+        "type": { "enum": ["local", "remote"] },
+        "capability": { "type": "string", "minLength": 1 },
+        "mode": { "enum": ["read-only", "write", "action"] },
+        "risk": { "enum": ["low", "medium", "high"] },
+        "permissions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "requirements": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "secretEnv": { "type": "string", "minLength": 1 },
+            "network": { "type": "boolean" }
+          }
+        },
+        "optional": { "type": "boolean" },
+        "load": { "const": "on-demand" },
+        "typeSpecific": { "type": "object" }
+      }
+    }
+  }
+}

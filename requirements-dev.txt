@@ -1,0 +1,5 @@
+# Entorno único de CI para el circuito y el producto OCR.
+-r backend/requirements-dev.txt
+
+# Validación de los contratos JSON del circuito Template v2.
+jsonschema==4.23.0

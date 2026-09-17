@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["schemaVersion", "defaultDecision", "capabilities", "profiles", "rules", "mcp"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "defaultDecision": { "const": "deny" },
+    "capabilities": { "type": "array", "minItems": 10, "uniqueItems": true },
+    "profiles": { "type": "object", "required": ["LIGHT", "STANDARD", "FULL"] },
+    "rules": { "type": "object" },
+    "mcp": { "type": "object", "required": ["readOnly", "writeOrAction", "credentials", "default"] }
+  }
+}
