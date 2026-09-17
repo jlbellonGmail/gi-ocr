@@ -1,4 +1,4 @@
-# Roadmap: gi-ocr (Smart Invoice Capture)
+﻿# Roadmap: gi-ocr (Smart Invoice Capture)
 
 Cada feature nueva se implementa siguiendo el circuito agéntico de
 [AGENTS.md](AGENTS.md): Analyst → Reviewer → Builder → QA →
@@ -225,7 +225,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
   de `template` que centraliza roles, permisos, modelos y MCP en
   `.agentic/`, agregar el router de modelos OpenCode y el gate
   post-HITL antes de mergear. PR #11, mergeada a `develop`.
-- [-] 28-adopcion-template-v2 — Adoptar incrementalmente Template v2.0.0
+- [x] 28-adopcion-template-v2 — Adoptar incrementalmente Template v2.0.0
   como capa transversal de gobernanza, lifecycle y evidencias, preservando
   la arquitectura funcional OCR.
 
@@ -246,6 +246,7 @@ Sigue pendiente: PR contra `develop`, CI verde, y decisión HITL final
 
 **Patrón del ítem**: `NN` (dos dígitos, numeración secuencial), `slug` en
 minúsculas con guiones, seguido de `—` y descripción corta en español.
+
 
 
 
