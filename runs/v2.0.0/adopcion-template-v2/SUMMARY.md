@@ -1,11 +1,11 @@
 # v2.0.0 — Adopción Template v2
 
-Estado: implementación en validación
+Estado: adoptado y validado
 Tipo: Maintenance
 Template: v2.0.0
 Fuente: f5d4b6cc029c34c0d0c05831bfd28134276fa167
-PR: pendiente
-Merge: pendiente
+PR: #29 (adopción), #32 (reconciliación de cierre)
+Merge: #29 158aeeafa55b36cdc59e29af27ce47b29fe80179; #32 213f266aa74318ac359a8cdb4a276dd7bba57bfa
 
 ## Alcance
 

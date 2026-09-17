@@ -11,18 +11,18 @@ v2 y cerrar la adopción mediante PR contra `develop`.
 
 ## Estado verificado automáticamente
 
-- Actualizado: 2026-09-17T00:57:04Z
+- Actualizado: 2026-09-17T01:22:13Z
 - Versión: v2.0.0
-- Rama: feature/28-adopcion-template-v2
-- HEAD: 1665c77bd33633a26d3e33149d3caf2ad75f8d27
+- Rama: develop
+- HEAD: 213f266aa74318ac359a8cdb4a276dd7bba57bfa
 - Remoto: https://github.com/jlbellonGmail/gi-ocr.git
 - Working tree: dirty
 - Worktrees: 3
 - Worktrees Git: 3
-- Unidades activas: = [feature/28-adopcion-template-v2]
+- Unidades activas: ninguna
 - PR activa: UNKNOWN / sin PR abierta
-- CI: UNKNOWN / sin CI verificable
-- CI vigente: UNKNOWN / sin CI verificable
+- CI: success @ 7ebee8b0857e9cf7165229490627a49e3effff1d
+- CI vigente: success @ 7ebee8b0857e9cf7165229490627a49e3effff1d
 - Última release: UNKNOWN / no disponible
 
 <!-- STATUS:AUTO:END -->
