@@ -67,7 +67,7 @@ jobs:
         run: 'echo "PLACEHOLDER: los tests de producto se ejecutan en CI/test; este job conserva el gate v2 separado. Ver docs/tecnica/arquitectura.md."'
 
   local-reconciler-tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
