@@ -1,29 +1,3 @@
-# ruff: noqa: E501
-import json
-import shutil
-import subprocess
-from pathlib import Path
-
-import pytest
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError
-
-ROOT = Path(__file__).resolve().parents[1]
-SCHEMA = ROOT / ".agentic/schemas/mcp.schema.json"
-SCRIPT = ROOT / "scripts/mcp-tools.ps1"
-
-
-def ps():
-    for name in ("pwsh", "powershell"):
-        if shutil.which(name):
-            return name
-    pytest.skip("PowerShell no disponible")
-
-
-def run(command, cwd=ROOT):
-    return subprocess.run([ps(), "-NoProfile", "-Command", command], cwd=cwd, text=True, capture_output=True)
-
-
 def test_catalog_schema_and_reference_are_valid():
     catalog = json.loads((ROOT / ".agentic/mcp.json").read_text(encoding="utf-8"))
     schema = json.loads(SCHEMA.read_text(encoding="utf-8"))

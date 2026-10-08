@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "platform": {
+    "repo": "github:jlbellonGmail/ai-native",
+    "version": "v3.0.1",
+    "commit": "da84fb1fb4cb0164300857f77fcf06b16f7202d7",
+    "digest": "sha256:73c30a1cb9dc5b1c830a48e62c113945cf971ea128777aba68ae10f050c4c52c",
+    "channel": "stable"
+  },
+  "profiles": [
+    "python-service"
+  ],
+  "mcpProfiles": [],
+  "packs": [],
+  "overrides": {}
+}

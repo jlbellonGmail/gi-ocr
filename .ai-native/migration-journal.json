@@ -1,0 +1,296 @@
+{
+  "schemaVersion": 1,
+  "baseCommit": "8614f8267d77b267b00a8af932e6a2495b85f2c6",
+  "platform": {
+    "repo": "github:jlbellonGmail/ai-native",
+    "version": "v3.0.1",
+    "commit": "da84fb1fb4cb0164300857f77fcf06b16f7202d7",
+    "digest": "sha256:73c30a1cb9dc5b1c830a48e62c113945cf971ea128777aba68ae10f050c4c52c"
+  },
+  "retired": [
+    {
+      "path": ".agentic/agents.json",
+      "sha256": "sha256:7f81d9efff215c1868f2d59a93b1169c3deff40b430f13072f6944a4ffe6afcc"
+    },
+    {
+      "path": ".agentic/mcp.json",
+      "sha256": "sha256:6270b542b246c9ef9583999d97744a610fa9218bbf60e1c14d8dcaf647206db2"
+    },
+    {
+      "path": ".agentic/models.json",
+      "sha256": "sha256:6729036d40956e09cf002e360fea20157bfaeaadf1e30000d81482027291b99a"
+    },
+    {
+      "path": ".agentic/run.example.yaml",
+      "sha256": "sha256:9c277aef6f21c5a407d44e3e27855f320a840bb4b9c3f10a083e8cbaa6ab1771"
+    },
+    {
+      "path": ".agentic/schemas/agentic-eval-result.schema.json",
+      "sha256": "sha256:3655ab6866634c798578239eb22b6adc21b364db0ce9d1c67c2760b06f398a8d"
+    },
+    {
+      "path": ".agentic/schemas/agents.schema.json",
+      "sha256": "sha256:b7900a2a18f9b7b540d9fda655e6fd8684fbdb8de08c4dce65a941f55d89c00f"
+    },
+    {
+      "path": ".agentic/schemas/mcp.schema.json",
+      "sha256": "sha256:6bd681e4991ff080ef365298de3ab6a4f194655cb7c1dd66139d6770019ecb0a"
+    },
+    {
+      "path": ".agentic/schemas/models.schema.json",
+      "sha256": "sha256:5aad14dfd4a1819c0c2b4307ce4efe6bd20c0f72d8cc4c5279755394c73f26ff"
+    },
+    {
+      "path": ".agentic/schemas/security-policy.schema.json",
+      "sha256": "sha256:f21ff3acf0d48f86c14cedb75374b1fa303c552de71a8a31e2d7081cba5792fd"
+    },
+    {
+      "path": ".agentic/schemas/unit-identity.schema.json",
+      "sha256": "sha256:03a10f3dadd3b18b730de207f00b0d64636ab2cd18b01f8d3f2556bdd87453e6"
+    },
+    {
+      "path": ".agentic/schemas/work-unit.schema.json",
+      "sha256": "sha256:e7747e78d00e2384a5048e4ffb19955cd2f76bb8150af43439aef52cdf717c92"
+    },
+    {
+      "path": ".agentic/security-policy.json",
+      "sha256": "sha256:eb875f0767d43f470096ba7f8a8757eb4a384ae4d6e0b557892b7ddbc80e2455"
+    },
+    {
+      "path": ".agents/skills/README.md",
+      "sha256": "sha256:9fc416582f5d5147fcc27067e9c5ba222a14da26fd20e4f6f6664cee0391c828"
+    },
+    {
+      "path": ".claude/rules/.gitkeep",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".claude/rules/README.md",
+      "sha256": "sha256:67ee6578609ae2f804857d39b6add51b684410eca98c3630539452cfc089c5ca"
+    },
+    {
+      "path": ".claude/skills/.gitkeep",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".claude/skills/README.md",
+      "sha256": "sha256:9fc416582f5d5147fcc27067e9c5ba222a14da26fd20e4f6f6664cee0391c828"
+    },
+    {
+      "path": ".codex/config.toml",
+      "sha256": "sha256:8a8624d5916d9eb2f5c50e270580f3303797ad5b8bea01876d7c76fe3fb09dfc"
+    },
+    {
+      "path": ".github/workflows/guard-develop-branch.yml",
+      "sha256": "sha256:feab4ba33bee62e80d4dfdedc92227a27a4ccaeea865b0c8b0fb121e26a07922"
+    },
+    {
+      "path": ".mcp.json",
+      "sha256": "sha256:d8e397af03b5b032f21d0aa967086f0c78b33c87b76f2e9898ae0a144df7de02"
+    },
+    {
+      "path": ".opencode/skills/.gitkeep",
+      "sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".opencode/skills/README.md",
+      "sha256": "sha256:9fc416582f5d5147fcc27067e9c5ba222a14da26fd20e4f6f6664cee0391c828"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "sha256:336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    },
+    {
+      "path": "CONSTITUTION.md",
+      "sha256": "sha256:82b090731f844a612d036b88fe0f5990da599fe42c1d78584b69e8305d1c73a4"
+    },
+    {
+      "path": "evals/scenarios.json",
+      "sha256": "sha256:176137e8f4dbd237651c904693a4d08799c25f71316c5514ebb7356257a3c5d5"
+    },
+    {
+      "path": "opencode.json",
+      "sha256": "sha256:182cdad8089616f28a3d005d2db7e10ea8cae4fee5e4455b38deb69d26f84903"
+    },
+    {
+      "path": "scripts/agentic-evals.ps1",
+      "sha256": "sha256:06a136456432f637cef52b6f32ac37c8ea926b3f563567829c5d715b8b0d5016"
+    },
+    {
+      "path": "scripts/assess-work-unit.ps1",
+      "sha256": "sha256:7cb011f613d79eba8207c7cca340b4cb503b25d18ab3682a650b48b564a3cd3f"
+    },
+    {
+      "path": "scripts/check-adoption-conflicts.ps1",
+      "sha256": "sha256:030570c85b641a5ec51839075cd957796e5b66cc2066f44c4d6ee40af8a24647"
+    },
+    {
+      "path": "scripts/check-status.ps1",
+      "sha256": "sha256:9ea28b4a2ad04d2d193c3eba5be8be365db96d5e09aacbb88a6d872ddff20374"
+    },
+    {
+      "path": "scripts/cleanup-work-unit.ps1",
+      "sha256": "sha256:526b96f37161af2ee6f8652682976521797405abb3703d2873bc7be86a65aeb3"
+    },
+    {
+      "path": "scripts/convergence.ps1",
+      "sha256": "sha256:cbc5fe4adb9da44aa2be6c191565e0bfb5ba8cb1c786de25e3491a8c6289f1fa"
+    },
+    {
+      "path": "scripts/materialize-sdd.ps1",
+      "sha256": "sha256:794c7571100b6fada638a5fc4031bcd31e179343e73e9be9d6378c0dfa546a29"
+    },
+    {
+      "path": "scripts/mcp-tools.ps1",
+      "sha256": "sha256:684f37436210c52d519e0a3b64cc0263fdf027eb73b103ebb96c2ffee72131bc"
+    },
+    {
+      "path": "scripts/release-readiness.ps1",
+      "sha256": "sha256:866391bceeffad75e1520ac5eaec520cf9adbe11ebb24d8820410cc9762b14b3"
+    },
+    {
+      "path": "scripts/security-policy.ps1",
+      "sha256": "sha256:256233566f56ba544b017496ab2ec1397cef2fe83ed1d88cfa630a19237d9726"
+    },
+    {
+      "path": "scripts/start-work-unit.ps1",
+      "sha256": "sha256:9e274724ee134ec5a581208fa8c25985868d2bc69bcad9bda192538647568ddf"
+    },
+    {
+      "path": "scripts/unit-lifecycle.ps1",
+      "sha256": "sha256:e887b4882ef2f1cd265f034cc952e72c8d9668d003d83b84152b579e60286ab1"
+    },
+    {
+      "path": "scripts/update-status.ps1",
+      "sha256": "sha256:3428ce65b9d530f599a04b01248e170ce64afd31829844c82464fc6b95e77c93"
+    },
+    {
+      "path": "scripts/workunit-lib.ps1",
+      "sha256": "sha256:dd386562ed56cbbde7e997b490897a9daa067adbe47c7d20889f1c796cae4bff"
+    },
+    {
+      "path": "tests/test_agentic_schemas.py",
+      "sha256": "sha256:8da7d6ce2eab20c6331f2df43d90d8b616759b99d2adbb99eade29b46b8e4eee"
+    }
+  ],
+  "replaced": [
+    {
+      "path": ".codex/config.toml",
+      "sha256": "sha256:8a8624d5916d9eb2f5c50e270580f3303797ad5b8bea01876d7c76fe3fb09dfc"
+    },
+    {
+      "path": ".mcp.json",
+      "sha256": "sha256:d8e397af03b5b032f21d0aa967086f0c78b33c87b76f2e9898ae0a144df7de02"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "sha256:336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    },
+    {
+      "path": "opencode.json",
+      "sha256": "sha256:182cdad8089616f28a3d005d2db7e10ea8cae4fee5e4455b38deb69d26f84903"
+    }
+  ],
+  "created": [
+    {
+      "path": ".claude/skills/delivery-governance/SKILL.md",
+      "sha256": "sha256:1c2953436c12f88c6b5175e160a8096fb199ad7e6ca0d0b6af8dee799e8ed7c6"
+    },
+    {
+      "path": ".claude/skills/product-context/SKILL.md",
+      "sha256": "sha256:fc64be8c7047db58e8deca92fbe55fffd951859c62c6c16f3b0dbf586ce0bf9b"
+    },
+    {
+      "path": ".claude/skills/recovery/SKILL.md",
+      "sha256": "sha256:bac93b7a4bd1b7b8fe45d7788ae62a3309dc19606183c45c5613648becbfd0c0"
+    },
+    {
+      "path": ".claude/skills/task-execution/SKILL.md",
+      "sha256": "sha256:7513c1c87bb58a4afb0becdd259871d85040161075d18136b89b1acbdfe23911"
+    },
+    {
+      "path": ".github/workflows/ai-native.yml",
+      "sha256": "sha256:6d461fab2302cdc0323ba24bb279149f2dfe7d74a1aa0a6bf0f96a21f743c340"
+    },
+    {
+      "path": ".opencode/roles/builder.md",
+      "sha256": "sha256:0225db2b1c6f6da7a816e35294f99d2d0c4eb663a914fb6f49a1af3789c99317"
+    },
+    {
+      "path": ".opencode/roles/planner.md",
+      "sha256": "sha256:6d2207d0055958b021f84b125ed48941e99d552c520ff220303879d2a30d938c"
+    },
+    {
+      "path": ".opencode/roles/reviewer.md",
+      "sha256": "sha256:492d576ca628e65dcc84d976f482fd94fd6ff87898ea27cf4af93f1c3833ee1a"
+    },
+    {
+      "path": ".opencode/skills/delivery-governance/SKILL.md",
+      "sha256": "sha256:1c2953436c12f88c6b5175e160a8096fb199ad7e6ca0d0b6af8dee799e8ed7c6"
+    },
+    {
+      "path": ".opencode/skills/product-context/SKILL.md",
+      "sha256": "sha256:fc64be8c7047db58e8deca92fbe55fffd951859c62c6c16f3b0dbf586ce0bf9b"
+    },
+    {
+      "path": ".opencode/skills/recovery/SKILL.md",
+      "sha256": "sha256:bac93b7a4bd1b7b8fe45d7788ae62a3309dc19606183c45c5613648becbfd0c0"
+    },
+    {
+      "path": ".opencode/skills/task-execution/SKILL.md",
+      "sha256": "sha256:7513c1c87bb58a4afb0becdd259871d85040161075d18136b89b1acbdfe23911"
+    },
+    {
+      "path": "ai-native.lock.json",
+      "sha256": "sha256:21a77daa3cd4c67027365080f5877fcf725d634acfd649e52373969758668c30"
+    },
+    {
+      "path": ".codex/config.toml",
+      "sha256": "sha256:cea7d8901e9439674a2daa2fd53a6d6b1f26cf4e91063c8d60e2878ba72e070d"
+    },
+    {
+      "path": ".mcp.json",
+      "sha256": "sha256:d8e397af03b5b032f21d0aa967086f0c78b33c87b76f2e9898ae0a144df7de02"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "sha256:336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+    },
+    {
+      "path": "opencode.json",
+      "sha256": "sha256:1900a6219f645904bfa2f06da45d00666df62513372d721d81c3b480852f4f43"
+    }
+  ],
+  "kept": [
+    {
+      "path": ".claude/agents/builder.md",
+      "reason": "MODIFIED_FROM_TEMPLATE v2 file (yours or product-owned)"
+    },
+    {
+      "path": ".claude/agents/planner.md",
+      "reason": "MODIFIED_FROM_TEMPLATE v2 file (yours or product-owned)"
+    },
+    {
+      "path": ".claude/agents/reviewer.md",
+      "reason": "MODIFIED_FROM_TEMPLATE v2 file (yours or product-owned)"
+    },
+    {
+      "path": ".codex/README.md",
+      "reason": "MODIFIED_FROM_TEMPLATE v2 file (yours or product-owned)"
+    },
+    {
+      "path": ".codex/builder.config.toml",
+      "reason": "MODIFIED_FROM_TEMPLATE v2 file (yours or product-owned)"
+    },
+    {
+      "path": ".codex/planner.config.toml",
+      "reason": "MODIFIED_FROM_TEMPLATE v2 file (yours or product-owned)"
+    },
+    {
+      "path": ".codex/reviewer.config.toml",
+      "reason": "MODIFIED_FROM_TEMPLATE v2 file (yours or product-owned)"
+    }
+  ],
+  "keptIdentical": 43,
+  "keptLocal": 248
+}

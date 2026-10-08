@@ -1,5 +1,0 @@
-{
-  "$schema": "./schemas/mcp.schema.json",
-  "schemaVersion": 1,
-  "servers": {}
-}
