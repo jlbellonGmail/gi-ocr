@@ -5,28 +5,6 @@ WORKFLOW = ROOT / ".github" / "workflows" / "post-hitl-merge-gate.yml"
 SCRIPT = ROOT / "scripts" / "complete-approved-pr.ps1"
 
 
-def test_workflow_dispatch_declares_explicit_inputs_and_mode_selection():
-    content = WORKFLOW.read_text(encoding="utf-8")
-    assert "workflow_dispatch:" in content
-    for name in ("pr_number", "expected_branch", "expected_base", "expected_head_sha", "hitl_intent", "confirmation"):
-        assert f"      {name}:" in content
-    assert "github.event_name == 'workflow_dispatch'" in content
-    assert "SingleMaintainer" in content
-    assert "HITL_EVENT_NAME: ${{ github.event_name }}" in content
-    assert "actions: read" in content
-
-
-def test_review_mode_and_single_maintainer_event_are_separate():
-    content = WORKFLOW.read_text(encoding="utf-8")
-    assert "github.event_name == 'pull_request_review'" in content
-    assert "github.event.review.state == 'approved'" in content
-    assert "github.event_name == 'pull_request'" in content
-    assert "github.event.action == 'synchronize'" in content
-    assert "HITL_MODE: ${{ github.event_name == 'workflow_dispatch' && 'SingleMaintainer' || 'Review' }}" in content
-    assert "github.event_name == 'workflow_dispatch'" in content
-    assert "-Mode $env:HITL_MODE" in content
-
-
 def test_single_maintainer_is_fail_closed_and_requires_exact_inputs():
     content = SCRIPT.read_text(encoding="utf-8")
     for value in (

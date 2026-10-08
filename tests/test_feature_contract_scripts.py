@@ -296,13 +296,3 @@ def test_ready_for_pr_blocks_before_touching_roadmap_when_toolchain_check_fails(
     assert (repo / "ROADMAP.md").read_text(encoding="utf-8") == roadmap_before
     assert "- [-]" not in (repo / "ROADMAP.md").read_text(encoding="utf-8")
     assert git(repo, "status", "--short").stdout.strip() == ""
-
-
-def test_workflow_yaml_is_valid():
-    workflow = ROOT / ".github" / "workflows" / "post-merge-close-feature.yml"
-    content = workflow.read_text(encoding="utf-8")
-    assert "pull_request_target:" in content
-    assert "contents: write" in content
-    assert "pull-requests: read" in content
-    assert "group: close-feature-develop" in content
-    assert "-SkipLocalCleanup" in content

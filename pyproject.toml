@@ -5,6 +5,21 @@
 # es unicamente configuracion de tooling (lint/formato/type-check), texto
 # plano TOML, no configuracion persistente de dominio OCR.
 
+# M6 / gate L3 de AI-Native: el perfil python-service ejecuta `pip install . -r requirements-dev.txt`.
+# gi-ocr es una aplicacion (pip + requirements), no una libreria: se declara un paquete vacio solo para que
+# `pip install .` sea valido; las dependencias reales siguen en backend/requirements*.txt (incluidas via requirements-dev.txt).
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gi-ocr"
+version = "0.0.0"
+requires-python = ">=3.12"
+
+[tool.setuptools]
+packages = []
+
 [tool.ruff]
 line-length = 120
 target-version = "py312"
