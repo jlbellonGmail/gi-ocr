@@ -93,101 +93,6 @@ def make_contract_repo(tmp_path: Path, slug: str = "99-demo-feature", title: str
     return repo, slug, title
 
 
-import os
-import shutil
-import stat
-import subprocess
-from pathlib import Path
-
-import pytest
-
-ROOT = Path(__file__).resolve().parents[1]
-CONTRACT = ROOT / "scripts" / "feature-contract.ps1"
-UPDATE_INDEXES = ROOT / "scripts" / "update-doc-indexes.ps1"
-READY_FOR_PR = ROOT / "scripts" / "ready-for-pr.ps1"
-
-
-def powershell() -> str:
-    candidates = ["powershell.exe", "pwsh"] if os.name == "nt" else ["pwsh", "powershell"]
-    for candidate in candidates:
-        path = shutil.which(candidate)
-        if path:
-            return path
-    pytest.skip("PowerShell no esta disponible")
-
-
-def run_ps(command: str, cwd: Path, env: dict[str, str] | None = None):
-    return subprocess.run(
-        [powershell(), "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command],
-        cwd=cwd,
-        env=env,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-
-
-def run_file(script: Path, args: list[str], cwd: Path, env: dict[str, str] | None = None):
-    return subprocess.run(
-        [powershell(), "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(script), *args],
-        cwd=cwd,
-        env=env,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-
-
-def git(repo: Path, *args: str, check: bool = True):
-    result = subprocess.run(
-        ["git", *args],
-        cwd=repo,
-        text=True,
-        capture_output=True,
-        check=False,
-        env=git_env(),
-    )
-    if check and result.returncode != 0:
-        raise AssertionError(result.stderr + result.stdout)
-    return result
-
-
-def git_env(extra_path: Path | None = None) -> dict[str, str]:
-    env = os.environ.copy()
-    env["GIT_CONFIG_GLOBAL"] = "NUL" if os.name == "nt" else "/dev/null"
-    env["GIT_TERMINAL_PROMPT"] = "0"
-    if extra_path:
-        env["PATH"] = str(extra_path) + os.pathsep + env["PATH"]
-    return env
-
-
-def make_contract_repo(tmp_path: Path, slug: str = "99-demo-feature", title: str = "Demo feature"):
-    repo = tmp_path / "repo"
-    repo.mkdir()
-    git(repo, "init")
-    git(repo, "checkout", "-b", "feature/99-demo-feature")
-    git(repo, "config", "user.email", "tests@example.invalid")
-    git(repo, "config", "user.name", "Tests")
-
-    doc_slug = slug.split("-", 1)[1]
-    for path in [
-        repo / "runs" / slug,
-        repo / "docs" / "tecnica",
-        repo / "docs" / "usuario",
-    ]:
-        path.mkdir(parents=True, exist_ok=True)
-
-    (repo / "runs" / slug / "spec.md").write_text("# Spec\n", encoding="utf-8")
-    (repo / "runs" / slug / "audit-1.md").write_text("status: approved\n", encoding="utf-8")
-    (repo / "runs" / slug / "test-report-1.md").write_text("status: approved\n", encoding="utf-8")
-    (repo / "docs" / "tecnica" / f"{doc_slug}.md").write_text("# Tecnica\n", encoding="utf-8")
-    (repo / "docs" / "usuario" / f"{doc_slug}.md").write_text("# Usuario\n", encoding="utf-8")
-    (repo / "docs" / "tecnica" / "index.md").write_text("# Tecnica\n\nTexto externo\n", encoding="utf-8")
-    (repo / "docs" / "usuario" / "index.md").write_text("# Usuario\n\nTexto externo\n", encoding="utf-8")
-    (repo / "ROADMAP.md").write_text(f"- [ ] {slug} - Demo\n", encoding="utf-8")
-    return repo, slug, title
-
-
 def test_scaffolding_decision_docs_and_index_links_are_idempotent(tmp_path: Path):
     repo, slug, title = make_contract_repo(tmp_path)
 
@@ -391,3 +296,5 @@ def test_ready_for_pr_blocks_before_touching_roadmap_when_toolchain_check_fails(
     assert (repo / "ROADMAP.md").read_text(encoding="utf-8") == roadmap_before
     assert "- [-]" not in (repo / "ROADMAP.md").read_text(encoding="utf-8")
     assert git(repo, "status", "--short").stdout.strip() == ""
+
+
