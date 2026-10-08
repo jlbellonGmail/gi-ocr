@@ -296,5 +296,3 @@ def test_ready_for_pr_blocks_before_touching_roadmap_when_toolchain_check_fails(
     assert (repo / "ROADMAP.md").read_text(encoding="utf-8") == roadmap_before
     assert "- [-]" not in (repo / "ROADMAP.md").read_text(encoding="utf-8")
     assert git(repo, "status", "--short").stdout.strip() == ""
-
-

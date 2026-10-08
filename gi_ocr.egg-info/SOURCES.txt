@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+gi_ocr.egg-info/PKG-INFO
+gi_ocr.egg-info/SOURCES.txt
+gi_ocr.egg-info/dependency_links.txt
+gi_ocr.egg-info/top_level.txt
+tests/test_adaptive_evidence.py
+tests/test_audit_framework.py
+tests/test_check_integrity.py
+tests/test_close_feature_script.py
+tests/test_feature_contract_scripts.py
+tests/test_local_reconciler_scripts.py
+tests/test_preflight_script.py
+tests/test_security_policy.py
+tests/test_single_maintainer_hitl.py
+tests/test_supply_chain_policy.py
+tests/test_wait_pr_ci_script.py

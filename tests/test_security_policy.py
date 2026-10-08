@@ -23,10 +23,6 @@ def run(code):
     )
 
 
-
-
-
-
 def test_scoped_authorization_rejects_other_unit_and_secret(tmp_path):
     auth = tmp_path / "authorization.md"
     auth.write_text(
@@ -37,5 +33,3 @@ def test_scoped_authorization_rejects_other_unit_and_secret(tmp_path):
     result = subprocess.run([ps(), "-NoProfile", "-Command", command], cwd=ROOT, text=True, capture_output=True)
     assert result.returncode != 0
     assert "scope" in (result.stderr + result.stdout).lower()
-
-
