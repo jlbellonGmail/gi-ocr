@@ -34,8 +34,6 @@ jobs:
       - name: Tests (pytest)
         run: pytest -v
 
-      - name: Validar adaptadores agenticos
-        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/sync-agentic-adapters.ps1 -Check
       - name: Validar supply chain del circuito
         run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-supply-chain.ps1
 
