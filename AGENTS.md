@@ -1,5 +1,7 @@
 # Proyecto: gi-ocr (Smart Invoice Capture)
 
+> **Estado de plataforma (M7):** este repositorio esta migrado a AI-Native v3.0.1 (`ai-native.lock.json`, `.ai-native/migration-journal.json`); Template v2.x es LEGACY/TRANSITION. El resto de este manual describe el circuito Template original y se conserva como referencia. No existen en este arbol y no deben invocarse: `.agentic/agents.json`, `.agentic/mcp.json`, `.agentic/models.json`, `.agentic/run.example.yaml`, `.github/workflows/post-hitl-merge-gate.yml`, `.github/workflows/post-merge-close-feature.yml`.
+
 Sistema de captura de comprobantes (impuestos, servicios, documentos
 empresariales) vía OCR: captura o carga de imagen desde un frontend web
 mobile-first, extracción de campos configurables, validación semántica,
@@ -418,7 +420,7 @@ vacío, Codex debe referenciar esas reglas desde `.agentic/roles/*.md`
 
 ## Setup manual (una sola vez, no automatizable)
 ## Gobierno Template v2.0.0
-`CONSTITUTION.md` contiene los principios permanentes de Template v2.0.0 y
+`core/constitution.md` de AI-Native v3.0.1 (sustituye al `CONSTITUTION.md` de Template v2.0.0, retirado) contiene los principios permanentes y
 este archivo continúa siendo la instrucción operativa canónica de GI-OCR.
 Todo cambio nuevo comienza con una unidad de trabajo, una evaluación ASSESS
 determinística y SDD adaptativo (`LIGHT`, `STANDARD` o `FULL`) según riesgo.
