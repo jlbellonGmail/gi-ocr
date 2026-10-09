@@ -2,7 +2,7 @@
 
 Este documento conserva únicamente decisiones técnicas, matriz de
 compatibilidad y criterios verificables. Los principios permanentes viven en
-[CONSTITUTION](../../CONSTITUTION.md); la operación en [AGENTS](../../AGENTS.md);
+[CONSTITUTION de Template, retirado; vigente: `core/constitution.md` de AI-Native v3.0.1](https://github.com/jlbellonGmail/ai-native/blob/v3.0.1/core/constitution.md); la operación en [AGENTS](../../AGENTS.md);
 el backlog en [ROADMAP](../../ROADMAP.md) y el estado en [STATUS](../../STATUS.md).
 
 Estado: diseño de Fase 00; motor ejecutable v1 vigente y SDD adaptativo
@@ -172,7 +172,7 @@ esta matriz por sí sola no es un sandbox.
 ## Supervisor mínimo: diseño y operación temporal
 
 No se crea `template run` ni `scripts/<orquestador>.ps1` en Fase 00. La entrada
-actual es el orquestador disponible siguiendo la [guía](../usuario/fundamentos-v2.md).
+actual es el orquestador disponible siguiendo la guía `docs/usuario/fundamentos-v2.md` (no existe en este árbol).
 Esto prepara continuidad sin framework, almacenamiento ni dependencia nuevos.
 
 | Estado | Entrada y transición permitida |

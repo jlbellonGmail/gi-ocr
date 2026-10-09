@@ -1,6 +1,6 @@
 # Proyecto: gi-ocr (Smart Invoice Capture)
 
-> **Estado de plataforma (M7):** este repositorio esta migrado a AI-Native v3.0.1 (`ai-native.lock.json`, `.ai-native/migration-journal.json`); Template v2.x es LEGACY/TRANSITION. El resto de este manual describe el circuito Template original y se conserva como referencia. No existen en este arbol y no deben invocarse: `.agentic/agents.json`, `.agentic/mcp.json`, `.agentic/models.json`, `.agentic/run.example.yaml`, `.github/workflows/post-hitl-merge-gate.yml`, `.github/workflows/post-merge-close-feature.yml`, `CONSTITUTION.md`.
+> **Estado de plataforma (M7):** este repositorio esta migrado a AI-Native v3.0.1 (`ai-native.lock.json`, `.ai-native/migration-journal.json`); Template v2.x es LEGACY/TRANSITION. El resto de este manual describe el circuito Template original y se conserva como referencia. No existen en este arbol y no deben invocarse: `.agentic/agents.json`, `.agentic/mcp.json`, `.agentic/models.json`, `.github/workflows/post-hitl-merge-gate.yml`, `.github/workflows/post-merge-close-feature.yml`.
 
 Sistema de captura de comprobantes (impuestos, servicios, documentos
 empresariales) vía OCR: captura o carga de imagen desde un frontend web
