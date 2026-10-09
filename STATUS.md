@@ -1,7 +1,7 @@
 # Estado operativo
 
 Versión: v2.0.0 (adopción incremental en GI-OCR)
-Estado general: features 13 y 14 cerradas; Template v2.0.0 adoptado y operativo.
+Estado general: features 13 y 14 cerradas; Template v2.0.0 adoptado (hoy LEGACY/TRANSITION); plataforma vigente: AI-Native v3.0.1 (M6).
 La arquitectura OCR y sus contratos de producto permanecen preservados.
 
 Próximo paso exacto: iniciar una nueva feature del ROADMAP mediante el
